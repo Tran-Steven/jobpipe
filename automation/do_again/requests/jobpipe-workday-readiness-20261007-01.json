@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-workday-readiness-20261007-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-07T23:16:45Z",
+  "expires_at_utc": "2026-10-08T00:16:45Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "import subprocess\nfrom pathlib import Path\nrepo=Path('/Users/steventran/jobpipe')\ncmd=[str(repo/'.venv/bin/python'),'jobpipe.py','apply-csv','--priorities','Medium','--statuses','Needs user','--limit','1','--preview']\nr=subprocess.run(cmd,cwd=repo,capture_output=True,text=True,timeout=45)\nprint('PREVIEW_EXIT',r.returncode)\nif r.returncode==0:\n import json\n data=json.loads(r.stdout)\n print('SELECTION_COUNT',len(data.get('jobs',[])))\n print('SELECTED_COMPANIES',[j.get('company') for j in data.get('jobs',[])])\nelse:\n print('PREVIEW_ERROR_CLASS',r.stderr[-400:])\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 75
+  }
+}
