@@ -239,6 +239,12 @@ class CandidateVault:
             allow_account_registration=bool(
                 autonomy.get("allow_account_registration", True)
             ),
+            medium_material_strategy=str(
+                autonomy.get("medium_material_strategy") or "TARGETED"
+            ),
+            medium_cover_letter_strategy=str(
+                autonomy.get("medium_cover_letter_strategy") or "TARGETED"
+            ),
         )
 
     def application_profile(

@@ -151,6 +151,7 @@ _REGISTRATION_TERMS_RULES = {
         "i agree to the terms of use",
         "i have read and agree to the privacy statement",
         "i agree to the privacy policy and terms of use",
+        "by checking this box i acknowledge that i have read and agree to the terms and conditions above",
     }),
 }
 
@@ -167,6 +168,7 @@ class WorkdayPageSignals:
     heading: str = ""
     has_captcha_challenge: bool = False
     posting_urls: tuple[str, ...] = ()
+    dialog_password_fields: int = 0
 
 
 @dataclass(frozen=True)
@@ -335,6 +337,32 @@ def detect_workday_stage(signals: WorkdayPageSignals) -> WorkdayStage:
     )) or ids.intersection({"verificationcode", "emailverificationcode"}):
         return WorkdayStage.EMAIL_VERIFICATION
 
+    if "popupdialog" in ids:
+        if signals.dialog_password_fields >= 2:
+            return WorkdayStage.REGISTER
+        if (
+            signals.dialog_password_fields == 1
+            and _contains_any(text, ("sign in", "log in", "forgot password"))
+        ):
+            return WorkdayStage.LOGIN
+    if signals.password_fields >= 2 or "create an account" in text:
+        return WorkdayStage.REGISTER
+    if signals.password_fields == 1 and _contains_any(text, ("sign in", "log in", "forgot password")):
+        return WorkdayStage.LOGIN
+
+    id_stage_map = (
+        ({"myinformation", "legalnamesection_firstname"}, WorkdayStage.MY_INFORMATION),
+        ({"myexperience", "workexperiencesection"}, WorkdayStage.MY_EXPERIENCE),
+        ({"applicationquestions", "primaryquestionnairepage"}, WorkdayStage.APPLICATION_QUESTIONS),
+        ({"voluntarydisclosures"}, WorkdayStage.VOLUNTARY_DISCLOSURES),
+        ({"selfidentify"}, WorkdayStage.SELF_IDENTIFY),
+        ({"reviewpage", "reviewsubmit"}, WorkdayStage.REVIEW),
+        ({"resumeupload", "file-upload-input-ref", "autofillwithresume"}, WorkdayStage.AUTOFILL_WITH_RESUME),
+    )
+    for markers, stage in id_stage_map:
+        if ids.intersection(markers):
+            return stage
+
     route_map = (
         ("autofillwithresume", WorkdayStage.AUTOFILL_WITH_RESUME),
         ("myinformation", WorkdayStage.MY_INFORMATION),
@@ -349,23 +377,6 @@ def detect_workday_stage(signals: WorkdayPageSignals) -> WorkdayStage:
         if token in compact_url:
             return stage
 
-    id_stage_map = (
-        ({"resumeupload", "file-upload-input-ref", "autofillwithresume"}, WorkdayStage.AUTOFILL_WITH_RESUME),
-        ({"myinformation", "legalnamesection_firstname"}, WorkdayStage.MY_INFORMATION),
-        ({"myexperience", "workexperiencesection"}, WorkdayStage.MY_EXPERIENCE),
-        ({"applicationquestions", "primaryquestionnairepage"}, WorkdayStage.APPLICATION_QUESTIONS),
-        ({"voluntarydisclosures"}, WorkdayStage.VOLUNTARY_DISCLOSURES),
-        ({"selfidentify"}, WorkdayStage.SELF_IDENTIFY),
-        ({"reviewpage", "reviewsubmit"}, WorkdayStage.REVIEW),
-    )
-    for markers, stage in id_stage_map:
-        if ids.intersection(markers):
-            return stage
-
-    if signals.password_fields >= 2 or "create an account" in text:
-        return WorkdayStage.REGISTER
-    if signals.password_fields == 1 and _contains_any(text, ("sign in", "log in", "forgot password")):
-        return WorkdayStage.LOGIN
     if signals.has_apply_button:
         return WorkdayStage.JOB
     if signals.visible_inputs > 0 and any(token in url for token in ("/apply", "application")):
@@ -393,6 +404,8 @@ async def inspect_workday_signals(page: Any) -> WorkdayPageSignals:
                     heading: (document.querySelector('h1, [role="heading"]')?.textContent || '').trim(),
                     passwordFields: Array.from(document.querySelectorAll('input[type="password"]'))
                         .filter(visible).length,
+                    dialogPasswordFields: Array.from(document.querySelectorAll('[role="dialog"] input[type="password"]'))
+                        .filter(visible).length,
                     visibleInputs: Array.from(document.querySelectorAll('input, textarea, select'))
                         .filter(el => visible(el) && el.type !== 'hidden').length,
                     hasApplyButton: !!document.querySelector('[data-automation-id="jobPostingApplyButton"]') ||
@@ -405,6 +418,7 @@ async def inspect_workday_signals(page: Any) -> WorkdayPageSignals:
                         + '.g-recaptcha, .h-captcha, [data-sitekey]'
                     )).some(visible),
                     automationIds: Array.from(document.querySelectorAll('[data-automation-id]'))
+                        .filter(visible)
                         .map(el => el.getAttribute('data-automation-id'))
                         .filter(Boolean).slice(0, 250),
                     postingUrls: Array.from(new Set([
@@ -430,6 +444,7 @@ async def inspect_workday_signals(page: Any) -> WorkdayPageSignals:
         heading=str(details.get("heading", "")),
         has_captcha_challenge=bool(details.get("hasCaptchaChallenge", False)),
         posting_urls=tuple(str(item) for item in details.get("postingUrls") or ()),
+        dialog_password_fields=int(details.get("dialogPasswordFields", 0)),
     )
 
 
@@ -744,6 +759,9 @@ class WorkdayAdapter(BaseATSAdapter):
                         ReasonCode.LOGIN_REQUIRED,
                         "Workday authentication did not advance; no further automatic attempts were made",
                         checkpoint=f"workday.auth.{stage.value}",
+                        details={
+                            "diagnostics": await _stage_diagnostics(page),
+                        },
                     )
                 return ApplicationOutcome(
                     run_id=context.run_id,
@@ -755,6 +773,9 @@ class WorkdayAdapter(BaseATSAdapter):
                     adapter=self.name,
                     retryable=True,
                     checkpoint=f"workday.application.{stage.value}",
+                    details={
+                        "diagnostics": await _stage_diagnostics(page),
+                    },
                 )
 
             if stage is WorkdayStage.CONFIRMATION:
@@ -914,7 +935,26 @@ class WorkdayAdapter(BaseATSAdapter):
             return None
 
         if config.auto_register and signals.has_create_account:
-            if await _click_named(context.page, ("Create Account", "Create an Account")):
+            scope = context.page
+            dialog = None
+            try:
+                candidate = context.page.locator('[role="dialog"]').first
+                if await candidate.is_visible(timeout=500):
+                    dialog = candidate
+                    scope = candidate
+            except Exception:
+                pass
+            if dialog is not None:
+                try:
+                    registration_password = context.page.locator(
+                        '[data-automation-id="verifyPassword"]'
+                    ).first
+                    if await registration_password.is_visible(timeout=500):
+                        if await _click_named(dialog, ("Close",)):
+                            return None
+                except Exception:
+                    pass
+            if await _click_named(scope, ("Create Account", "Create an Account")):
                 return None
         return _needs_user(
             context,
@@ -964,6 +1004,19 @@ class WorkdayAdapter(BaseATSAdapter):
                 generated_password,
             )
         previous_password = existing.password if existing is not None else None
+        if existing is not None and generated_password is None:
+            if await _click_named(context.page, ("Sign In", "Log In")):
+                return None, None
+            return (
+                _needs_user(
+                    context,
+                    OutcomeStatus.NEEDS_USER_LOGIN,
+                    ReasonCode.LOGIN_REQUIRED,
+                    "An existing Workday credential is available but Sign In could not be activated",
+                    checkpoint="workday.auth.register",
+                ),
+                None,
+            )
         password = generated_password or generate_strong_password(
             config.generated_password_length
         )
@@ -1010,10 +1063,13 @@ class WorkdayAdapter(BaseATSAdapter):
                     ReasonCode.LOGIN_REQUIRED,
                     "Workday registration fields could not be completed",
                     checkpoint="workday.auth.register",
+                    details={
+                        "diagnostics": await _stage_diagnostics(context.page),
+                    },
                 ),
                 password,
             )
-        if not await _click_named(context.page, ("Create Account", "Register")):
+        if not await _click_create_account_submit(context.page):
             self._restore_generated_credential(context, previous_password)
             return (
                 _needs_user(
@@ -1153,6 +1209,14 @@ class WorkdayAdapter(BaseATSAdapter):
         stage: WorkdayStage,
     ) -> ApplicationOutcome | None:
         fields = await inspect_workday_fields(context.page)
+        if stage is WorkdayStage.AUTOFILL_WITH_RESUME:
+            chooser_visible = await _autofill_choice_visible(context.page)
+            if chooser_visible or not fields:
+                if await _activate_autofill_resume(
+                    context.page,
+                    context.resume_path,
+                ):
+                    return None
         report = await fill_workday_fields(context, stage, fields)
         if report.readback_mismatches:
             return ApplicationOutcome.needs_user(
@@ -1203,6 +1267,7 @@ class WorkdayAdapter(BaseATSAdapter):
             )
         self._remember_expected_readbacks(context, report.expected_readbacks)
         if not await _click_next(context.page):
+            diagnostics = await _stage_diagnostics(context.page)
             return ApplicationOutcome(
                 run_id=context.run_id,
                 job_id=context.job_id,
@@ -1213,7 +1278,11 @@ class WorkdayAdapter(BaseATSAdapter):
                 adapter=self.name,
                 retryable=True,
                 checkpoint=f"workday.application.{stage.value}",
-                details={"stage": stage.value, "filled": report.filled},
+                details={
+                    "stage": stage.value,
+                    "filled": report.filled,
+                    "diagnostics": diagnostics,
+                },
             )
         return None
 
@@ -1375,7 +1444,12 @@ async def inspect_workday_fields(page: Any) -> tuple[WorkdayField, ...]:
         raw_fields = await page.evaluate(
             """() => {
                 const visible = el => !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
-                return Array.from(document.querySelectorAll(
+                const applyRoot = document.querySelector('[data-automation-id="applyFlowPage"]');
+                const path = String(location.pathname || '').toLowerCase();
+                const inApplyRoute = path.includes('/apply/') || path.endsWith('/apply');
+                const root = applyRoot || (inApplyRoute ? null : document);
+                if (!root) return [];
+                return Array.from(root.querySelectorAll(
                     'input, textarea, select, [role="combobox"], '
                     + 'button[aria-haspopup="listbox"], [role="radio"], [role="checkbox"]'
                 ))
@@ -1904,10 +1978,13 @@ async def apply_workday(
 async def _fill_first(page: Any, selectors: Sequence[str], value: str) -> bool:
     for selector in selectors:
         try:
-            locator = page.locator(selector).first
-            if await locator.is_visible(timeout=800):
-                await locator.fill(value)
-                return True
+            matches = page.locator(selector)
+            count = min(await matches.count(), 10)
+            for index in range(count):
+                locator = matches.nth(index)
+                if await locator.is_visible(timeout=500):
+                    await locator.fill(value)
+                    return True
         except Exception:
             continue
     return False
@@ -1917,10 +1994,13 @@ async def _click_named(page: Any, names: Sequence[str]) -> bool:
     for name in names:
         for role in ("button", "link"):
             try:
-                locator = page.get_by_role(role, name=name, exact=False).first
-                if await locator.is_visible(timeout=800):
-                    await locator.click()
-                    return True
+                matches = page.get_by_role(role, name=name, exact=False)
+                count = min(await matches.count(), 10)
+                for index in range(count):
+                    locator = matches.nth(index)
+                    if await locator.is_visible(timeout=500):
+                        await locator.click()
+                        return True
             except Exception:
                 continue
     return False
@@ -1940,7 +2020,8 @@ async def _check_registration_terms(page: Any) -> tuple[str, ...]:
                 const visible = el => !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
                 return Array.from(document.querySelectorAll(
                     'input[type="checkbox"][required], '
-                    + '[role="checkbox"][aria-required="true"]'
+                    + '[role="checkbox"][aria-required="true"], '
+                    + '[data-automation-id="createAccountCheckbox"]'
                 )).filter(visible).slice(0, 20).map((el, index) => {
                     const aid = el.getAttribute('data-automation-id') || '';
                     const id = el.id || '';
@@ -1987,9 +2068,16 @@ async def _check_registration_terms(page: Any) -> tuple[str, ...]:
 
 
 async def _fill_login(page: Any, email: str, password: str) -> bool:
-    email_ok = await _fill_first(page, LOGIN_EMAIL_SELECTORS, email)
-    password_ok = await _fill_first(page, PASSWORD_SELECTORS, password)
-    return bool(email_ok and password_ok and await _click_named(page, ("Sign In", "Log In")))
+    scope = page
+    try:
+        dialog = page.locator('[role="dialog"]').first
+        if await dialog.is_visible(timeout=500):
+            scope = dialog
+    except Exception:
+        pass
+    email_ok = await _fill_first(scope, LOGIN_EMAIL_SELECTORS, email)
+    password_ok = await _fill_first(scope, PASSWORD_SELECTORS, password)
+    return bool(email_ok and password_ok and await _click_named(scope, ("Sign In", "Log In")))
 
 
 async def _fill_registration(
@@ -1997,15 +2085,45 @@ async def _fill_registration(
     email: str,
     password: str,
 ) -> RegistrationFillResult:
-    email_ok = await _fill_first(page, LOGIN_EMAIL_SELECTORS, email)
-    await _fill_first(page, CONFIRM_EMAIL_SELECTORS, email)
-    password_ok = await _fill_first(page, PASSWORD_SELECTORS, password)
-    await _fill_first(page, CONFIRM_PASSWORD_SELECTORS, password)
+    scope = page
+    try:
+        form = page.locator(
+            'form:has([data-automation-id="verifyPassword"])'
+        ).first
+        if await form.is_visible(timeout=800):
+            scope = form
+    except Exception:
+        pass
+    email_ok = await _fill_first(scope, LOGIN_EMAIL_SELECTORS, email)
+    await _fill_first(scope, CONFIRM_EMAIL_SELECTORS, email)
+    password_ok = await _fill_first(scope, PASSWORD_SELECTORS, password)
+    await _fill_first(scope, CONFIRM_PASSWORD_SELECTORS, password)
     unresolved = await _check_registration_terms(page)
     return RegistrationFillResult(
         fields_ready=bool(email_ok and password_ok),
         unresolved_required=unresolved,
     )
+
+
+async def _click_create_account_submit(page: Any) -> bool:
+    try:
+        locator = page.locator(
+            '[data-automation-id="createAccountSubmitButton"]'
+        ).first
+        if await locator.is_visible(timeout=1000):
+            await locator.click()
+            return True
+    except Exception:
+        pass
+    try:
+        form = page.locator(
+            'form:has([data-automation-id="verifyPassword"])'
+        ).first
+        if await form.is_visible(timeout=800):
+            return await _click_named(form, ("Create Account", "Register"))
+    except Exception:
+        pass
+    return False
 
 
 async def _click_apply(page: Any) -> bool:
@@ -2017,6 +2135,144 @@ async def _click_apply(page: Any) -> bool:
     except Exception:
         pass
     return await _click_named(page, ("Apply", "Apply Now"))
+
+
+async def _autofill_choice_visible(page: Any) -> bool:
+    selectors = (
+        'button[data-automation-id="autofillWithResume"]',
+        '[role="button"][data-automation-id="autofillWithResume"]',
+        '[data-automation-id="autofillWithResume"] button',
+    )
+    for selector in selectors:
+        try:
+            matches = page.locator(selector)
+            count = min(await matches.count(), 10)
+            for index in range(count):
+                if await matches.nth(index).is_visible(timeout=300):
+                    return True
+        except Exception:
+            continue
+    try:
+        locator = page.get_by_role(
+            "button",
+            name="Autofill with Resume",
+            exact=False,
+        ).first
+        return bool(await locator.is_visible(timeout=300))
+    except Exception:
+        return False
+
+
+async def _wait_for_autofill_transition(page: Any) -> bool:
+    for _ in range(20):
+        fields = await inspect_workday_fields(page)
+        if any(
+            field.kind == "file" and _workday_canonical_key(field) == "resume"
+            for field in fields
+        ):
+            return True
+        signals = await inspect_workday_signals(page)
+        if detect_workday_stage(signals) not in {
+            WorkdayStage.AUTOFILL_WITH_RESUME,
+            WorkdayStage.LOADING,
+        }:
+            return True
+        await asyncio.sleep(0.5)
+    return False
+
+
+async def _activate_autofill_resume(
+    page: Any,
+    resume_path: str | None,
+) -> bool:
+    if not resume_path:
+        return False
+    path = Path(resume_path).expanduser()
+    if not path.is_file():
+        return False
+
+    candidates = []
+    try:
+        candidates.append(
+            page.get_by_role(
+                "button",
+                name="Autofill with Resume",
+                exact=False,
+            ).first
+        )
+    except Exception:
+        pass
+    for selector in (
+        'button[data-automation-id="autofillWithResume"]',
+        '[role="button"][data-automation-id="autofillWithResume"]',
+        '[data-automation-id="autofillWithResume"] button',
+    ):
+        try:
+            candidates.append(page.locator(selector).first)
+        except Exception:
+            continue
+
+    for locator in candidates:
+        try:
+            if not await locator.is_visible(timeout=500):
+                continue
+            try:
+                async with page.expect_file_chooser(timeout=2500) as chooser_info:
+                    await locator.click()
+                chooser = await chooser_info.value
+                await chooser.set_files(str(path.resolve()))
+            except Exception:
+                await locator.click()
+            return await _wait_for_autofill_transition(page)
+        except Exception:
+            continue
+
+    return False
+
+
+async def _stage_diagnostics(page: Any) -> dict[str, Any]:
+    try:
+        value = await page.evaluate(
+            r"""() => {
+                const visible = el => !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+                return {
+                    automation_ids: Array.from(document.querySelectorAll('[data-automation-id]'))
+                        .filter(visible)
+                        .map(el => el.getAttribute('data-automation-id'))
+                        .filter(Boolean)
+                        .slice(0, 40),
+                    inputs: Array.from(document.querySelectorAll('input'))
+                        .slice(0, 30)
+                        .map(el => ({
+                            automation_id: el.getAttribute('data-automation-id') || '',
+                            name: el.getAttribute('name') || '',
+                            type: el.getAttribute('type') || 'text',
+                            visible: visible(el),
+                            in_dialog: Boolean(el.closest('[role="dialog"]')),
+                            form_automation_id: el.closest('form')?.getAttribute('data-automation-id') || '',
+                        })),
+                    dialogs: Array.from(document.querySelectorAll('[role="dialog"]'))
+                        .filter(visible)
+                        .map(el => ({
+                            automation_id: el.getAttribute('data-automation-id') || '',
+                            buttons: Array.from(el.querySelectorAll('button, [role="button"]'))
+                                .filter(visible)
+                                .map(button => (button.innerText || button.getAttribute('aria-label') || '').replace(/\s+/g, ' ').trim())
+                                .filter(Boolean)
+                                .slice(0, 20),
+                        }))
+                        .slice(0, 10),
+                    buttons: Array.from(document.querySelectorAll('button, [role="button"]'))
+                        .filter(visible)
+                        .map(el => (el.innerText || el.getAttribute('aria-label') || '').replace(/\s+/g, ' ').trim())
+                        .filter(Boolean)
+                        .slice(0, 30),
+                };
+            }"""
+        )
+    except Exception:
+        return {}
+    return value if isinstance(value, dict) else {}
 
 
 async def _click_next(page: Any) -> bool:

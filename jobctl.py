@@ -266,7 +266,7 @@ def _build_application_bundle(
         policy=decision,
         fallback_resume=fallback_resume,
     )
-    profile = vault.application_profile(
+    execution_profile = vault.application_profile(
         resume_path=materials.resume_path,
         job_id=job.job_id,
     )
@@ -274,11 +274,11 @@ def _build_application_bundle(
         run_id=run_id,
         job=job,
         materials=materials,
-        profile=profile,
+        profile={"personal": dict(execution_profile["personal"])},
         answers=dict(answer_report.values),
         policy=decision,
     )
-    return bundle, profile
+    return bundle, execution_profile
 
 
 def _project_csv_outcome(

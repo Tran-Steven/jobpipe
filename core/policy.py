@@ -98,9 +98,21 @@ class PolicyConfig:
     email_verification_agent_enabled: bool = False
     allow_keychain_login: bool = True
     allow_account_registration: bool = True
+    medium_material_strategy: MaterialStrategy = MaterialStrategy.TARGETED
+    medium_cover_letter_strategy: CoverLetterStrategy = CoverLetterStrategy.TARGETED
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "mode", AutonomyMode(self.mode))
+        object.__setattr__(
+            self,
+            "medium_material_strategy",
+            MaterialStrategy(self.medium_material_strategy),
+        )
+        object.__setattr__(
+            self,
+            "medium_cover_letter_strategy",
+            CoverLetterStrategy(self.medium_cover_letter_strategy),
+        )
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -108,6 +120,8 @@ class PolicyConfig:
             "email_verification_agent_enabled": self.email_verification_agent_enabled,
             "allow_keychain_login": self.allow_keychain_login,
             "allow_account_registration": self.allow_account_registration,
+            "medium_material_strategy": self.medium_material_strategy.value,
+            "medium_cover_letter_strategy": self.medium_cover_letter_strategy.value,
         }
 
 
@@ -179,14 +193,17 @@ class PolicyEngine:
             blockers.append(PolicyBlocker.PAYMENT_OR_PERMISSION)
         return tuple(blockers)
 
-    @staticmethod
     def _materials(
+        self,
         tier: JobTier,
     ) -> tuple[MaterialStrategy, CoverLetterStrategy]:
         if tier is JobTier.HIGH:
             return MaterialStrategy.BESPOKE, CoverLetterStrategy.NARRATIVE
         if tier is JobTier.MEDIUM:
-            return MaterialStrategy.TARGETED, CoverLetterStrategy.TARGETED
+            return (
+                self.config.medium_material_strategy,
+                self.config.medium_cover_letter_strategy,
+            )
         return MaterialStrategy.ROUTE_EXISTING, CoverLetterStrategy.IF_REQUIRED
 
     def _approval_actors(

@@ -103,3 +103,14 @@ def test_keychain_login_is_allowed_but_captcha_still_blocks() -> None:
     captcha = engine.decide(JobTier.LOW, RiskSignals(captcha=True))
     assert captcha.submit_authority is SubmitAuthority.BLOCKED
     assert PolicyBlocker.CAPTCHA in captcha.blockers
+
+
+def test_medium_material_policy_can_route_existing_resume() -> None:
+    config = PolicyConfig(
+        medium_material_strategy=MaterialStrategy.ROUTE_EXISTING,
+        medium_cover_letter_strategy=CoverLetterStrategy.IF_REQUIRED,
+    )
+    decision = PolicyEngine(config).decide(JobTier.MEDIUM, RiskSignals())
+
+    assert decision.material_strategy is MaterialStrategy.ROUTE_EXISTING
+    assert decision.cover_letter_strategy is CoverLetterStrategy.IF_REQUIRED

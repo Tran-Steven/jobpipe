@@ -60,11 +60,39 @@ FIXTURES = Path(__file__).parent / "fixtures" / "workday"
             "login",
         ),
         (WorkdayPageSignals("Create an Account", WORKDAY_URL, password_fields=2), "register"),
+        (
+            WorkdayPageSignals(
+                "Create Account",
+                WORKDAY_URL + "/autofillWithResume",
+                password_fields=2,
+                has_create_account=True,
+            ),
+            "register",
+        ),
+        (
+            WorkdayPageSignals(
+                "Sign In Create Account Forgot Password",
+                WORKDAY_URL + "/autofillWithResume",
+                password_fields=3,
+                has_create_account=True,
+                automation_ids=("popUpDialog",),
+                dialog_password_fields=1,
+            ),
+            "login",
+        ),
         (WorkdayPageSignals("Sign In", WORKDAY_URL, password_fields=1), "login"),
         (WorkdayPageSignals("Job details", WORKDAY_URL, has_apply_button=True), "job"),
         (
             WorkdayPageSignals("Application", WORKDAY_URL + "/autofillWithResume"),
             "autofillWithResume",
+        ),
+        (
+            WorkdayPageSignals(
+                "Application",
+                WORKDAY_URL + "/autofillWithResume",
+                automation_ids=("myInformation", "legalNameSection_firstName"),
+            ),
+            "myInformation",
         ),
         (WorkdayPageSignals("", WORKDAY_URL + "/myInformation"), "myInformation"),
         (WorkdayPageSignals("", WORKDAY_URL + "/myExperience"), "myExperience"),
@@ -290,7 +318,10 @@ async def test_failed_registration_restores_preexisting_keychain_credential(
     monkeypatch.setattr("adapters.workday._fill_registration", prepare)
     monkeypatch.setattr("adapters.workday._click_named", create)
 
-    outcome, _password = await WorkdayAdapter()._register(context, None)
+    outcome, _password = await WorkdayAdapter()._register(
+        context,
+        "synthetic-generated-secret",
+    )
 
     assert outcome.status is OutcomeStatus.NEEDS_USER
     assert store.get(service, "candidate@example.test") == "synthetic-existing-secret"
@@ -1114,3 +1145,57 @@ async def test_sanitized_workday_fixture_reaches_review_through_multiple_stages(
     assert page.uploaded_file_count == 1
     assert page.next_clicks == len(fixture["stages"]) - 1
     assert page.stage_index == len(fixture["stages"]) - 1
+
+
+@pytest.mark.asyncio
+async def test_autofill_choice_clicks_before_upload_fields_exist(monkeypatch):
+    page = FakeFormPage()
+    context = WorkdayApplicationContext(
+        page=page,
+        job_url=WORKDAY_URL,
+        profile={"personal": {"first_name": "Synthetic"}},
+        job_id="job-autofill-choice",
+        run_id="run-autofill-choice",
+        navigate=False,
+    )
+    monkeypatch.setattr(
+        "adapters.workday.inspect_workday_fields", AsyncMock(return_value=())
+    )
+    activate = AsyncMock(return_value=True)
+    monkeypatch.setattr("adapters.workday._activate_autofill_resume", activate)
+    click_next = AsyncMock(side_effect=AssertionError("must not advance yet"))
+    monkeypatch.setattr("adapters.workday._click_next", click_next)
+
+    outcome = await WorkdayAdapter()._complete_stage(
+        context, WorkdayStage.AUTOFILL_WITH_RESUME
+    )
+
+    assert outcome is None
+    activate.assert_awaited_once_with(page, context.resume_path)
+    click_next.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_fresh_registration_with_existing_credential_prefers_sign_in(monkeypatch):
+    store = InMemoryCredentialStore()
+    service = workday_service(WORKDAY_URL)
+    store.set(service, "candidate@example.test", "synthetic-existing-secret")
+    context = WorkdayApplicationContext(
+        page=object(),
+        job_url=WORKDAY_URL,
+        profile={"personal": {"email": "candidate@example.test"}},
+        job_id="job-register-existing",
+        run_id="run-register-existing",
+        credential_store=store,
+    )
+    click = AsyncMock(return_value=True)
+    prepare = AsyncMock(side_effect=AssertionError("must not refill registration"))
+    monkeypatch.setattr("adapters.workday._click_named", click)
+    monkeypatch.setattr("adapters.workday._fill_registration", prepare)
+
+    outcome, password = await WorkdayAdapter()._register(context, None)
+
+    assert outcome is None
+    assert password is None
+    click.assert_awaited_once_with(context.page, ("Sign In", "Log In"))
+    prepare.assert_not_awaited()
