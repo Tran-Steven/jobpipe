@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-jobvite-failure-isolation-20261007-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-07T23:48:00Z",
+  "expires_at_utc": "2026-10-08T00:48:00Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess\nrepo=Path('/Users/steventran/jobpipe')\ncommands=[\n ['git','status','--short'],\n [str(repo/'.venv/bin/python'),'-m','pytest','-q','tests/test_ats_adapter_contract.py','-k','jobvite and explicit_confirmation_produces_verified_evidence','--maxfail=1'],\n [str(repo/'.venv/bin/python'),'-m','pytest','-q','tests/test_jobctl.py','--maxfail=1']\n]\nfor cmd in commands:\n p=subprocess.run(cmd,cwd=repo,text=True,capture_output=True,timeout=110)\n print('COMMAND',cmd,'EXIT',p.returncode)\n print('STDOUT',p.stdout[-4500:])\n print('STDERR',p.stderr[-1000:])\n if p.returncode: raise SystemExit(p.returncode)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 260
+  }
+}
