@@ -35,6 +35,11 @@ from datetime import datetime, timezone
 
 import pytest
 
+pytestmark = pytest.mark.skipif(
+    os.environ.get("JOBPIPE_RUN_LIVE_FORM_TESTS") != "1",
+    reason="Live ATS integration requires JOBPIPE_RUN_LIVE_FORM_TESTS=1",
+)
+
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
