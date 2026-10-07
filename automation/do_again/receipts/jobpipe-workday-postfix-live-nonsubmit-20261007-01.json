@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:93987:1791414800:9e48d0bdac84",
+  "error": null,
+  "finished_at_utc": "2026-10-07T23:19:09.711881+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "b95b73a59faa447072df89c3e522480a4f5ff59c52b51ddef328ac6eb1dcd337",
+  "request_id": "jobpipe-workday-postfix-live-nonsubmit-20261007-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "20f89a36e78af4dc0f1559790947b17ff7d3ed54"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "20f89a36e78af4dc0f1559790947b17ff7d3ed54"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "b95b73a59faa447072df89c3e522480a4f5ff59c52b51ddef328ac6eb1dcd337",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-postfix-live-nonsubmit-20261007-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 102.827,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 592,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-postfix-live-nonsubmit-20261007-01/script.py",
+      "script_sha256": "287f40492bab728501735e3ee55fe44b990ef6888e9aa5aca7a6083f3a8a5093",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "NON_SUBMIT_DIAGNOSTIC=true\nTARGET_COMPANY=Alteryx\nEXIT_CODE 10\nOUTPUT_TAIL {\"adapter\":\"workday\",\"checkpoint\":\"workday.auth.register\",\"created_at\":\"2026-10-07T23:19:09.227133Z\",\"details\":{},\"evidence_refs\":[],\"job_id\":\"job-66b3262969a79ef7e74afa76\",\"message\":\"Workday account creation control could not be activated\",\"phase\":\"AUTHENTICATE\",\"reason_code\":\"LOGIN_REQUIRED\",\"retryable\":false,\"run_id\":\"run-a0db849b5eb04db899a07abb8627621f\",\"schema_version\":1,\"status\":\"NEEDS_USER_LOGIN\"}\n{\n  \"attempted\": 1,\n  \"outcomes\": {\n    \"NEEDS_USER_LOGIN\": 1\n  },\n  \"queue\": \"/Users/steventran/Library/Application Support/Jobops/queue/job_pool.csv\"\n}\n\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T23:17:26.641289+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
