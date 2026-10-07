@@ -475,3 +475,14 @@ def test_event_metrics_keep_fixture_and_live_claims_separate() -> None:
     assert metrics["supported_ats_review_arrival"]["rate"] == 1.0
     assert metrics["median_model_calls_observed"] == 0
     assert metrics["submitted_verified_evidence_coverage"] == 1.0
+
+
+
+def test_default_apply_csv_selection_does_not_replay_user_blockers():
+    from jobctl import DEFAULT_STATUSES, REVIEWED_STATUSES
+
+    selected = {item.strip().casefold() for item in DEFAULT_STATUSES.split(",")}
+    assert "needs user" not in selected
+    assert "pending" in selected
+    assert "ready to apply" in selected
+    assert "Needs user" in REVIEWED_STATUSES

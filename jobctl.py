@@ -61,7 +61,7 @@ from jobpipe_orchestrator import run_pipeline as jobpipe_run_pipeline
 from jobpipe_readiness import application_readiness as jobpipe_application_readiness
 
 
-DEFAULT_STATUSES = "Needs user,Pending,Ready to apply"
+DEFAULT_STATUSES = "Pending,Ready to apply"
 REVIEWED_STATUSES = "Ready for review,Needs user"
 SUPPORTED_ATS = frozenset({"greenhouse", "lever", "ashby", "jobvite", "workday"})
 DEFAULT_MAILBOX_KEYCHAIN_SERVICE = "com.jobops.mailbox.imap"
