@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-rebrand-cli-001",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-07T14:21:46Z",
+  "expires_at_utc": "2026-10-07T15:21:46Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\n\npath = Path(\"/Users/steventran/jobpipe/jobctl.py\")\ntext = path.read_text(encoding=\"utf-8\")\ntext = text.replace(\n    '\"\"\"Jobops control plane for private queues and permit-gated ATS execution.\"\"\"',\n    '\"\"\"jobpipe control plane for discovery, private queues, and permit-gated ATS execution.\"\"\"',\n    1,\n)\ntext = text.replace('help=\"Override JOBOPS_HOME\"', 'help=\"Override jobpipe private home\"', 1)\npath.write_text(text, encoding=\"utf-8\")\nprint(\"updated jobctl.py CLI branding\")\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 60
+  }
+}
