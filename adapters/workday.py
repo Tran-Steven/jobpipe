@@ -715,6 +715,14 @@ class WorkdayAdapter(BaseATSAdapter):
         for _ in range(max(1, context.max_steps)):
             signals = await inspect_workday_signals(page)
             stage = detect_workday_stage(signals)
+            if stage in {
+                WorkdayStage.AUTOFILL_WITH_RESUME,
+                WorkdayStage.LOADING,
+                WorkdayStage.OTHER,
+            }:
+                auth_stage = await _visible_workday_auth_stage(page)
+                if auth_stage is not None:
+                    stage = auth_stage
             identity_status = _workday_identity_status(requested_identity, signals)
             if identity_status == "mismatch":
                 return _workday_identity_failure(
@@ -1205,6 +1213,9 @@ class WorkdayAdapter(BaseATSAdapter):
     ) -> ApplicationOutcome | None:
         fields = await inspect_workday_fields(context.page)
         if stage is WorkdayStage.AUTOFILL_WITH_RESUME:
+            auth_stage = await _visible_workday_auth_stage(context.page)
+            if auth_stage is not None:
+                return None
             refreshed_stage = detect_workday_stage(
                 await inspect_workday_signals(context.page)
             )
@@ -2069,6 +2080,25 @@ async def _check_registration_terms(page: Any) -> tuple[str, ...]:
         except Exception:
             unresolved.append(_safe_label(str(item.get("label") or "Required agreement")))
     return tuple(dict.fromkeys(unresolved))
+
+
+async def _visible_workday_auth_stage(page: Any) -> WorkdayStage | None:
+    try:
+        form = page.locator('[data-automation-id="signInFormo"]').first
+        if not await form.is_visible(timeout=400):
+            return None
+        password = form.locator('[data-automation-id="password"]').first
+        if not await password.is_visible(timeout=350):
+            return None
+        verify = form.locator('[data-automation-id="verifyPassword"]').first
+        if await verify.is_visible(timeout=350):
+            return WorkdayStage.REGISTER
+        email = form.locator('[data-automation-id="email"]').first
+        if await email.is_visible(timeout=350):
+            return WorkdayStage.LOGIN
+    except Exception:
+        pass
+    return None
 
 
 async def _active_auth_dialog(page: Any) -> Any | None:

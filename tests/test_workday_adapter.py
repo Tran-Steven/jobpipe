@@ -19,6 +19,7 @@ from adapters.workday import (
     _check_registration_terms,
     _fill_login,
     _click_create_account_submit,
+    _visible_workday_auth_stage,
     _same_workday_session_url,
     _sanitize_confirmation_url,
     _validate_expected_readbacks,
@@ -1294,5 +1295,55 @@ async def test_workday_autofill_does_not_advance_hydrated_registration_surface(m
             assert outcome is None
             activate.assert_not_awaited()
             advance.assert_not_awaited()
+        finally:
+            await browser.close()
+
+
+@pytest.mark.asyncio
+async def test_workday_visible_auth_form_preempts_stale_autofill_signals(monkeypatch):
+    playwright_module = pytest.importorskip("playwright.async_api")
+    async with playwright_module.async_playwright() as playwright:
+        try:
+            browser = await playwright.chromium.launch(headless=True)
+        except Exception as exc:
+            pytest.skip(f"Playwright Chromium is unavailable: {type(exc).__name__}")
+        try:
+            page = await browser.new_page()
+            await page.set_content(
+                (FIXTURES / "auth_on_autofill_route.html").read_text()
+            )
+            assert await _visible_workday_auth_stage(page) is WorkdayStage.REGISTER
+            context = WorkdayApplicationContext(
+                page=page,
+                job_url=WORKDAY_URL,
+                profile={"personal": {"email": "synthetic@example.test"}},
+                job_id="job-opaque-signals",
+                run_id="run-opaque-signals",
+                navigate=False,
+            )
+            monkeypatch.setattr(
+                "adapters.workday.inspect_workday_signals",
+                AsyncMock(return_value=WorkdayPageSignals(
+                    text="",
+                    url=WORKDAY_URL + "/autofillWithResume",
+                )),
+            )
+            activate = AsyncMock(side_effect=AssertionError("resume must not activate"))
+            advance = AsyncMock(side_effect=AssertionError("next must not be clicked"))
+            monkeypatch.setattr("adapters.workday._activate_autofill_resume", activate)
+            monkeypatch.setattr("adapters.workday._click_next", advance)
+            result = await WorkdayAdapter()._complete_stage(
+                context, WorkdayStage.AUTOFILL_WITH_RESUME
+            )
+            assert result is None
+            activate.assert_not_awaited()
+            advance.assert_not_awaited()
+            await page.set_content(
+                '<form data-automation-id="signInFormo">'
+                '<input data-automation-id="email" type="email">'
+                '<input data-automation-id="password" type="password">'
+                '</form>'
+            )
+            assert await _visible_workday_auth_stage(page) is WorkdayStage.LOGIN
         finally:
             await browser.close()
