@@ -374,3 +374,19 @@ def test_discovery_core_has_no_forbidden_dependencies() -> None:
         for module in imported
         if any(module == prefix or module.startswith(f"{prefix}.") for prefix in forbidden)
     }
+
+
+
+def test_discovery_preserves_distinct_canonical_application_destination(
+    synthetic_home: PrivateHome,
+) -> None:
+    source = "https://boards.greenhouse.io/acme/jobs/123"
+    destination = "https://jobs.lever.co/acme/job-456?utm_source=mail&stage=apply"
+    response = run_discovery(
+        _request(candidate=_candidate(source_url=source, application_url=destination))
+    )
+    assert response.disposition is DiscoveryDisposition.ACCEPTED
+    posting = _read_single(synthetic_home.paths.job_postings)
+    assert posting["source_url"] == source
+    assert posting["application_url"] == "https://jobs.lever.co/acme/job-456?stage=apply"
+    assert posting["application_url"] != posting["source_url"]
