@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:93987:1791414800:9e48d0bdac84",
+  "error": null,
+  "finished_at_utc": "2026-10-07T23:36:46.560675+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "cdce13540f11c8a2bea8147c5f5c2527576a24b5acf022d8d6a09a09f2899dd2",
+  "request_id": "jobpipe-no-loop-retry-audit-20261007-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "56a4a6bdb129e99ef765f15e5816a474b7d19fc1"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "56a4a6bdb129e99ef765f15e5816a474b7d19fc1"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "cdce13540f11c8a2bea8147c5f5c2527576a24b5acf022d8d6a09a09f2899dd2",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-no-loop-retry-audit-20261007-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.178,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 612,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-no-loop-retry-audit-20261007-01/script.py",
+      "script_sha256": "f13c7d448bafa2ffece5576b267b1b5d6f66b716b9830e773c73d587bed4fe92",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "FILE core/application_engine.py RETRY_REFERENCES [(14, 'DuplicateSubmissionError,'), (153, 'automatically.  VERIFIED is a completed duplicate guard.'), (173, 'reason_code=ReasonCode.DUPLICATE_SUBMISSION,'), (666, 'except DuplicateSubmissionError:'), (667, 'validator_error[\"reason\"] = \"duplicate submission\"'), (711, 'status=OutcomeStatus.FAILED_RETRYABLE,'), (713, 'reason_code=ReasonCode.RETRYABLE_BROWSER_ERROR,'), (715, 'retryable=True,'), (742, 'if validator_error.get(\"reason\") == \"duplicate submission\":'), (748, 'reason_code=ReasonCode.DUPLICATE_SUBMISSION,'), (756, 'status=OutcomeStatus.FAILED_RETRYABLE,'), (758, 'reason_code=ReasonCode.RETRYABLE_BROWSER_ERROR,'), (761, 'retryable=True,'), (807, '# retryable or look like a safe no-click policy skip.'), (851, 'status=OutcomeStatus.FAILED_RETRYABLE,'), (853, 'reason_code=ReasonCode.RETRYABLE_BROWSER_ERROR,'), (855, 'retryable=True,')]\nFILE core/runnable_application_queue.py RETRY_REFERENCES [(59, 'BLOCKED_NEEDS_USER = \"BLOCKED_NEEDS_USER\"'), (69, 'PRIORITY_NEEDS_USER = \"PRIORITY_NEEDS_USER\"'), (96, 'RunnableApplicationStatus.BLOCKED_NEEDS_USER: ('), (97, 'RunnableApplicationReason.PRIORITY_NEEDS_USER'), (187, 'retryable: bool'), (207, 'if type(self.retryable) is not bool:'), (208, 'raise TypeError(\"retryable must be a boolean\")'), (214, 'or self.retryable'), (283, 'retryable: bool = False,'), (289, 'retryable=retryable,'), (339, 'if decision.qualification is PriorityQualification.NEEDS_USER:'), (344, 'status=RunnableApplicationStatus.BLOCKED_NEEDS_USER,'), (450, 'retryable=True,'), (467, 'retryable=priority_queue.retryable,'), (557, 'retryable=False,')]\nFILE core/outcomes.py RETRY_REFERENCES [(36, 'NEEDS_USER = \"NEEDS_USER\"'), (37, 'NEEDS_USER_LOGIN = \"NEEDS_USER_LOGIN\"'), (38, 'NEEDS_USER_2FA = \"NEEDS_USER_2FA\"'), (39, 'NEEDS_USER_CAPTCHA = \"NEEDS_USER_CAPTCHA\"'), (40, 'NEEDS_USER_EMAIL_VERIFICATION = \"NEEDS_USER_EMAIL_VERIFICATION\"'), (41, 'NEEDS_USER_ACCOUNT_LOCKED = \"NEEDS_USER_ACCOUNT_LOCKED\"'), (42, 'NEEDS_USER_SENSITIVE_ANSWER = \"NEEDS_USER_SENSITIVE_ANSWER\"'), (47, 'FAILED_RETRYABLE = \"FAILED_RETRYABLE\"'), (83, 'RETRYABLE_BROWSER_ERROR = \"RETRYABLE_BROWSER_ERROR\"'), (85, 'DUPLICATE_SUBMISSION = \"DUPLICATE_SUBMISSION\"'), (116, 'NEEDS_USER = 10'), (119, 'RETRYABLE_FAILURE = 20'), (173, '_NEEDS_USER_STATUSES = frozenset('), (175, 'OutcomeStatus.NEEDS_USER,'), (176, 'OutcomeStatus.NEEDS_USER_LOGIN,'), (177, 'OutcomeStatus.NEEDS_USER_2FA,'), (178, 'OutcomeStatus.NEEDS_USER_CAPTCHA,'), (179, 'OutcomeStatus.NEEDS_USER_EMAIL_VERIFICATION,'), (180, 'OutcomeStatus.NEEDS_USER_ACCOUNT_LOCKED,'), (181, 'OutcomeStatus.NEEDS_USER_SENSITIVE_ANSWER,'), (186, '# resumable \"Needs user\" state.  It still exits through the broad NEEDS_USER'), (202, 'retryable: bool = False'), (238, 'if self.status is OutcomeStatus.FAILED_RETRYABLE and not self.retryable:'), (239, 'object.__setattr__(self, \"retryable\", True)'), (248, 'return ExitCode.NEEDS_USER'), (249, 'if self.status in _NEEDS_USER_STATUSES:'), (250, 'return ExitCode.NEEDS_USER'), (251, 'if self.status is OutcomeStatus.FAILED_RETRYABLE:'), (252, 'return ExitCode.RETRYABLE_FAILURE'), (287, '\"retryable\": self.retryable,'), (313, 'retryable=bool(value.get(\"retryable\", False)),'), (353, 'def needs_user('), (358, 'status: OutcomeStatus = OutcomeStatus.NEEDS_USER,'), (366, 'if status not in _NEEDS_USER_STATUSES | _HARD_STOP_STATUSES:')]\nFILE core/current_priority_queue.py RETRY_REFERENCES [(172, 'retryable: bool'), (191, 'if type(self.retryable) is not bool:'), (192, 'raise TypeError(\"retryable must be a boolean\")'), (196, 'if self.reason_code is not None or self.retryable:'), (303, 'retryable: bool = False,'), (313, 'retryable=retryable,'), (356, 'elif decision.qualification is PriorityQualification.NEEDS_USER:'), (439, 'retryable=True,'), (459, 'retryable=True,'), (501, 'retryable=True,'), (566, 'retryable=True,'), (631, 'retryable=True,'), (657, 'retryable=False,')]\nDIRTY_TREE  M adapters/protocol.py\n M do-again.toml\n?? do-again-policy.json\n\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T23:36:46.065456+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
