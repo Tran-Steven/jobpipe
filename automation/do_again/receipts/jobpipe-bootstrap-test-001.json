@@ -1,0 +1,59 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:42322:1791381911",
+  "error": null,
+  "finished_at_utc": "2026-10-07T14:16:27.411914+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "3dac3cd6bbf588ccebe6cc40c851d08e26ea183f702b988e1f8f87af3a8ba3eb",
+  "request_id": "jobpipe-bootstrap-test-001",
+  "result": {
+    "authority_after": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "c962b97769e9de6d5cefddecc8156f6bd7f420b9",
+      "revision": null
+    },
+    "authority_before": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "c962b97769e9de6d5cefddecc8156f6bd7f420b9",
+      "revision": null
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "3dac3cd6bbf588ccebe6cc40c851d08e26ea183f702b988e1f8f87af3a8ba3eb",
+    "result": {
+      "argv": [
+        "python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-bootstrap-test-001/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.178,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 686,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-bootstrap-test-001/script.py",
+      "script_sha256": "33396c4b9bd607c088bcfd83a8f5a4648cbbbdc476c087143def9ff59347c701",
+      "stderr": "Traceback (most recent call last):\n  File \"/Users/steventran/jobpipe/jobpipe.py\", line 4, in <module>\n    from jobctl import main\n  File \"/Users/steventran/jobpipe/jobctl.py\", line 17, in <module>\n    from playwright.async_api import async_playwright\nModuleNotFoundError: No module named 'playwright'\n\n",
+      "stderr_truncated": false,
+      "stdout": "\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T14:16:27.151648+00:00",
+  "state": "failed",
+  "traceback": null
+}
