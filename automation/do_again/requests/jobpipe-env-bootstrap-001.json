@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-env-bootstrap-001",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-07T14:17:23Z",
+  "expires_at_utc": "2026-10-07T15:17:23Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "import subprocess\nfrom pathlib import Path\n\nrepo = Path(\"/Users/steventran/jobpipe\")\nvenv = repo / \".venv\"\nif not (venv / \"bin\" / \"python\").exists():\n    subprocess.run([\"python3\", \"-m\", \"venv\", str(venv)], cwd=repo, check=True)\n\npip = str(venv / \"bin\" / \"pip\")\nsubprocess.run([pip, \"install\", \"-r\", \"requirements-dev.txt\"], cwd=repo, check=True)\nprint(\"jobpipe environment ready\")\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 900
+  }
+}
