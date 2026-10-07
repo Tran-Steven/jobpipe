@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
+  "error": null,
+  "finished_at_utc": "2026-10-07T22:37:09.464627+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "da30806f1b1d9e25272ac47ffe42079c8c17fe3be406cf5ee21e85d14c525598",
+  "request_id": "jobpipe-bounded-full-suite-20261007-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "22a47681203a45b3195923d7964cf586df41ae71"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "22a47681203a45b3195923d7964cf586df41ae71"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "da30806f1b1d9e25272ac47ffe42079c8c17fe3be406cf5ee21e85d14c525598",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-bounded-full-suite-20261007-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 175.07,
+      "language": "python",
+      "returncode": 124,
+      "script_bytes": 836,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-bounded-full-suite-20261007-01/script.py",
+      "script_sha256": "cb9af49987361a7284dc01ffb4773c3f86bf2fd982456844cfb5426bc0b14c33",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "FULL_SUITE_TIMED_OUT\non_application_bundle_factory.py::test_invalid_or_drifted_inputs_fail_closed_without_partial_bundle[<lambda>-MATERIAL_CONTRACT_INVALID] PASSED [ 62%]\ntests/test_production_application_bundle_factory.py::test_invalid_or_drifted_inputs_fail_closed_without_partial_bundle[<lambda>-ANSWER_CONTRACT_INVALID] PASSED [ 62%]\ntests/test_production_application_bundle_factory.py::test_invalid_or_drifted_inputs_fail_closed_without_partial_bundle[<lambda>-POLICY_CONTRACT_INVALID] PASSED [ 62%]\ntests/test_production_application_bundle_factory.py::test_invalid_or_drifted_inputs_fail_closed_without_partial_bundle[<lambda>-PLAN_JOB_BINDING_MISMATCH] PASSED [ 62%]\ntests/test_production_application_bundle_factory.py::test_factory_is_deterministic_and_p2c1_replay_calls_it_zero_times PASSED [ 62%]\ntests/test_production_application_bundle_factory.py::test_factory_bundle_round_trips_through_existing_execution_contract PASSED [ 62%]\ntests/test_production_application_preparation_recipe.py::test_factory_builds_exact_stable_canonical_production_recipe PASSED [ 62%]\ntests/test_production_application_preparation_recipe.py::test_all_stage_adapters_map_request_to_typed_command_once PASSED [ 62%]\ntests/test_production_application_preparation_recipe.py::test_factory_fails_closed_without_partial_recipe_or_agent PASSED [ 62%]\ntests/test_production_application_preparation_recipe.py::test_production_recipe_has_no_event_loop_bridge_or_test_dependency PASSED [ 62%]\ntests/test_production_automation_composition.py::test_complete_production_root_is_static_canonical_and_exact PASSED [ 62%]\ntests/test_production_automation_composition.py::test_dashboard_install_is_atomic_and_lifecycle_owned PASSED [ 63%]\ntests/test_production_automation_composition.py::test_authenticated_routes_use_injected_s3b_and_p2c10a_not_503 PASSED [ 63%]\ntests/test_production_automation_composition.py::test_missing_mandatory_dependency_fails_and_diagnostics_are_safe PASSED [ 63%]\ntests/test_production_browser_runtime.py::test_typed_config_startup_and_safe_diagnostics PASSED [ 63%]\ntests/test_production_browser_runtime.py::test_exclusive_lease_page_lifecycle_and_exception_release PASSED [ 63%]\ntests/test_production_browser_runtime.py::test_provider_satisfies_both_execution_ports_without_side_effects PASSED [ 63%]\ntests/test_production_browser_runtime.py::test_shutdown_is_idempotent_and_blocks_new_leases PASSED [ 63%]\ntests/test_production_job_search_ports.py::test_greenhouse_production_search_is_bounded_stable_and_deduplicated PASSED [ 63%]\ntests/test_production_job_search_ports.py::test_provider_boundary_is_exact_and_lever_is_not_advertised PASSED [ 63%]\ntests/test_production_job_search_ports.py::test_network_content_and_candidate_failures_are_typed PASSED [ 63%]\ntests/test_production_job_search_ports.py::test_factory_is_network_free_and_s3b_executor_consumes_ports PASSED [ 63%]\ntests/test_production_preparation_agents.py::test_factory_builds_and_executes_all_nine_typed_ports_once PASSED [ 63%]\ntests/test_production_preparation_agents.py::test_malformed_timeout_and_unavailable_fail_typed_without_retry PASSED [ 63%]\ntests/test_production_preparation_agents.py::test_factory_fails_fast_for_missing_or_incompatible_mandatory_component PASSED [ 63%]\ntests/test_production_preparation_agents.py::test_request_projection_is_bounded_and_diagnostics_are_secret_safe PASSED [ 63%]\ntests/test_production_preparation_agents.py::test_existing_validator_still_rejects_unsafe_typed_domain_output PASSED [ 63%]\ntests/test_profile_store.py::test_private_vault_projects_only_verified_answers PASSED [ 63%]\ntests/test_profile_store.py::test_verified_answer_requires_provenance_scope_and_unexpired_confirmation PASSED [ 63%]\ntests/test_profile_store.py::test_private_vault_contains_no_credentials_field PASSED [ 63%]\ntests/test_profile_store.py::test_workday_auth_autonomy_cannot_exceed_private_policy PASSED [ 64%]\ntests/test_publication_manifest_stop_reason_migration.py::test_resume_publication_all_stops_are_typed PASSED [ 64%]\ntests/test_publication_manifest_stop_reason_migration.py::test_cover_letter_publication_preserves_defer_and_failure PASSED [ 64%]\ntests/test_publication_manifest_stop_reason_migration.py::test_resume_and_cover_manifest_stops_are_stage_specific PASSED [ 64%]\ntests/test_publication_manifest_stop_reason_migration.py::test_closed_registry_and_target_modules_have_no_legacy_adapter PASSED [ 64%]\ntests/test_publication_safety.py::test_docker_context_excludes_private_and_local_runtime_trees PASSED [ 64%]\ntests/test_publication_safety.py::test_git_excludes_nested_upstream_and_legacy_private_profile PASSED [ 64%]\ntests/test_publication_safety.py::test_git_index_contains_no_private_runtime_artifact PASSED [ 64%]\ntests/test_publication_safety.py::test_legacy_profile_example_has_no_prefilled_application_answers PASSED [ 64%]\ntests/test_publication_safety.py::test_public_skills_use_the_repository_virtual_environment PASSED [ 64%]\ntests/test_publication_stopped_source_lineage.py::test_all_current_source_lineage_kinds_round_trip_and_replay PASSED [ 64%]\ntests/test_publication_stopped_source_lineage.py::test_parent_source_stage_and_material_binding_fail_closed PASSED [ 64%]\ntests/test_publication_stopped_source_lineage.py::test_identity_tampering_and_incomplete_fact_qa_blockers_fail_closed PASSED [ 64%]\ntests/test_publication_stopped_source_lineage.py::test_public_projection_contains_only_bounded_typed_references PASSED [ 64%]\ntests/test_real_forms.py::TestFormSnapshot::test_greenhouse_snapshot \n\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T22:34:14.303274+00:00",
+  "state": "failed",
+  "traceback": null
+}
