@@ -1,0 +1,44 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:93987:1791414800:9e48d0bdac84",
+  "error": null,
+  "finished_at_utc": "2026-10-07T23:14:49.684376+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "status",
+  "request_fingerprint": "5c3920e3ee2aae2a50384a2222571fc3683710a42deae870515c99ed2547bee7",
+  "request_id": "jobpipe-doagain-030-runtime-smoke-20261007-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "20f89a36e78af4dc0f1559790947b17ff7d3ed54"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "20f89a36e78af4dc0f1559790947b17ff7d3ed54"
+    },
+    "operation": "status",
+    "request_fingerprint": "5c3920e3ee2aae2a50384a2222571fc3683710a42deae870515c99ed2547bee7",
+    "result": {
+      "authority": {
+        "repo_branch": "main",
+        "repo_dirty": true,
+        "repo_head": "20f89a36e78af4dc0f1559790947b17ff7d3ed54"
+      },
+      "disk": {
+        "available_bytes": 21466599424,
+        "total_bytes": 245107195904,
+        "used_bytes": 223640596480
+      },
+      "runtime": {
+        "platform": "darwin",
+        "python_executable": "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "python_version": "3.13.15"
+      }
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T23:14:49.368477+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
