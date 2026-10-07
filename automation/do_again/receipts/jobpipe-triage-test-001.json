@@ -1,0 +1,59 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:42322:1791381911",
+  "error": null,
+  "finished_at_utc": "2026-10-07T14:38:14.098613+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "24ee52810dae1b1770036b60e03fa9cfc4f905edd44c7a1585bbc192cba947bc",
+  "request_id": "jobpipe-triage-test-001",
+  "result": {
+    "authority_after": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "2dabbe4c9dd470d7787ff978ee2255c63877c9ce",
+      "revision": null
+    },
+    "authority_before": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "2dabbe4c9dd470d7787ff978ee2255c63877c9ce",
+      "revision": null
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "24ee52810dae1b1770036b60e03fa9cfc4f905edd44c7a1585bbc192cba947bc",
+    "result": {
+      "argv": [
+        "python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-triage-test-001/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.446,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 663,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-triage-test-001/script.py",
+      "script_sha256": "08e8b8a39d903f826837011458af35c0537c4bb6ed1c00ea0a520f3646781712",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "$ /Users/steventran/jobpipe/.venv/bin/python -m py_compile jobpipe.py jobctl.py jobpipe_discovery.py utils/jobspy_source.py utils/tracker.py\n\n\n$ /Users/steventran/jobpipe/.venv/bin/python -m pytest -q tests/test_jobpipe_discovery.py\n..                                                                       [100%]\n2 passed in 0.05s\n\n\n$ /Users/steventran/jobpipe/.venv/bin/python jobpipe.py --help\nusage: jobpipe.py [-h] [--home HOME]\n                  {init,migrate,mailbox,queue,apply-csv,submit-reviewed,invalidate-review,scout,triage,jobs,policy,status} ...\n\njobpipe control plane for discovery, private queues, and permit-gated ATS\nexecution.\n\npositional arguments:\n  {init,migrate,mailbox,queue,apply-csv,submit-reviewed,invalidate-review,scout,triage,jobs,policy,status}\n    init                Create Private Home and the Keychain permit key\n    migrate             Import an ApplyPilot workflow privately\n    mailbox             Configure or disable the optional read-only IMAP\n                        verifier\n    queue               Inspect the private CSV queue\n    apply-csv           Run deterministic adapters from the private CSV queue\n    submit-reviewed     Submit one persisted Review in a separate Gate B\n                        invocation\n    invalidate-review   Append a safe correction for a falsely detected Review\n    scout               Discover and persist jobs from configured sources\n    triage              Score and filter discovered jobs\n    jobs                List persisted discovered jobs\n    policy              Show tier-specific material and permit policy\n    status              Summarize the event ledger\n\noptions:\n  -h, --help            show this help message and exit\n  --home HOME           Override jobpipe private home\n\n\ntriage surface validation passed\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T14:38:13.535177+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
