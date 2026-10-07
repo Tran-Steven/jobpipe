@@ -49,6 +49,7 @@ from jobpipe_discovery import list_jobs as jobpipe_list_jobs, print_json as jobp
 from jobpipe_queue import enqueue_matched as jobpipe_enqueue_matched
 from jobpipe_resolve import resolve_matched as jobpipe_resolve_matched
 from jobpipe_orchestrator import run_pipeline as jobpipe_run_pipeline
+from jobpipe_readiness import application_readiness as jobpipe_application_readiness
 
 
 DEFAULT_STATUSES = "Needs user,Pending,Ready to apply"
@@ -704,6 +705,41 @@ async def cmd_apply_csv(args: argparse.Namespace) -> int:
     return int(final_exit)
 
 
+async def cmd_autopilot(args: argparse.Namespace) -> int:
+    pipeline = await jobpipe_run_pipeline(
+        args.profile,
+        args.scout_limit,
+        args.resolve_limit,
+        args.csv,
+    )
+    readiness = jobpipe_application_readiness(args.home)
+    _json_print(
+        {
+            "pipeline": pipeline,
+            "readiness": readiness,
+        }
+    )
+    if not readiness["ready"]:
+        return int(ExitCode.NEEDS_USER)
+
+    apply_args = argparse.Namespace(
+        home=args.home,
+        csv=args.csv,
+        resume_dir=args.resume_dir,
+        priorities=args.priorities,
+        statuses=args.statuses,
+        limit=args.apply_limit,
+        preview=False,
+        submit=args.submit,
+        approve_gate_a=args.approve_gate_a,
+        continue_on_user=args.continue_on_user,
+        semantic_mapper=args.semantic_mapper,
+        headless=args.headless,
+        lease_ttl=args.lease_ttl,
+    )
+    return await cmd_apply_csv(apply_args)
+
+
 async def cmd_submit_reviewed(args: argparse.Namespace) -> int:
     """Re-read and submit one run whose Review was persisted earlier."""
 
@@ -980,6 +1016,24 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--resolve-limit", type=int, default=0)
     run_parser.add_argument("--csv", default="")
 
+    subparsers.add_parser("readiness", help="Check whether ATS execution prerequisites are satisfied")
+
+    autopilot_parser = subparsers.add_parser("autopilot", help="Run the job pipeline and continue into ATS execution when ready")
+    autopilot_parser.add_argument("--profile", default="config/jobpipe.search.yaml")
+    autopilot_parser.add_argument("--scout-limit", type=int, default=0)
+    autopilot_parser.add_argument("--resolve-limit", type=int, default=0)
+    autopilot_parser.add_argument("--csv", default="")
+    autopilot_parser.add_argument("--resume-dir", default="")
+    autopilot_parser.add_argument("--priorities", default="High,Medium,Low")
+    autopilot_parser.add_argument("--statuses", default=DEFAULT_STATUSES)
+    autopilot_parser.add_argument("--apply-limit", type=int, default=0)
+    autopilot_parser.add_argument("--submit", action="store_true")
+    autopilot_parser.add_argument("--approve-gate-a", action="store_true")
+    autopilot_parser.add_argument("--continue-on-user", action="store_true")
+    autopilot_parser.add_argument("--semantic-mapper", action="store_true")
+    autopilot_parser.add_argument("--headless", action="store_true")
+    autopilot_parser.add_argument("--lease-ttl", type=float, default=1800.0)
+
     enqueue_parser = subparsers.add_parser("enqueue", help="Export matched jobs into the application queue")
     enqueue_parser.add_argument("--csv", default="")
     enqueue_parser.add_argument("--limit", type=int, default=0)
@@ -999,6 +1053,12 @@ def main() -> int:
     args = parser.parse_args()
     if getattr(args, "limit", 0) < 0:
         parser.error("--limit must be zero or greater")
+    if getattr(args, "apply_limit", 0) < 0:
+        parser.error("--apply-limit must be zero or greater")
+    if getattr(args, "scout_limit", 0) < 0:
+        parser.error("--scout-limit must be zero or greater")
+    if getattr(args, "resolve_limit", 0) < 0:
+        parser.error("--resolve-limit must be zero or greater")
     if getattr(args, "lease_ttl", 1) <= 0:
         parser.error("--lease-ttl must be positive")
     try:
@@ -1027,6 +1087,12 @@ def main() -> int:
                 args.csv,
             )))
             return 0
+        if args.command == "readiness":
+            readiness = jobpipe_application_readiness(args.home)
+            jobpipe_print_json(readiness)
+            return 0 if readiness["ready"] else int(ExitCode.NEEDS_USER)
+        if args.command == "autopilot":
+            return asyncio.run(cmd_autopilot(args))
         if args.command == "enqueue":
             jobpipe_print_json(jobpipe_enqueue_matched(args.csv, args.limit))
             return 0
