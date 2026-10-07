@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-working-tree-check-20261007-01",
+  "operation": "extended_exec",
+  "issued_at_utc": "2026-10-07T23:20:00Z",
+  "expires_at_utc": "2026-10-08T00:20:00Z",
+  "args": {
+    "command": [
+      "git",
+      "status",
+      "--short"
+    ],
+    "cwd": "/Users/steventran/jobpipe"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 60
+  }
+}
