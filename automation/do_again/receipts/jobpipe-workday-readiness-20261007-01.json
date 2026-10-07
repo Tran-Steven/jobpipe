@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:93987:1791414800:9e48d0bdac84",
+  "error": null,
+  "finished_at_utc": "2026-10-07T23:17:06.554959+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "dee6bdb9f07f7c7089cb17aef0e24f34df6d98b61834d2f729bfebb066696105",
+  "request_id": "jobpipe-workday-readiness-20261007-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "20f89a36e78af4dc0f1559790947b17ff7d3ed54"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "20f89a36e78af4dc0f1559790947b17ff7d3ed54"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "dee6bdb9f07f7c7089cb17aef0e24f34df6d98b61834d2f729bfebb066696105",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-readiness-20261007-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.896,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 565,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-readiness-20261007-01/script.py",
+      "script_sha256": "22f22907a83aeccbc91c75e0e1ac2943333863bbdde7dd6411c59051afc81235",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "PREVIEW_EXIT 0\nSELECTION_COUNT 1\nSELECTED_COMPANIES ['Alteryx']\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T23:17:05.399657+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
