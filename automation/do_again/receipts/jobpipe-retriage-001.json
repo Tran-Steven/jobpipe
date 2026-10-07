@@ -1,0 +1,59 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:42322:1791381911",
+  "error": null,
+  "finished_at_utc": "2026-10-07T14:47:34.240726+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "8bf7fcad4092f698cf17162869cef907beb87372e0671597757e82e152b39713",
+  "request_id": "jobpipe-retriage-001",
+  "result": {
+    "authority_after": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "62af6fc0b8ad740df66be797b17c4f380ccaa0c3",
+      "revision": null
+    },
+    "authority_before": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "62af6fc0b8ad740df66be797b17c4f380ccaa0c3",
+      "revision": null
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "8bf7fcad4092f698cf17162869cef907beb87372e0671597757e82e152b39713",
+    "result": {
+      "argv": [
+        "python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-retriage-001/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.033,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 2753,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-retriage-001/script.py",
+      "script_sha256": "e09317cba186ec6842f263b603e38747581e71fd59a8254c669c663c00b6a675",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "retriage now reevaluates discovered/matched/skipped jobs\nskipped jobs persist current score\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T14:47:34.119297+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
