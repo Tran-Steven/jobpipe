@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-no-loop-retry-audit-20261007-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-07T23:36:15Z",
+  "expires_at_utc": "2026-10-08T00:36:15Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess\nrepo=Path('/Users/steventran/jobpipe')\nfor file in ['core/application_engine.py','core/runnable_application_queue.py','core/outcomes.py','core/current_priority_queue.py']:\n lines=(repo/file).read_text().splitlines()\n matches=[(i+1,line.strip()[:180]) for i,line in enumerate(lines) if any(s in line.lower() for s in ('retryable','retry_count','attempt_count','needs_user','duplicate'))]\n print('FILE',file,'RETRY_REFERENCES',matches[:50])\nname=subprocess.run(['git','status','--short'],cwd=repo,capture_output=True,text=True,check=True)\nprint('DIRTY_TREE',name.stdout)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 65
+  }
+}
