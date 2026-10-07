@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
+  "error": null,
+  "finished_at_utc": "2026-10-07T22:32:34.476918+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "579a401964c5634428fe866b39115a84aa752541a86b61af62dba2d299e8bc20",
+  "request_id": "jobpipe-workday-hydration-guard-20261007-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "4040779cd7792654b1df535e2514f015bd573f3c"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "4040779cd7792654b1df535e2514f015bd573f3c"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "579a401964c5634428fe866b39115a84aa752541a86b61af62dba2d299e8bc20",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-workday-hydration-guard-20261007-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 9.297,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 5047,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-workday-hydration-guard-20261007-01/script.py",
+      "script_sha256": "e12a79f1d1d462fe9f07830c450af7d80b23f0bb7bbe012fdebf6eb71d085bd4",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": ".................................................................F...... [ 73%]\n..........................                                               [100%]\n=================================== FAILURES ===================================\n____________ test_autofill_choice_clicks_before_upload_fields_exist ____________\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107f27d90>\n\n    @pytest.mark.asyncio\n    async def test_autofill_choice_clicks_before_upload_fields_exist(monkeypatch):\n        page = FakeFormPage()\n        context = WorkdayApplicationContext(\n            page=page,\n            job_url=WORKDAY_URL,\n            profile={\"personal\": {\"first_name\": \"Synthetic\"}},\n            job_id=\"job-autofill-choice\",\n            run_id=\"run-autofill-choice\",\n            navigate=False,\n        )\n        monkeypatch.setattr(\n            \"adapters.workday.inspect_workday_fields\", AsyncMock(return_value=())\n        )\n        activate = AsyncMock(return_value=True)\n        monkeypatch.setattr(\"adapters.workday._activate_autofill_resume\", activate)\n        click_next = AsyncMock(side_effect=AssertionError(\"must not advance yet\"))\n        monkeypatch.setattr(\"adapters.workday._click_next\", click_next)\n    \n        outcome = await WorkdayAdapter()._complete_stage(\n            context, WorkdayStage.AUTOFILL_WITH_RESUME\n        )\n    \n        assert outcome is None\n>       activate.assert_awaited_once_with(page, context.resume_path)\n\ntests/test_workday_adapter.py:1176: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <AsyncMock id='4422616464'>\nargs = (<test_workday_adapter.FakeFormPage object at 0x107d02d70>, None)\nkwargs = {}\n\n    def assert_awaited_once_with(self, /, *args, **kwargs):\n        \"\"\"\n        Assert that the mock was awaited exactly once and with the specified\n        arguments.\n        \"\"\"\n        if not self.await_count == 1:\n            msg = (f\"Expected {self._mock_name or 'mock'} to have been awaited once.\"\n                   f\" Awaited {self.await_count} times.\")\n>           raise AssertionError(msg)\nE           AssertionError: Expected mock to have been awaited once. Awaited 0 times.\n\n/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/unittest/mock.py:2398: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_workday_adapter.py::test_autofill_choice_clicks_before_upload_fields_exist\n1 failed, 97 passed in 8.96s\n\n\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T22:32:25.083639+00:00",
+  "state": "failed",
+  "traceback": null
+}
