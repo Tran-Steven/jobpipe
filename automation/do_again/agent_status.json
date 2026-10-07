@@ -3,12 +3,12 @@
   "control_worktree": "/Users/steventran/.do_again/jobpipe-control",
   "host": "Stevens-Mac-mini.local",
   "instance_id": "Stevens-Mac-mini.local:42322:1791381911",
-  "last_request_id": "jobpipe-quality-queue-001",
+  "last_request_id": "jobpipe-retriage-001",
   "last_request_state": "succeeded",
   "pid": 42322,
   "repo": "/Users/steventran/jobpipe",
   "schema_version": 1,
   "started_at_utc": "2026-10-07T14:05:11.661989+00:00",
   "state": "ready",
-  "updated_at_utc": "2026-10-07T14:45:48.972340+00:00"
+  "updated_at_utc": "2026-10-07T14:47:36.064020+00:00"
 }
