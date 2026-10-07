@@ -48,6 +48,7 @@ from utils.csv_apply import CSVApplication, load_csv_queue, update_csv_applicati
 from jobpipe_discovery import list_jobs as jobpipe_list_jobs, print_json as jobpipe_print_json, scout as jobpipe_scout, triage_jobs as jobpipe_triage_jobs
 from jobpipe_queue import enqueue_matched as jobpipe_enqueue_matched
 from jobpipe_resolve import resolve_matched as jobpipe_resolve_matched
+from jobpipe_orchestrator import run_pipeline as jobpipe_run_pipeline
 
 
 DEFAULT_STATUSES = "Needs user,Pending,Ready to apply"
@@ -973,6 +974,12 @@ def build_parser() -> argparse.ArgumentParser:
     resolve_parser = subparsers.add_parser("resolve", help="Resolve matched jobs to canonical application URLs")
     resolve_parser.add_argument("--limit", type=int, default=0)
 
+    run_parser = subparsers.add_parser("run", help="Run discovery, triage, resolution, and queue orchestration")
+    run_parser.add_argument("--profile", default="config/jobpipe.search.yaml")
+    run_parser.add_argument("--scout-limit", type=int, default=0)
+    run_parser.add_argument("--resolve-limit", type=int, default=0)
+    run_parser.add_argument("--csv", default="")
+
     enqueue_parser = subparsers.add_parser("enqueue", help="Export matched jobs into the application queue")
     enqueue_parser.add_argument("--csv", default="")
     enqueue_parser.add_argument("--limit", type=int, default=0)
@@ -1011,6 +1018,14 @@ def main() -> int:
             return 0
         if args.command == "resolve":
             jobpipe_print_json(asyncio.run(jobpipe_resolve_matched(args.limit)))
+            return 0
+        if args.command == "run":
+            jobpipe_print_json(asyncio.run(jobpipe_run_pipeline(
+                args.profile,
+                args.scout_limit,
+                args.resolve_limit,
+                args.csv,
+            )))
             return 0
         if args.command == "enqueue":
             jobpipe_print_json(jobpipe_enqueue_matched(args.csv, args.limit))

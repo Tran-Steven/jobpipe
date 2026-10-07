@@ -131,6 +131,18 @@ async def resolve_matched(limit: int = 0) -> dict[str, Any]:
             results.append({"id": job.get("id"), "resolution": "missing_url"})
             continue
 
+        if is_ats_url(base):
+            update_apply_url(job["id"], base)
+            direct += 1
+            results.append({
+                "id": job.get("id"),
+                "company": job.get("company"),
+                "title": job.get("title"),
+                "resolution": "ats_direct",
+                "url": base,
+            })
+            continue
+
         greenhouse = await _greenhouse_lookup(job, base)
         if greenhouse and greenhouse["state"] == "found":
             resolved = greenhouse["url"]
@@ -153,18 +165,6 @@ async def resolve_matched(limit: int = 0) -> dict[str, Any]:
                 "company": job.get("company"),
                 "title": job.get("title"),
                 "resolution": "closed",
-                "url": base,
-            })
-            continue
-
-        if is_ats_url(base):
-            update_apply_url(job["id"], base)
-            direct += 1
-            results.append({
-                "id": job.get("id"),
-                "company": job.get("company"),
-                "title": job.get("title"),
-                "resolution": "ats_direct",
                 "url": base,
             })
             continue
