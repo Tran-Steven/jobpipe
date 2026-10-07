@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-workday-single-live-nonsubmit-20261007-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-07T22:30:23.075Z",
+  "expires_at_utc": "2026-10-07T23:30:23.075Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "import subprocess\nimport json\nimport re\nfrom pathlib import Path\n\nrepo=Path('/Users/steventran/jobpipe')\npython=str(repo/'.venv/bin/python')\npreview=subprocess.run([python,'jobpipe.py','apply-csv','--priorities','Medium','--statuses','Needs user','--limit','1','--preview'],cwd=repo,text=True,capture_output=True,timeout=45)\nif preview.returncode:\n    raise SystemExit(f'PREVIEW_FAILED exit={preview.returncode}')\nselection=json.loads(preview.stdout)\njobs=selection.get('jobs',[])\nif len(jobs)!=1 or jobs[0].get('company')!='Alteryx':\n    raise SystemExit('LIVE_RUN_ABORTED unexpected job selection')\ncmd=[python,'jobpipe.py','apply-csv','--priorities','Medium','--statuses','Needs user','--limit','1','--headless','--continue-on-user']\nresult=subprocess.run(cmd,cwd=repo,text=True,capture_output=True,timeout=270)\nsafe=result.stdout\nsafe=re.sub(r'(?i)[\\w.+-]+@[\\w.-]+\\.[A-Za-z]{2,}', '[redacted-email]', safe)\nsafe=re.sub(r'/Users/steventran/[^\\s\"]+', '[local-path]',safe)\nsafe=re.sub(r'https?://[^\\s\"]+', '[url]', safe)\nprint('LIVE_NON_SUBMIT_ATTEMPTED=true')\nprint('TARGET_COMPANY=Alteryx')\nprint('REQUEST_SUBMIT=false')\nprint('exit_code=',result.returncode)\nprint('stdout_tail=',safe[-12000:])\nprint('stderr_tail=',result.stderr[-1200:])\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 330
+  }
+}
