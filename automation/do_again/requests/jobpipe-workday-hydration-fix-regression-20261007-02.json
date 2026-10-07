@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-workday-hydration-fix-regression-20261007-02",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-07T22:32:50.988Z",
+  "expires_at_utc": "2026-10-07T23:32:50.988Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess\n\nrepo=Path('/Users/steventran/jobpipe')\nworkday=repo/'adapters/workday.py'\ntests=repo/'tests/test_workday_adapter.py'\nfixture=repo/'tests/fixtures/workday/auth_on_autofill_route.html'\nsource=tests.read_text()\nold='''async def test_autofill_choice_clicks_before_upload_fields_exist(monkeypatch):\n    page = FakeFormPage()\n    context = WorkdayApplicationContext(\n'''\nnew='''async def test_autofill_choice_clicks_before_upload_fields_exist(monkeypatch):\n    page = FakeFormPage()\n    page.url = WORKDAY_URL + \"/autofillWithResume\"\n    context = WorkdayApplicationContext(\n'''\nif source.count(old)!=1:\n    raise SystemExit(f'Unexpected original test fixture state: {source.count(old)}')\nif 'refreshed_stage = detect_workday_stage(' not in workday.read_text() or not fixture.is_file():\n    raise SystemExit('Prior hydration guard changes missing')\ntests.write_text(source.replace(old,new,1))\ncmd=[str(repo/'.venv/bin/python'),'-m','pytest','-q','tests/test_workday_adapter.py','tests/test_foundation_policy.py','tests/test_profile_store.py','tests/test_jobctl.py','tests/test_jobpipe_autopilot.py','tests/test_jobpipe_readiness.py']\nr=subprocess.run(cmd,cwd=repo,text=True,capture_output=True,timeout=180)\nprint(r.stdout[-12000:])\nprint(r.stderr[-2000:])\nif r.returncode:\n    raise SystemExit(r.returncode)\nsubprocess.run(['git','add','--','adapters/workday.py','tests/test_workday_adapter.py','tests/fixtures/workday/auth_on_autofill_route.html'],cwd=repo,check=True)\nsubprocess.run(['git','commit','-m','fix: reclassify Workday stage after SPA hydration'],cwd=repo,check=True)\nsubprocess.run(['git','push','origin','main'],cwd=repo,check=True,timeout=90)\nprint('HYDRATION_GUARD_PUSH_VERIFIED')\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 420
+  }
+}
