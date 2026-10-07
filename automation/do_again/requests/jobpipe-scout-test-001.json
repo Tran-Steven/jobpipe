@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-scout-test-001",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-07T14:27:17Z",
+  "expires_at_utc": "2026-10-07T15:27:17Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "import subprocess\nfrom pathlib import Path\n\nrepo = Path(\"/Users/steventran/jobpipe\")\npy = str(repo / \".venv\" / \"bin\" / \"python\")\n\nfor argv in [\n    [py, \"-m\", \"pytest\", \"-q\", \"tests/test_jobpipe_discovery.py\"],\n    [py, str(repo / \"jobpipe.py\"), \"--help\"],\n    [py, str(repo / \"jobpipe.py\"), \"jobs\", \"--limit\", \"1\"],\n]:\n    run = subprocess.run(argv, cwd=repo, capture_output=True, text=True)\n    print(\"$\", \" \".join(argv))\n    print(run.stdout)\n    print(run.stderr)\n    if run.returncode != 0:\n        raise SystemExit(run.returncode)\n\nprint(\"jobpipe scout surface tests passed\")\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 120
+  }
+}
