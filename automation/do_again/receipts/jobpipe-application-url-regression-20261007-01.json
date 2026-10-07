@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:93987:1791414800:9e48d0bdac84",
+  "error": null,
+  "finished_at_utc": "2026-10-07T23:31:04.609082+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "3570fafbf34634e7dd082409726a74761339074fefa128035c1f6bd497d48a59",
+  "request_id": "jobpipe-application-url-regression-20261007-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "9a2adc97d6dc3eab1f3c9bfa61cb5cd5076eebd4"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "9a2adc97d6dc3eab1f3c9bfa61cb5cd5076eebd4"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "3570fafbf34634e7dd082409726a74761339074fefa128035c1f6bd497d48a59",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-application-url-regression-20261007-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 261.385,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 1771,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-application-url-regression-20261007-01/script.py",
+      "script_sha256": "3888b95d03c80e859edee45499db20cff3c16345dbfe97a076169ac8c791c8dd",
+      "stderr": "Traceback (most recent call last):\n  File \"/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-application-url-regression-20261007-01/script.py\", line 29, in <module>\n    r=subprocess.run(cmd,cwd=repo,text=True,capture_output=True,timeout=260)\n  File \"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/subprocess.py\", line 556, in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/subprocess.py\", line 1222, in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/subprocess.py\", line 2155, in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/subprocess.py\", line 1269, in _check_timeout\n    raise TimeoutExpired(\n    ...<2 lines>...\n            stderr=b''.join(stderr_seq) if stderr_seq else None)\nsubprocess.TimeoutExpired: Command '['/Users/steventran/jobpipe/.venv/bin/python', '-m', 'pytest', '-q', '--maxfail=1']' timed out after 260 seconds\n",
+      "stderr_truncated": false,
+      "stdout": "TEST_EXIT 0 COMMAND ['pytest', '-q', 'tests/test_job_discovery.py']\n...................                                                      [100%]\n19 passed in 0.65s\n\n\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T23:26:42.970570+00:00",
+  "state": "failed",
+  "traceback": null
+}
