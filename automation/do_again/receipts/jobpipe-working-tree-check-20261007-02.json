@@ -1,0 +1,42 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:93987:1791414800:9e48d0bdac84",
+  "error": null,
+  "finished_at_utc": "2026-10-07T23:16:38.510393+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "extended_exec",
+  "request_fingerprint": "d5acf992555a726c2e7172ad613b30710d24d8a457cd143198124436344d51fa",
+  "request_id": "jobpipe-working-tree-check-20261007-02",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "20f89a36e78af4dc0f1559790947b17ff7d3ed54"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "20f89a36e78af4dc0f1559790947b17ff7d3ed54"
+    },
+    "operation": "extended_exec",
+    "request_fingerprint": "d5acf992555a726c2e7172ad613b30710d24d8a457cd143198124436344d51fa",
+    "result": {
+      "argv": [
+        "/usr/bin/git",
+        "status",
+        "--short"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.034,
+      "returncode": 0,
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": " M adapters/protocol.py\n M do-again.toml\n?? do-again-policy.json\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T23:16:38.284505+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
