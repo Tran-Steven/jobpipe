@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-playwright-install-001",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-07T14:57:48+00:00",
+  "expires_at_utc": "2026-10-07T15:57:48+00:00",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "import subprocess\nfrom pathlib import Path\n\nrepo = Path(\"/Users/steventran/jobpipe\")\npy = str(repo / \".venv\" / \"bin\" / \"python\")\nrun = subprocess.run([py, \"-m\", \"playwright\", \"install\", \"chromium\"], cwd=repo, text=True)\nraise SystemExit(run.returncode)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 900
+  }
+}
