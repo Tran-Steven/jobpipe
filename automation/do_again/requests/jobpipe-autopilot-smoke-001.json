@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-autopilot-smoke-001",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-07T16:10:01Z",
+  "expires_at_utc": "2026-10-07T17:10:01Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "import subprocess\nfrom pathlib import Path\n\nrepo = Path(\"/Users/steventran/jobpipe\")\npython = str(repo / \".venv\" / \"bin\" / \"python\")\nresult = subprocess.run(\n    [\n        python,\n        str(repo / \"jobpipe.py\"),\n        \"autopilot\",\n        \"--profile\",\n        \"config/jobpipe.search.yaml\",\n        \"--scout-limit\",\n        \"1\",\n        \"--resolve-limit\",\n        \"2\",\n        \"--apply-limit\",\n        \"1\",\n        \"--headless\",\n        \"--continue-on-user\",\n    ],\n    cwd=repo,\n    capture_output=True,\n    text=True,\n    timeout=900,\n)\nprint(result.stdout)\nprint(result.stderr)\nprint(f\"exit={result.returncode}\")\nraise SystemExit(0 if result.returncode in (0, 10) else result.returncode)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 1000
+  }
+}
