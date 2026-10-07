@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
+  "claimed_at_utc": "2026-10-07T22:32:23.939795+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 41902,
+  "request_fingerprint": "579a401964c5634428fe866b39115a84aa752541a86b61af62dba2d299e8bc20",
+  "request_id": "jobpipe-workday-hydration-guard-20261007-01",
+  "schema_version": 1
+}
