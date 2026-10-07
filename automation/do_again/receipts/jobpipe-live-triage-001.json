@@ -1,0 +1,59 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:42322:1791381911",
+  "error": null,
+  "finished_at_utc": "2026-10-07T14:41:04.548878+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "e83259a4f964a2a3c74d1caf02f9b90bb202b1c638c35da6784eb8890952c83b",
+  "request_id": "jobpipe-live-triage-001",
+  "result": {
+    "authority_after": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": false,
+      "repo_head": "62af6fc0b8ad740df66be797b17c4f380ccaa0c3",
+      "revision": null
+    },
+    "authority_before": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": false,
+      "repo_head": "62af6fc0b8ad740df66be797b17c4f380ccaa0c3",
+      "revision": null
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "e83259a4f964a2a3c74d1caf02f9b90bb202b1c638c35da6784eb8890952c83b",
+    "result": {
+      "argv": [
+        "python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-live-triage-001/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 72.567,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 557,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-live-triage-001/script.py",
+      "script_sha256": "213f3a8401f7cb4f1cbb97ad7dda161d2c5af4f8e4accea4925488f93ca1a4be",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "$ /Users/steventran/jobpipe/.venv/bin/python jobpipe.py scout --profile config/jobpipe.search.yaml --limit 100\n\n🔍 Searching job boards via JobSpy...\n  🔍 Searching: 'Software Engineer' in 'Los Angeles, CA'...\n    Found 61 jobs for 'Software Engineer' in 'Los Angeles, CA'\n  🔍 Searching: 'Software Engineer' in 'Remote'...\n    Found 75 jobs for 'Software Engineer' in 'Remote'\n  🔍 Searching: 'Backend Engineer' in 'Los Angeles, CA'...\n    Found 50 jobs for 'Backend Engineer' in 'Los Angeles, CA'\n  🔍 Searching: 'Backend Engineer' in 'Remote'...\n    Found 75 jobs for 'Backend Engineer' in 'Remote'\n  🔍 Searching: 'Full Stack Engineer' in 'Los Angeles, CA'...\n    Found 50 jobs for 'Full Stack Engineer' in 'Los Angeles, CA'\n  🔍 Searching: 'Full Stack Engineer' in 'Remote'...\n    Found 75 jobs for 'Full Stack Engineer' in 'Remote'\n  📊 JobSpy total: 386 jobs found\n\n📡 Checking RSS feeds...\n  📡 RemoteOK: 98 matching jobs\n\n📊 Searching Adzuna...\n  ⚠ Adzuna skipped (no API key). Get free key at developer.adzuna.com\n    Add to profile.yaml: adzuna: { app_id: '...', app_key: '...' }\n\n📰 Checking HN Who is Hiring...\n  📰 Found: Ask HN: Who is hiring right now?\n  📰 480 postings in thread\n  📊 HN Who is Hiring: 462 matching jobs\n\n🔄 Deduplicated: 946 -> 889 unique jobs\n\n📊 Total: 889 matching jobs found\n{\n  \"existing\": 43,\n  \"found\": 100,\n  \"new\": 57,\n  \"profile\": \"/Users/steventran/jobpipe/config/jobpipe.search.yaml\"\n}\n\n\n$ /Users/steventran/jobpipe/.venv/bin/python jobpipe.py triage --profile config/jobpipe.search.yaml\n{\n  \"evaluated\": 157,\n  \"matched\": 34,\n  \"skipped\": 123,\n  \"threshold\": 70,\n  \"top\": [\n    {\n      \"company\": \"Unknown\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_4ff671ddee7afe18\",\n      \"score\": 95,\n      \"title\": \"React Software Engineer\"\n    },\n    {\n      \"company\": \"Unknown\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_dff4c7f6e34f7c81\",\n      \"score\": 92,\n      \"title\": \"Software Engineer, Full Stack, Level 5\"\n    },\n    {\n      \"company\": \"Unknown\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_175520c415111a38\",\n      \"score\": 92,\n      \"title\": \"Full Stack Software Engineer, Platform\"\n    },\n    {\n      \"company\": \"SpaceX\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_cea87c5624012eeb\",\n      \"score\": 92,\n      \"title\": \"Application Software Engineer, Employee Experience\"\n    },\n    {\n      \"company\": \"Unknown\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_bf4e8a78209cd8a8\",\n      \"score\": 89,\n      \"title\": \"Software Engineer III\"\n    },\n    {\n      \"company\": \"Unknown\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_4348c742e13a2bb5\",\n      \"score\": 86,\n      \"title\": \"Software Engineer II (Fullstack), Growth Platform\"\n    },\n    {\n      \"company\": \"Unknown\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_a61d203a11056d81\",\n      \"score\": 86,\n      \"title\": \"Software Engineer, Backend, Level 5\"\n    },\n    {\n      \"company\": \"Unknown\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_944ba093e79dddde\",\n      \"score\": 86,\n      \"title\": \"Sr Software Engineer (MANTL)\"\n    },\n    {\n      \"company\": \"Unknown\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_af70bc9b671650a3\",\n      \"score\": 86,\n      \"title\": \"Backend Software Engineer II\"\n    },\n    {\n      \"company\": \"Businessolver\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_617f7778dd8c818d\",\n      \"score\": 86,\n      \"title\": \"Software Engineer II, UI/UX React (Remote) New\"\n    },\n    {\n      \"company\": \"Unknown\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_d5803ffbf6db7ab4\",\n      \"score\": 84,\n      \"title\": \"Blockchain Developer\"\n    },\n    {\n      \"company\": \"INflow Federal\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_e2d339c10927bb0f\",\n      \"score\": 83,\n      \"title\": \"Sr Platform Engineer (GitLab practice)\"\n    },\n    {\n      \"company\": \"Alteryx\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_e5b4ad3865ac1284\",\n      \"score\": 83,\n      \"title\": \"Software Engineer\"\n    },\n    {\n      \"company\": \"Unknown\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_0ad26e036da04fc2\",\n      \"score\": 83,\n      \"title\": \"AI Native Software Engineer\"\n    },\n    {\n      \"company\": \"Unknown\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_4cba8c31ba3dfd6f\",\n      \"score\": 83,\n      \"title\": \"Golang Software Engineer\"\n    },\n    {\n      \"company\": \"Unknown\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_09c2763753f7bcc4\",\n      \"score\": 83,\n      \"title\": \"Software Engineer, Ground Systems\"\n    },\n    {\n      \"company\": \"Unknown\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_486f325028815c88\",\n      \"score\": 81,\n      \"title\": \"Rust Developer\"\n    },\n    {\n      \"company\": \"Unknown\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_a9bdfa7d8f09e2f5\",\n      \"score\": 81,\n      \"title\": \"React Developer\"\n    },\n    {\n      \"company\": \"Unknown\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_f26d19e83e1ca998\",\n      \"score\": 81,\n      \"title\": \"Angular Developer\"\n    },\n    {\n      \"company\": \"Unknown\",\n      \"decision\": \"matched\",\n      \"id\": \"jobspy_b5615e96438f4b3f\",\n      \"score\": 80,\n      \"title\": \"Software Engineer - Digitech - Remote\"\n    }\n  ],\n  \"total_discovered_before\": 157\n}\n\n\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T14:39:51.893517+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
