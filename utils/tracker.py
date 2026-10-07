@@ -79,6 +79,10 @@ def _migrate_schema(conn: sqlite3.Connection):
         "follow_up_date": "TEXT",
         "last_activity": "TEXT",
         "follow_up_count": "INTEGER DEFAULT 0",
+        "first_seen_at": "TEXT",
+        "last_seen_at": "TEXT",
+        "last_checked_at": "TEXT",
+        "closed_at": "TEXT",
     }
 
     for col, col_type in migrations.items():
@@ -107,27 +111,42 @@ def _emit(event_type: str, data=None):
 
 
 def log_discovered(job) -> None:
-    """Log a newly discovered job. Skips if on the ignore list."""
-    # Check ignore list first (fast hash lookup)
     if is_ignored(job.title, job.company):
         return
 
     conn = get_db()
+    now = datetime.now().isoformat()
     try:
         metadata = json.dumps(job.metadata) if isinstance(job.metadata, dict) else job.metadata
         conn.execute("""
-            INSERT OR IGNORE INTO applications
+            INSERT INTO applications
             (id, title, company, platform, url, apply_url, location, description, source,
-             salary_min, salary_max, date_posted, metadata)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             salary_min, salary_max, date_posted, metadata, first_seen_at, last_seen_at, last_checked_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(id) DO UPDATE SET
+                title = excluded.title,
+                company = excluded.company,
+                platform = excluded.platform,
+                url = excluded.url,
+                apply_url = excluded.apply_url,
+                location = excluded.location,
+                description = excluded.description,
+                source = excluded.source,
+                salary_min = excluded.salary_min,
+                salary_max = excluded.salary_max,
+                date_posted = excluded.date_posted,
+                metadata = excluded.metadata,
+                last_seen_at = excluded.last_seen_at,
+                last_checked_at = excluded.last_checked_at,
+                closed_at = NULL
         """, (
             job.id, job.title, job.company, job.platform, job.url, job.apply_url,
-            job.location, getattr(job, 'description', ''),
-            job.metadata.get('source', job.platform) if isinstance(job.metadata, dict) else job.platform,
-            job.metadata.get('salary_min') if isinstance(job.metadata, dict) else None,
-            job.metadata.get('salary_max') if isinstance(job.metadata, dict) else None,
-            job.metadata.get('date_posted', '') if isinstance(job.metadata, dict) else '',
-            metadata
+            job.location, getattr(job, "description", ""),
+            job.metadata.get("source", job.platform) if isinstance(job.metadata, dict) else job.platform,
+            job.metadata.get("salary_min") if isinstance(job.metadata, dict) else None,
+            job.metadata.get("salary_max") if isinstance(job.metadata, dict) else None,
+            job.metadata.get("date_posted", "") if isinstance(job.metadata, dict) else "",
+            metadata, now, now, now
         ))
         conn.commit()
     finally:

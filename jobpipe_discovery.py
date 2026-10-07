@@ -32,11 +32,12 @@ async def scout(profile_path: str, limit: int = 0) -> dict[str, Any]:
     discovered = 0
     existing = 0
     for job in jobs:
-        if is_already_seen(job.id):
-            existing += 1
-            continue
+        seen = is_already_seen(job.id)
         log_discovered(job)
-        discovered += 1
+        if seen:
+            existing += 1
+        else:
+            discovered += 1
     return {
         "found": len(jobs),
         "new": discovered,
@@ -52,3 +53,84 @@ def list_jobs(status: str = "", limit: int = 50) -> dict[str, Any]:
 
 def print_json(value: Any) -> None:
     print(json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False, default=str))
+
+
+def _score_job(job: dict[str, Any], profile: dict[str, Any]) -> tuple[int, list[str]]:
+    title = str(job.get("title") or "").casefold()
+    desc = str(job.get("description") or "").casefold()
+    location = str(job.get("location") or "").casefold()
+    prefs = profile.get("preferences", {})
+    roles = [str(v).casefold() for v in prefs.get("roles", [])]
+    keywords = [str(v).casefold() for v in prefs.get("keywords", [])]
+
+    score = 45
+    reasons: list[str] = []
+
+    if any(role in title for role in roles):
+        score += 20
+        reasons.append("target role")
+    elif any(v in title for v in ("software engineer", "backend", "full stack", "full-stack", "developer", "platform engineer")):
+        score += 12
+        reasons.append("adjacent role")
+    else:
+        score -= 18
+        reasons.append("weak role match")
+
+    if any(v in title for v in ("principal", "staff", "director", "manager", "architect")):
+        score -= 35
+        reasons.append("seniority gap")
+    elif any(v in title for v in ("senior", "sr.", "lead")):
+        score -= 18
+        reasons.append("senior stretch")
+    elif any(v in title for v in ("intern", "internship")):
+        score -= 40
+        reasons.append("internship")
+
+    if "remote" in location:
+        score += 12
+        reasons.append("remote")
+    elif any(v in location for v in ("los angeles", "culver city", "santa monica", "burbank", "glendale", "pasadena", "hawthorne", "torrance", "el segundo", "beverly hills", "playa vista")):
+        score += 12
+        reasons.append("LA area")
+    elif location:
+        score -= 8
+        reasons.append("location mismatch")
+
+    overlap = [kw for kw in keywords if kw and kw in desc]
+    score += min(18, len(overlap) * 3)
+    if overlap:
+        reasons.append("stack overlap: " + ", ".join(overlap[:5]))
+
+    if any(v in title for v in ("ios", "android", "embedded", "firmware", "palantir", ".net")):
+        score -= 18
+        reasons.append("specialized mismatch")
+
+    return max(0, min(100, score)), reasons
+
+
+def triage_jobs(profile_path: str, limit: int = 0) -> dict[str, Any]:
+    profile = load_search_profile(profile_path)
+    jobs, total = get_all_jobs(status="discovered", limit=limit or 10000)
+    from utils.tracker import log_matched, log_skipped
+    threshold = int(profile.get("preferences", {}).get("min_match_score", 70))
+    matched = skipped = 0
+    scored = []
+    for job in jobs:
+        score, reasons = _score_job(job, profile)
+        reason = "; ".join(reasons)
+        if score >= threshold:
+            log_matched(job["id"], score, reason, "")
+            matched += 1
+        else:
+            log_skipped(job["id"], reason)
+            skipped += 1
+        scored.append({"id": job["id"], "title": job["title"], "company": job["company"], "score": score, "decision": "matched" if score >= threshold else "skipped"})
+    scored.sort(key=lambda item: item["score"], reverse=True)
+    return {
+        "total_discovered_before": total,
+        "evaluated": len(jobs),
+        "matched": matched,
+        "skipped": skipped,
+        "threshold": threshold,
+        "top": scored[:20],
+    }

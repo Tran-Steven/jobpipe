@@ -25,6 +25,10 @@ target_boards:
   lever: []
 search:
   enabled: true
+  sites:
+    - indeed
+    - linkedin
+    - glassdoor
   queries:
     - Software Engineer
     - Backend Engineer

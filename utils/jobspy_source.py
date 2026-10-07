@@ -48,7 +48,7 @@ def discover_jobspy_jobs(profile: dict) -> list:
         return []
 
     # Sites to search
-    sites = ["indeed", "linkedin", "glassdoor", "zip_recruiter", "google"]
+    sites = search_config.get("sites", ["indeed", "linkedin", "glassdoor"])
 
     for query in queries:
         for location in locations:
@@ -70,7 +70,7 @@ def discover_jobspy_jobs(profile: dict) -> list:
                 for _, row in results.iterrows():
                     try:
                         title = _clean(row.get("title"), "Untitled")
-                        company = _clean(row.get("company_name"), "Unknown")
+                        company = _clean(row.get("company") or row.get("company_name"), "Unknown")
                         job_location = _clean(row.get("location"), location)
                         job_url = _clean(row.get("job_url"))
                         description = _clean(row.get("description"))

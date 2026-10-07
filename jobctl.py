@@ -45,7 +45,7 @@ from core.profile_store import CandidateVault
 from core.secrets import load_or_create_permit_secret
 from scripts.migrate_private_home import migrate
 from utils.csv_apply import CSVApplication, load_csv_queue, update_csv_application
-from jobpipe_discovery import list_jobs as jobpipe_list_jobs, print_json as jobpipe_print_json, scout as jobpipe_scout
+from jobpipe_discovery import list_jobs as jobpipe_list_jobs, print_json as jobpipe_print_json, scout as jobpipe_scout, triage_jobs as jobpipe_triage_jobs
 
 
 DEFAULT_STATUSES = "Needs user,Pending,Ready to apply"
@@ -964,6 +964,10 @@ def build_parser() -> argparse.ArgumentParser:
     scout_parser.add_argument("--profile", default="config/jobpipe.search.yaml")
     scout_parser.add_argument("--limit", type=int, default=0)
 
+    triage_parser = subparsers.add_parser("triage", help="Score and filter discovered jobs")
+    triage_parser.add_argument("--profile", default="config/jobpipe.search.yaml")
+    triage_parser.add_argument("--limit", type=int, default=0)
+
     jobs_parser = subparsers.add_parser("jobs", help="List persisted discovered jobs")
     jobs_parser.add_argument("--status", default="")
     jobs_parser.add_argument("--limit", type=int, default=50)
@@ -992,6 +996,9 @@ def main() -> int:
             return cmd_queue(args)
         if args.command == "scout":
             jobpipe_print_json(asyncio.run(jobpipe_scout(args.profile, args.limit)))
+            return 0
+        if args.command == "triage":
+            jobpipe_print_json(jobpipe_triage_jobs(args.profile, args.limit))
             return 0
         if args.command == "jobs":
             jobpipe_print_json(jobpipe_list_jobs(args.status, args.limit))
