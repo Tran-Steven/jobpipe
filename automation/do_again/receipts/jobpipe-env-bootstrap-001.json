@@ -1,0 +1,59 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:42322:1791381911",
+  "error": null,
+  "finished_at_utc": "2026-10-07T14:18:03.208033+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "319f6f6760c3857f15f1e116334f1ad7c7317185dd7019e176a98a590be6c12e",
+  "request_id": "jobpipe-env-bootstrap-001",
+  "result": {
+    "authority_after": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "c962b97769e9de6d5cefddecc8156f6bd7f420b9",
+      "revision": null
+    },
+    "authority_before": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "c962b97769e9de6d5cefddecc8156f6bd7f420b9",
+      "revision": null
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "319f6f6760c3857f15f1e116334f1ad7c7317185dd7019e176a98a590be6c12e",
+    "result": {
+      "argv": [
+        "python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-env-bootstrap-001/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 3.559,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 382,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-env-bootstrap-001/script.py",
+      "script_sha256": "778942fb09bd513f28c9fa15853deddb64369cf87990d580347847b29b47a7b0",
+      "stderr": "ERROR: Could not find a version that satisfies the requirement python-jobspy>=1.1.0 (from versions: none)\nERROR: No matching distribution found for python-jobspy>=1.1.0\nWARNING: You are using pip version 21.2.4; however, version 26.0.1 is available.\nYou should consider upgrading via the '/Users/steventran/jobpipe/.venv/bin/python3 -m pip install --upgrade pip' command.\nTraceback (most recent call last):\n  File \"/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-env-bootstrap-001/script.py\", line 10, in <module>\n    subprocess.run([pip, \"install\", \"-r\", \"requirements-dev.txt\"], cwd=repo, check=True)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py\", line 528, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['/Users/steventran/jobpipe/.venv/bin/pip', 'install', '-r', 'requirements-dev.txt']' returned non-zero exit status 1.\n",
+      "stderr_truncated": false,
+      "stdout": "Collecting playwright>=1.40.0\n  Downloading playwright-1.60.0-py3-none-macosx_11_0_arm64.whl (42.3 MB)\nCollecting pyyaml>=6.0\n  Downloading pyyaml-6.0.3-cp39-cp39-macosx_11_0_arm64.whl (174 kB)\nCollecting httpx>=0.25.0\n  Downloading httpx-0.28.1-py3-none-any.whl (73 kB)\nCollecting jsonschema<5,>=4.21\n  Downloading jsonschema-4.25.1-py3-none-any.whl (90 kB)\nCollecting pillow<13,>=10\n  Downloading pillow-11.3.0-cp39-cp39-macosx_11_0_arm64.whl (4.7 MB)\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T14:17:59.567716+00:00",
+  "state": "failed",
+  "traceback": null
+}
