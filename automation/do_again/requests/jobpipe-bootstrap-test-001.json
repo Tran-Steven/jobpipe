@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-bootstrap-test-001",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-07T14:14:15Z",
+  "expires_at_utc": "2026-10-07T15:14:15Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "import subprocess\nfrom pathlib import Path\n\nrepo = Path(\"/Users/steventran/jobpipe\")\ncompile_run = subprocess.run(\n    [\"python3\", \"-m\", \"py_compile\", str(repo / \"jobpipe.py\")],\n    cwd=repo,\n    capture_output=True,\n    text=True,\n)\nif compile_run.returncode != 0:\n    raise SystemExit(compile_run.stderr)\n\nhelp_run = subprocess.run(\n    [\"python3\", str(repo / \"jobpipe.py\"), \"--help\"],\n    cwd=repo,\n    capture_output=True,\n    text=True,\n)\nprint(help_run.stdout)\nif help_run.returncode != 0:\n    raise SystemExit(help_run.stderr)\nif \"usage:\" not in help_run.stdout.lower():\n    raise SystemExit(\"jobpipe --help did not produce CLI usage\")\nprint(\"jobpipe wrapper smoke test passed\")\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 60
+  }
+}
