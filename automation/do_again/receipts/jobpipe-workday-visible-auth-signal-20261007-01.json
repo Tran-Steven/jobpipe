@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
+  "error": null,
+  "finished_at_utc": "2026-10-07T22:37:25.289096+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "82f6dc3dfe71e3990b0b47c02c2b87d87bc65882cb3843bd9e7566f2f4952596",
+  "request_id": "jobpipe-workday-visible-auth-signal-20261007-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "a41f2847b35fd4b73538708b685a87621b5ab3b5"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "22a47681203a45b3195923d7964cf586df41ae71"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "82f6dc3dfe71e3990b0b47c02c2b87d87bc65882cb3843bd9e7566f2f4952596",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-workday-visible-auth-signal-20261007-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 9.814,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 6209,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-workday-visible-auth-signal-20261007-01/script.py",
+      "script_sha256": "bbf2ec52d8b5bfe1b9d3c0c63d86ff67b71c66e21e8d5bfffe7ae3b06dbfa39c",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   22a4768..a41f284  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "[main a41f284] fix: recognize visible Workday authentication controls on stale routes\n 2 files changed, 81 insertions(+)\n........................................................................ [ 72%]\n...........................                                              [100%]\n99 passed in 8.36s\n\n\nVISIBLE_AUTH_STAGE_PUSH_VERIFIED\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T22:37:15.381503+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
