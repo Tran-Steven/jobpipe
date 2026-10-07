@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
+  "error": null,
+  "finished_at_utc": "2026-10-07T22:33:06.731808+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "4e58784534acd08ef5ce4b0db143107d80cc7ee5ec64d34c4888880be243d22f",
+  "request_id": "jobpipe-workday-hydration-fix-regression-20261007-02",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "22a47681203a45b3195923d7964cf586df41ae71"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "4040779cd7792654b1df535e2514f015bd573f3c"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "4e58784534acd08ef5ce4b0db143107d80cc7ee5ec64d34c4888880be243d22f",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-workday-hydration-fix-regression-20261007-02/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 10.817,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1735,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-workday-hydration-fix-regression-20261007-02/script.py",
+      "script_sha256": "1ca9e057fda17de7392aea377daad9b907625c6bea1beed0e482f96e8fb8151b",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   4040779..22a4768  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "[main 22a4768] fix: reclassify Workday stage after SPA hydration\n 3 files changed, 63 insertions(+)\n create mode 100644 tests/fixtures/workday/auth_on_autofill_route.html\n........................................................................ [ 73%]\n..........................                                               [100%]\n98 passed in 9.22s\n\n\nHYDRATION_GUARD_PUSH_VERIFIED\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T22:32:55.733541+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
