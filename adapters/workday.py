@@ -1205,6 +1205,15 @@ class WorkdayAdapter(BaseATSAdapter):
     ) -> ApplicationOutcome | None:
         fields = await inspect_workday_fields(context.page)
         if stage is WorkdayStage.AUTOFILL_WITH_RESUME:
+            refreshed_stage = detect_workday_stage(
+                await inspect_workday_signals(context.page)
+            )
+            if refreshed_stage not in {
+                WorkdayStage.AUTOFILL_WITH_RESUME,
+                WorkdayStage.OTHER,
+                WorkdayStage.LOADING,
+            }:
+                return None
             chooser_visible = await _autofill_choice_visible(context.page)
             if chooser_visible or not fields:
                 if await _activate_autofill_resume(
