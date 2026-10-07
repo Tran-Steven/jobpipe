@@ -191,14 +191,14 @@ def log_applied(job_id: str, success: bool) -> None:
     _emit("job_applied", {"id": job_id, "success": success})
 
 
-def log_skipped(job_id: str, reason: str) -> None:
-    """Mark a job as skipped."""
+def log_skipped(job_id: str, reason: str, score: int | None = None) -> None:
+    """Mark a job as skipped and persist the current score when provided."""
     conn = get_db()
     conn.execute("""
         UPDATE applications
-        SET status = 'skipped', reasoning = ?
+        SET status = 'skipped', reasoning = ?, match_score = COALESCE(?, match_score)
         WHERE id = ?
-    """, (reason, job_id))
+    """, (reason, score, job_id))
     conn.commit()
     conn.close()
 

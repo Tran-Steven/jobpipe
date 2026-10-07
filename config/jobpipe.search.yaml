@@ -15,6 +15,7 @@ preferences:
     - Kubernetes
     - AWS
   min_match_score: 70
+  years_experience: 2
   remote_only: false
   locations:
     - Los Angeles, CA

@@ -46,6 +46,7 @@ from core.secrets import load_or_create_permit_secret
 from scripts.migrate_private_home import migrate
 from utils.csv_apply import CSVApplication, load_csv_queue, update_csv_application
 from jobpipe_discovery import list_jobs as jobpipe_list_jobs, print_json as jobpipe_print_json, scout as jobpipe_scout, triage_jobs as jobpipe_triage_jobs
+from jobpipe_queue import enqueue_matched as jobpipe_enqueue_matched
 
 
 DEFAULT_STATUSES = "Needs user,Pending,Ready to apply"
@@ -968,6 +969,10 @@ def build_parser() -> argparse.ArgumentParser:
     triage_parser.add_argument("--profile", default="config/jobpipe.search.yaml")
     triage_parser.add_argument("--limit", type=int, default=0)
 
+    enqueue_parser = subparsers.add_parser("enqueue", help="Export matched jobs into the application queue")
+    enqueue_parser.add_argument("--csv", default="")
+    enqueue_parser.add_argument("--limit", type=int, default=0)
+
     jobs_parser = subparsers.add_parser("jobs", help="List persisted discovered jobs")
     jobs_parser.add_argument("--status", default="")
     jobs_parser.add_argument("--limit", type=int, default=50)
@@ -999,6 +1004,9 @@ def main() -> int:
             return 0
         if args.command == "triage":
             jobpipe_print_json(jobpipe_triage_jobs(args.profile, args.limit))
+            return 0
+        if args.command == "enqueue":
+            jobpipe_print_json(jobpipe_enqueue_matched(args.csv, args.limit))
             return 0
         if args.command == "jobs":
             jobpipe_print_json(jobpipe_list_jobs(args.status, args.limit))

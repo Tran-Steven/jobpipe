@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -59,9 +60,14 @@ def _score_job(job: dict[str, Any], profile: dict[str, Any]) -> tuple[int, list[
     title = str(job.get("title") or "").casefold()
     desc = str(job.get("description") or "").casefold()
     location = str(job.get("location") or "").casefold()
+    company = str(job.get("company") or "").strip()
     prefs = profile.get("preferences", {})
     roles = [str(v).casefold() for v in prefs.get("roles", [])]
     keywords = [str(v).casefold() for v in prefs.get("keywords", [])]
+    candidate_years = int(prefs.get("years_experience", 2))
+
+    if not company or company.casefold() == "unknown":
+        return 0, ["missing company identity"]
 
     score = 45
     reasons: list[str] = []
@@ -69,7 +75,7 @@ def _score_job(job: dict[str, Any], profile: dict[str, Any]) -> tuple[int, list[
     if any(role in title for role in roles):
         score += 20
         reasons.append("target role")
-    elif any(v in title for v in ("software engineer", "backend", "full stack", "full-stack", "developer", "platform engineer")):
+    elif any(v in title for v in ("software engineer", "software developer", "backend engineer", "backend developer", "full stack", "full-stack", "platform engineer", "java engineer")):
         score += 12
         reasons.append("adjacent role")
     else:
@@ -77,14 +83,38 @@ def _score_job(job: dict[str, Any], profile: dict[str, Any]) -> tuple[int, list[
         reasons.append("weak role match")
 
     if any(v in title for v in ("principal", "staff", "director", "manager", "architect")):
-        score -= 35
-        reasons.append("seniority gap")
-    elif any(v in title for v in ("senior", "sr.", "lead")):
-        score -= 18
+        score -= 45
+        reasons.append("seniority mismatch")
+    elif any(v in title for v in ("senior", "sr.", "sr ", "lead")):
+        score -= 30
         reasons.append("senior stretch")
     elif any(v in title for v in ("intern", "internship")):
-        score -= 40
+        score -= 50
         reasons.append("internship")
+
+    if "new grad" in title or "new graduate" in title:
+        score -= 30
+        reasons.append("new-grad program")
+    if "clinician" in title or "therapist" in title:
+        score -= 45
+        reasons.append("non-SWE primary role")
+
+    years = []
+    for match in re.finditer(r"(?<!\d)(\d{1,2})\s*\+?\s*(?:years?|yrs?)\b", desc):
+        value = int(match.group(1))
+        if 0 < value < 20:
+            years.append(value)
+    if years:
+        required = min(years)
+        if required >= candidate_years + 4:
+            score -= 35
+            reasons.append(f"{required}+ YOE requirement")
+        elif required >= candidate_years + 2:
+            score -= 20
+            reasons.append(f"{required}+ YOE stretch")
+        elif required == candidate_years + 1:
+            score -= 6
+            reasons.append(f"{required}+ YOE slight stretch")
 
     if "remote" in location:
         score += 12
@@ -105,13 +135,25 @@ def _score_job(job: dict[str, Any], profile: dict[str, Any]) -> tuple[int, list[
         score -= 18
         reasons.append("specialized mismatch")
 
+    if any(v in desc for v in ("active security clearance required", "top secret clearance required", "ts/sci required")):
+        score -= 40
+        reasons.append("clearance requirement needs verified candidate fact")
+
     return max(0, min(100, score)), reasons
 
 
 def triage_jobs(profile_path: str, limit: int = 0) -> dict[str, Any]:
     profile = load_search_profile(profile_path)
-    jobs, total = get_all_jobs(status="discovered", limit=limit or 10000)
+    jobs: list[dict[str, Any]] = []
+    for status in ("discovered", "matched", "skipped"):
+        rows, _ = get_all_jobs(status=status, limit=10000)
+        jobs.extend(rows)
+    jobs.sort(key=lambda item: str(item.get("discovered_at") or ""))
+    if limit > 0:
+        jobs = jobs[:limit]
+
     from utils.tracker import log_matched, log_skipped
+
     threshold = int(profile.get("preferences", {}).get("min_match_score", 70))
     matched = skipped = 0
     scored = []
@@ -121,13 +163,20 @@ def triage_jobs(profile_path: str, limit: int = 0) -> dict[str, Any]:
         if score >= threshold:
             log_matched(job["id"], score, reason, "")
             matched += 1
+            decision = "matched"
         else:
-            log_skipped(job["id"], reason)
+            log_skipped(job["id"], reason, score)
             skipped += 1
-        scored.append({"id": job["id"], "title": job["title"], "company": job["company"], "score": score, "decision": "matched" if score >= threshold else "skipped"})
+            decision = "skipped"
+        scored.append({
+            "id": job["id"],
+            "title": job["title"],
+            "company": job["company"],
+            "score": score,
+            "decision": decision,
+        })
     scored.sort(key=lambda item: item["score"], reverse=True)
     return {
-        "total_discovered_before": total,
         "evaluated": len(jobs),
         "matched": matched,
         "skipped": skipped,

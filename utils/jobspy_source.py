@@ -73,6 +73,7 @@ def discover_jobspy_jobs(profile: dict) -> list:
                         company = _clean(row.get("company") or row.get("company_name"), "Unknown")
                         job_location = _clean(row.get("location"), location)
                         job_url = _clean(row.get("job_url"))
+                        direct_url = _clean(row.get("job_url_direct"))
                         description = _clean(row.get("description"))
                         site = _clean(row.get("site"), "jobspy")
                         date_posted = _clean(row.get("date_posted"))
@@ -110,13 +111,14 @@ def discover_jobspy_jobs(profile: dict) -> list:
                             company=company,
                             location=job_location,
                             url=job_url,
-                            apply_url=job_url,
+                            apply_url=direct_url or job_url,
                             platform=f"jobspy_{site}",
                             description=description[:5000],
                             department="",
                             metadata={
                                 "source": site,
                                 "date_posted": date_posted,
+                                "job_url_direct": direct_url,
                                 "salary_min": salary_min,
                                 "salary_max": salary_max,
                             }
