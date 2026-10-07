@@ -3,7 +3,7 @@
   "control_worktree": "/Users/steventran/.do_again/projects/42ba1b7dcb92/control",
   "host": "Stevens-Mac-mini.local",
   "instance_id": "Stevens-Mac-mini.local:93987:1791414800:9e48d0bdac84",
-  "last_request_id": "jobpipe-working-tree-check-20261007-02",
+  "last_request_id": "jobpipe-workday-readiness-20261007-01",
   "last_request_state": "succeeded",
   "pid": 93987,
   "remote": "origin",
@@ -11,5 +11,5 @@
   "schema_version": 1,
   "started_at_utc": "2026-10-07T23:13:20.101963+00:00",
   "state": "ready",
-  "updated_at_utc": "2026-10-07T23:16:45.847283+00:00"
+  "updated_at_utc": "2026-10-07T23:17:09.991970+00:00"
 }
