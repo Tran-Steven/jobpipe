@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
+  "error": null,
+  "finished_at_utc": "2026-10-07T22:29:25.032546+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "7da8b1b88bb19b7936abcdee0cf42bc72b748eacbaa014ea6e0248151d00ed41",
+  "request_id": "jobpipe-workday-dialog-hardening-20261007-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "4040779cd7792654b1df535e2514f015bd573f3c"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "852a8653b0226f3c027aa34276233dcaf12d7a56"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "7da8b1b88bb19b7936abcdee0cf42bc72b748eacbaa014ea6e0248151d00ed41",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-workday-dialog-hardening-20261007-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 9.85,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 10126,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-workday-dialog-hardening-20261007-01/script.py",
+      "script_sha256": "1b859d5b87091b0de89a953cd59a8456e59cc6c8b64be1cc16dc0507cd256056",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   852a865..4040779  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "[main 4040779] fix: scope Workday mixed authentication controls to active surface\n 3 files changed, 139 insertions(+), 24 deletions(-)\n create mode 100644 tests/fixtures/workday/mixed_auth.html\n........................................................................ [ 74%]\n.........................                                                [100%]\n97 passed in 8.37s\n\n\nWORKDAY_MIXED_AUTH_PUSH_VERIFIED\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T22:29:15.081330+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
