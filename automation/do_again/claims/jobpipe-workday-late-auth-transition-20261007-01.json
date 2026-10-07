@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
+  "claimed_at_utc": "2026-10-07T22:40:10.218751+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 41902,
+  "request_fingerprint": "9bf4054aa7440549f6b1fce95da233b8e6b15d49504db6bb997e8f432c5ecb7c",
+  "request_id": "jobpipe-workday-late-auth-transition-20261007-01",
+  "schema_version": 1
+}
