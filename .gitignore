@@ -88,3 +88,5 @@ profile.yaml
 
 # Broken empty directory
 {adapters,utils}/
+
+automation/do_again/policy.json

@@ -33,6 +33,9 @@ def _base_url(job: dict[str, Any]) -> str:
         direct = str(metadata.get("job_url_direct") or "").strip()
         if direct:
             return direct
+    apply_url = str(job.get("apply_url") or "").strip()
+    if apply_url:
+        return apply_url
     return str(job.get("url") or "").strip()
 
 
@@ -119,97 +122,115 @@ async def resolve_matched(limit: int = 0) -> dict[str, Any]:
     )
     results = []
     updated = direct = unresolved = failed = archived = 0
+    pending: list[tuple[dict[str, Any], str]] = []
 
-    async with async_playwright() as playwright:
-        browser = await playwright.chromium.launch(headless=True)
-        context = await browser.new_context()
-        page = await context.new_page()
+    for job in jobs:
+        base = _base_url(job)
+        if not base:
+            failed += 1
+            results.append({"id": job.get("id"), "resolution": "missing_url"})
+            continue
+
+        greenhouse = await _greenhouse_lookup(job, base)
+        if greenhouse and greenhouse["state"] == "found":
+            resolved = greenhouse["url"]
+            update_apply_url(job["id"], resolved)
+            updated += int(resolved != str(job.get("apply_url") or ""))
+            direct += int(is_ats_url(resolved))
+            results.append({
+                "id": job.get("id"),
+                "company": job.get("company"),
+                "title": job.get("title"),
+                "resolution": greenhouse["source"],
+                "url": resolved,
+            })
+            continue
+        if greenhouse and greenhouse["state"] == "closed":
+            mark_archived(job["id"], "live Greenhouse board no longer contains this posting")
+            archived += 1
+            results.append({
+                "id": job.get("id"),
+                "company": job.get("company"),
+                "title": job.get("title"),
+                "resolution": "closed",
+                "url": base,
+            })
+            continue
+
+        if is_ats_url(base):
+            update_apply_url(job["id"], base)
+            direct += 1
+            results.append({
+                "id": job.get("id"),
+                "company": job.get("company"),
+                "title": job.get("title"),
+                "resolution": "ats_direct",
+                "url": base,
+            })
+            continue
+
+        pending.append((job, base))
+
+    if pending:
         try:
-            for job in jobs:
-                base = _base_url(job)
-                if not base:
-                    failed += 1
-                    results.append({"id": job.get("id"), "resolution": "missing_url"})
-                    continue
-
-                greenhouse = await _greenhouse_lookup(job, base)
-                if greenhouse and greenhouse["state"] == "found":
-                    resolved = greenhouse["url"]
-                    update_apply_url(job["id"], resolved)
-                    updated += int(resolved != str(job.get("apply_url") or ""))
-                    direct += int(is_ats_url(resolved))
-                    results.append({
-                        "id": job.get("id"),
-                        "company": job.get("company"),
-                        "title": job.get("title"),
-                        "resolution": greenhouse["source"],
-                        "url": resolved,
-                    })
-                    continue
-                if greenhouse and greenhouse["state"] == "closed":
-                    mark_archived(job["id"], "live Greenhouse board no longer contains this posting")
-                    archived += 1
-                    results.append({
-                        "id": job.get("id"),
-                        "company": job.get("company"),
-                        "title": job.get("title"),
-                        "resolution": "closed",
-                        "url": base,
-                    })
-                    continue
-
-                if is_ats_url(base):
-                    update_apply_url(job["id"], base)
-                    direct += 1
-                    results.append({
-                        "id": job.get("id"),
-                        "company": job.get("company"),
-                        "title": job.get("title"),
-                        "resolution": "ats_direct",
-                        "url": base,
-                    })
-                    continue
-
+            async with async_playwright() as playwright:
+                browser = await playwright.chromium.launch(headless=True)
+                context = await browser.new_context()
+                page = await context.new_page()
                 try:
-                    result = await resolve_and_update_url(page, {**job, "apply_url": base})
-                except Exception as exc:
-                    update_apply_url(job["id"], base)
-                    failed += 1
-                    results.append({
-                        "id": job.get("id"),
-                        "company": job.get("company"),
-                        "title": job.get("title"),
-                        "resolution": "error",
-                        "error": type(exc).__name__,
-                        "url": base,
-                    })
-                    continue
+                    for job, base in pending:
+                        try:
+                            result = await resolve_and_update_url(page, {**job, "apply_url": base})
+                        except Exception as exc:
+                            update_apply_url(job["id"], base)
+                            failed += 1
+                            results.append({
+                                "id": job.get("id"),
+                                "company": job.get("company"),
+                                "title": job.get("title"),
+                                "resolution": "error",
+                                "error": type(exc).__name__,
+                                "url": base,
+                            })
+                            continue
 
-                resolved = str(result.get("resolved_url") or base).strip()
-                resolution = str(result.get("resolution") or "unresolved")
-                if _safe_resolution(base, resolved):
-                    update_apply_url(job["id"], resolved)
-                    updated += 1
-                    results.append({
-                        "id": job.get("id"),
-                        "company": job.get("company"),
-                        "title": job.get("title"),
-                        "resolution": resolution,
-                        "url": resolved,
-                    })
-                else:
-                    update_apply_url(job["id"], base)
-                    unresolved += 1
-                    results.append({
-                        "id": job.get("id"),
-                        "company": job.get("company"),
-                        "title": job.get("title"),
-                        "resolution": "unresolved",
-                        "url": base,
-                    })
-        finally:
-            await context.close()
-            await browser.close()
+                        resolved = str(result.get("resolved_url") or base).strip()
+                        resolution = str(result.get("resolution") or "unresolved")
+                        if _safe_resolution(base, resolved):
+                            update_apply_url(job["id"], resolved)
+                            updated += 1
+                            results.append({
+                                "id": job.get("id"),
+                                "company": job.get("company"),
+                                "title": job.get("title"),
+                                "resolution": resolution,
+                                "url": resolved,
+                            })
+                        else:
+                            update_apply_url(job["id"], base)
+                            unresolved += 1
+                            results.append({
+                                "id": job.get("id"),
+                                "company": job.get("company"),
+                                "title": job.get("title"),
+                                "resolution": "unresolved",
+                                "url": base,
+                            })
+                finally:
+                    await context.close()
+                    await browser.close()
+        except Exception as exc:
+            for job, base in pending:
+                update_apply_url(job["id"], base)
+                failed += 1
+                results.append({
+                    "id": job.get("id"),
+                    "company": job.get("company"),
+                    "title": job.get("title"),
+                    "resolution": "browser_unavailable",
+                    "error": type(exc).__name__,
+                    "url": base,
+                })
 
     return {
         "considered": len(jobs),

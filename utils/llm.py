@@ -229,10 +229,10 @@ class CodexCLIBackend(LLMBackend):
         self.default_timeout = self.config.get("timeout", 180)
         self.model = self.config.get("model", "")
         self.executable = shutil.which("codex")
-        if not self.executable:
-            raise RuntimeError("Codex CLI not found on PATH")
 
     def ask(self, prompt: str, timeout: int = None) -> str:
+        if not self.executable:
+            raise RuntimeError("Codex CLI not found on PATH")
         timeout = timeout or self.default_timeout
         # Codex 0.144.x documents that --ignore-user-config preserves auth in
         # CODEX_HOME.  Run in a fresh non-repository directory with read-only
@@ -280,6 +280,9 @@ class CodexCLIBackend(LLMBackend):
 
     async def ask_structured_isolated(self, request):
         """Execute one structured request through the configured M1b boundary."""
+
+        if not self.executable:
+            raise RuntimeError("Codex CLI not found on PATH")
 
         from core.model_provider_capabilities import (
             model_execution_isolation_profiles,
