@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-application-url-regression-20261007-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-07T23:27:00Z",
+  "expires_at_utc": "2026-10-08T00:27:00Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess\nrepo=Path('/Users/steventran/jobpipe')\npath=repo/'tests/test_job_discovery.py'\nr=subprocess.run(['git','status','--porcelain','--','tests/test_job_discovery.py'],cwd=repo,capture_output=True,text=True,check=True)\nif r.stdout.strip(): raise SystemExit('BLOCKED_EXISTING_TEST_EDITS')\nwith path.open('a') as f:\n f.write('''\n\n\ndef test_discovery_preserves_distinct_canonical_application_destination(\n    synthetic_home: PrivateHome,\n) -> None:\n    source = \"https://boards.greenhouse.io/acme/jobs/123\"\n    destination = \"https://jobs.lever.co/acme/job-456?utm_source=mail&stage=apply\"\n    response = run_discovery(\n        _request(candidate=_candidate(source_url=source, application_url=destination))\n    )\n    assert response.disposition is DiscoveryDisposition.ACCEPTED\n    posting = _read_single(synthetic_home.paths.job_postings)\n    assert posting[\"source_url\"] == source\n    assert posting[\"application_url\"] == \"https://jobs.lever.co/acme/job-456?stage=apply\"\n    assert posting[\"application_url\"] != posting[\"source_url\"]\n''')\nfor cmd in [\n [str(repo/'.venv/bin/python'),'-m','pytest','-q','tests/test_job_discovery.py'],\n [str(repo/'.venv/bin/python'),'-m','pytest','-q','--maxfail=1'],\n]:\n r=subprocess.run(cmd,cwd=repo,text=True,capture_output=True,timeout=260)\n print('TEST_EXIT',r.returncode,'COMMAND',cmd[-3:])\n print(r.stdout[-1800:])\n print(r.stderr[-500:])\n if r.returncode: raise SystemExit(r.returncode)\nsubprocess.run(['git','add','--','tests/test_job_discovery.py'],cwd=repo,check=True)\nsubprocess.run(['git','commit','-m','test: preserve canonical application URL distinct from source'],cwd=repo,check=True)\nsubprocess.run(['git','push','origin','main'],cwd=repo,check=True,timeout=90)\nprint('VERIFIED_PUSH')\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 690
+  }
+}
