@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
+  "claimed_at_utc": "2026-10-07T22:32:54.566530+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 41902,
+  "request_fingerprint": "4e58784534acd08ef5ce4b0db143107d80cc7ee5ec64d34c4888880be243d22f",
+  "request_id": "jobpipe-workday-hydration-fix-regression-20261007-02",
+  "schema_version": 1
+}
