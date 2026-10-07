@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Jobops control plane for private queues and permit-gated ATS execution."""
+"""jobpipe control plane for discovery, private queues, and permit-gated ATS execution."""
 
 from __future__ import annotations
 
@@ -897,7 +897,7 @@ def cmd_invalidate_review(args: argparse.Namespace) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--home", default="", help="Override JOBOPS_HOME")
+    parser.add_argument("--home", default="", help="Override jobpipe private home")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     subparsers.add_parser("init", help="Create Private Home and the Keychain permit key")

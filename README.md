@@ -1,6 +1,6 @@
-# Jobops
+# jobpipe
 
-> A Codex-native job application operating system for lazy job seekers: deterministic ATS automation that balances speed and application quality while keeping JavaScript-heavy browser work—and token use—low.
+> A local job-search pipeline that discovers, prioritizes, prepares, applies, verifies, and tracks jobs with deterministic ATS automation.
 
 Jobops turns authenticated job intake and a private queue into resumable,
 evidence-backed application plans. Codex handles bounded interpretation and
@@ -123,40 +123,40 @@ python3 -m venv .venv
 Initialize the external runtime and Keychain permit key:
 
 ```bash
-.venv/bin/python jobctl.py init
+.venv/bin/python jobpipe.py init
 ```
 
 Import an existing private ApplyPilot workflow without copying it into Git:
 
 ```bash
-.venv/bin/python jobctl.py migrate /path/to/applypilot-workflow \
+.venv/bin/python jobpipe.py migrate /path/to/applypilot-workflow \
   --legacy-profile /path/to/ignored/profile.yaml
 ```
 
 Inspect policy and the queue:
 
 ```bash
-.venv/bin/python jobctl.py policy
-.venv/bin/python jobctl.py queue --list
+.venv/bin/python jobpipe.py policy
+.venv/bin/python jobpipe.py queue --list
 ```
 
 Run one application to Review, which is the default and does not submit:
 
 ```bash
-.venv/bin/python jobctl.py apply-csv --limit 1
+.venv/bin/python jobpipe.py apply-csv --limit 1
 ```
 
 For High jobs, prepare the private job-specific material manifest first, then authorize Gate A when you have reviewed those materials:
 
 ```bash
-.venv/bin/python jobctl.py apply-csv --limit 1 --approve-gate-a
+.venv/bin/python jobpipe.py apply-csv --limit 1 --approve-gate-a
 ```
 
 Human Gate B is deliberately a later command. Inspect the browser Review and run record, then approve that exact persisted Review:
 
 ```bash
-.venv/bin/python jobctl.py status --run-id run-...
-.venv/bin/python jobctl.py submit-reviewed --run-id run-... --approve
+.venv/bin/python jobpipe.py status --run-id run-...
+.venv/bin/python jobpipe.py submit-reviewed --run-id run-... --approve
 ```
 
 There is no Gate B preapproval flag on `apply-csv`. Low-tier policy may use `apply-csv --submit` autonomously, but it still issues and consumes both permits and still requires explicit confirmation evidence.
@@ -164,8 +164,8 @@ There is no Gate B preapproval flag on `apply-csv`. Low-tier policy may use `app
 Inspect aggregate or run-specific ledger state:
 
 ```bash
-.venv/bin/python jobctl.py status
-.venv/bin/python jobctl.py status --run-id run-...
+.venv/bin/python jobpipe.py status
+.venv/bin/python jobpipe.py status --run-id run-...
 ```
 
 ## Job tiers and delegation
@@ -243,7 +243,7 @@ password without echoing it, stores that password only in macOS Keychain, and
 writes only non-secret connection metadata to the private policy:
 
 ```bash
-.venv/bin/python jobctl.py mailbox --host imap.example.com
+.venv/bin/python jobpipe.py mailbox --host imap.example.com
 ```
 
 The provider uses TLS, read-only mailbox selection, `BODY.PEEK`, the candidate's
@@ -254,7 +254,7 @@ missing/invalid credential all fall back to human verification. Disable the
 agent without deleting its Keychain item with:
 
 ```bash
-.venv/bin/python jobctl.py mailbox --disable
+.venv/bin/python jobpipe.py mailbox --disable
 ```
 
 ## Generic adapter and token budget
