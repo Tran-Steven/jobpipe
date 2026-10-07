@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
+  "claimed_at_utc": "2026-10-07T22:30:30.937740+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 41902,
+  "request_fingerprint": "2c2c3cdd39ba09076bbc87749e8f1e17acc5a765b775ebf2a0d0d30d50f7ecb7",
+  "request_id": "jobpipe-workday-single-live-nonsubmit-20261007-01",
+  "schema_version": 1
+}
