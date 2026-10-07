@@ -1,0 +1,59 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:42322:1791381911",
+  "error": null,
+  "finished_at_utc": "2026-10-07T14:50:46.043784+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "498381948910f272d815f266d63637da9768369dd78a8102a443364563f707d2",
+  "request_id": "jobpipe-direct-urls-001",
+  "result": {
+    "authority_after": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "62af6fc0b8ad740df66be797b17c4f380ccaa0c3",
+      "revision": null
+    },
+    "authority_before": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "62af6fc0b8ad740df66be797b17c4f380ccaa0c3",
+      "revision": null
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "498381948910f272d815f266d63637da9768369dd78a8102a443364563f707d2",
+    "result": {
+      "argv": [
+        "python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-direct-urls-001/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.024,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 3960,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-direct-urls-001/script.py",
+      "script_sha256": "93351839c555ce491b9a22c8cb1b02c97f7c3e88f42330d4193f3b85f1c9cb07",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "JobSpy now prefers direct employer URLs\nenqueue refreshes existing company/title rows when apply URLs improve\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T14:50:45.939017+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
