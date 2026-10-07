@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:93987:1791414800:9e48d0bdac84",
+  "claimed_at_utc": "2026-10-07T23:48:55.322041+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 93987,
+  "request_fingerprint": "8cabac9a8faf03219784e9311ba29cb091f9f0338b55cbcfd76bf89997bf2eff",
+  "request_id": "jobpipe-no-loop-validated-retry-20261007-01",
+  "schema_version": 1
+}
