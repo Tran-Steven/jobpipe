@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
+  "claimed_at_utc": "2026-10-07T22:26:30.624284+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 41902,
+  "request_fingerprint": "507832d37d6d6aa3f9c4b0c274579b53ad7ca1649d9fd1e8c90a804dc05d6d8a",
+  "request_id": "jobpipe-workday-regression-20261007-2227",
+  "schema_version": 1
+}
