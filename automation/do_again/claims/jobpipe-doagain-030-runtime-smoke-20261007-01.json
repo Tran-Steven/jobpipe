@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:93987:1791414800:9e48d0bdac84",
+  "claimed_at_utc": "2026-10-07T23:14:48.022914+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 93987,
+  "request_fingerprint": "5c3920e3ee2aae2a50384a2222571fc3683710a42deae870515c99ed2547bee7",
+  "request_id": "jobpipe-doagain-030-runtime-smoke-20261007-01",
+  "schema_version": 1
+}
