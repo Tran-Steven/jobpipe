@@ -6,6 +6,8 @@ from typing import Any
 
 from core.private_home import PrivateHome
 from utils.tracker import get_all_jobs
+from utils.url_resolver import is_aggregator_url
+from urllib.parse import urlparse
 
 
 FIELDS = [
@@ -27,6 +29,19 @@ def _priority(score: int) -> str:
     if score >= 75:
         return "Medium"
     return "Low"
+
+
+def _runnable_url(url: str) -> bool:
+    parsed = urlparse(url)
+    host = (parsed.hostname or "").casefold()
+    lowered = url.casefold()
+    if not parsed.scheme.startswith("http") or not host:
+        return False
+    if is_aggregator_url(url) or host == "grnh.se":
+        return False
+    if any(token in lowered for token in ("/sign_in", "/signin", "/login", "auth/login")):
+        return False
+    return True
 
 
 def _role_key(company: str, title: str) -> tuple[str, str]:
@@ -54,7 +69,7 @@ def enqueue_matched(csv_path: str = "", limit: int = 0) -> dict[str, Any]:
         company = str(job.get("company") or "").strip()
         title = str(job.get("title") or "").strip()
         url = str(job.get("apply_url") or job.get("url") or "").strip()
-        if not company or company.casefold() == "unknown" or not title or not url:
+        if not company or company.casefold() == "unknown" or not title or not url or not _runnable_url(url):
             continue
         key = _role_key(company, title)
         score = int(job.get("match_score") or 0)

@@ -47,6 +47,7 @@ from scripts.migrate_private_home import migrate
 from utils.csv_apply import CSVApplication, load_csv_queue, update_csv_application
 from jobpipe_discovery import list_jobs as jobpipe_list_jobs, print_json as jobpipe_print_json, scout as jobpipe_scout, triage_jobs as jobpipe_triage_jobs
 from jobpipe_queue import enqueue_matched as jobpipe_enqueue_matched
+from jobpipe_resolve import resolve_matched as jobpipe_resolve_matched
 
 
 DEFAULT_STATUSES = "Needs user,Pending,Ready to apply"
@@ -969,6 +970,9 @@ def build_parser() -> argparse.ArgumentParser:
     triage_parser.add_argument("--profile", default="config/jobpipe.search.yaml")
     triage_parser.add_argument("--limit", type=int, default=0)
 
+    resolve_parser = subparsers.add_parser("resolve", help="Resolve matched jobs to canonical application URLs")
+    resolve_parser.add_argument("--limit", type=int, default=0)
+
     enqueue_parser = subparsers.add_parser("enqueue", help="Export matched jobs into the application queue")
     enqueue_parser.add_argument("--csv", default="")
     enqueue_parser.add_argument("--limit", type=int, default=0)
@@ -1004,6 +1008,9 @@ def main() -> int:
             return 0
         if args.command == "triage":
             jobpipe_print_json(jobpipe_triage_jobs(args.profile, args.limit))
+            return 0
+        if args.command == "resolve":
+            jobpipe_print_json(asyncio.run(jobpipe_resolve_matched(args.limit)))
             return 0
         if args.command == "enqueue":
             jobpipe_print_json(jobpipe_enqueue_matched(args.csv, args.limit))

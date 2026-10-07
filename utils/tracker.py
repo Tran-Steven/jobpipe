@@ -379,6 +379,19 @@ def update_job_notes(job_id: str, notes: str) -> bool:
     return True
 
 
+def mark_archived(job_id: str, reason: str) -> bool:
+    conn = get_db()
+    now = datetime.now().isoformat()
+    conn.execute(
+        "UPDATE applications SET status = 'archived', closed_at = ?, reasoning = ? WHERE id = ?",
+        (now, reason, job_id),
+    )
+    conn.commit()
+    conn.close()
+    _emit("job_archived", {"id": job_id, "reason": reason})
+    return True
+
+
 def update_apply_url(job_id: str, apply_url: str) -> bool:
     """Update a job's apply_url (after URL resolution)."""
     conn = get_db()
