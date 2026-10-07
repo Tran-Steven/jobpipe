@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-workday-postfix-live-nonsubmit-20261007-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-07T23:17:10Z",
+  "expires_at_utc": "2026-10-08T00:17:10Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "import subprocess,re\nfrom pathlib import Path\nrepo=Path('/Users/steventran/jobpipe')\ncmd=[str(repo/'.venv/bin/python'),'jobpipe.py','apply-csv','--priorities','Medium','--statuses','Needs user','--limit','1','--headless','--continue-on-user']\nr=subprocess.run(cmd,cwd=repo,capture_output=True,text=True,timeout=270)\nsafe=re.sub(r'[\\w.+-]+@[\\w.-]+\\.[A-Za-z]{2,}','[redacted-email]',r.stdout+r.stderr)\nsafe=re.sub(r'https?://[^\\s\"\\']+','[redacted-url]',safe)\nprint('NON_SUBMIT_DIAGNOSTIC=true')\nprint('TARGET_COMPANY=Alteryx')\nprint('EXIT_CODE',r.returncode)\nprint('OUTPUT_TAIL',safe[-13500:])\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 315
+  }
+}
