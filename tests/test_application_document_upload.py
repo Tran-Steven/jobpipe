@@ -478,3 +478,63 @@ def test_shared_taxonomy_mapping_and_representative_adapters() -> None:
             "agent",
         )
     )
+
+
+class _DetachedUploadLocator(_Locator):
+    async def evaluate(self, _script: str):
+        raise TimeoutError("synthetic detached input")
+
+
+class _VisibleMarker:
+    @property
+    def first(self):
+        return self
+
+    async def is_visible(self, timeout: int = 0) -> bool:
+        return True
+
+
+class _DetachedUploadPage:
+    def __init__(self, selector: str) -> None:
+        self.control = _DetachedUploadLocator()
+        self.selector = selector
+
+    def locator(self, selector: str):
+        assert selector == self.selector
+        return self.control
+
+    def get_by_text(self, _text: str, exact: bool = True):
+        return _VisibleMarker()
+
+
+def test_detached_file_input_is_verified_by_rendered_filename(
+    tmp_path: Path,
+) -> None:
+    home, materials = _materials(tmp_path, cover=False)
+    page = _DetachedUploadPage("#resume")
+    form = _form(
+        _field(
+            CanonicalApplicationAnswerKey.RESUME,
+            control_id="resume",
+            required=True,
+        )
+    )
+
+    report = asyncio.run(
+        _Adapter().fill(
+            page,
+            ApplicationContext(
+                page=page,
+                job_url="https://jobs.example.test/apply",
+                job_id="job-detached",
+                run_id="run-detached",
+                profile={},
+                materials=materials,
+                private_home=home,
+            ),
+            form,
+        )
+    )
+
+    assert report.uploaded_files == ("resume",)
+    assert report.document_upload_failure is None

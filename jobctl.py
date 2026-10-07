@@ -682,6 +682,7 @@ async def cmd_apply_csv(args: argparse.Namespace) -> int:
                     page=None,
                     bundle=bundle,
                     request_submit=args.submit,
+                    private_home=home,
                 )
             else:
                 async with lease_browser_session(
@@ -704,6 +705,7 @@ async def cmd_apply_csv(args: argparse.Namespace) -> int:
                         tenant=application.company,
                         lease_ttl_seconds=args.lease_ttl,
                         browser_lease=browser.lease,
+                        private_home=home,
                     )
 
             attempted += 1
@@ -848,6 +850,7 @@ async def cmd_submit_reviewed(args: argparse.Namespace) -> int:
             request_submit=True,
             approve_gate_a=True,
             approved_review_hash=approved_review_hash,
+            private_home=home,
         )
         _project_csv_outcome(csv_path, application, outcome)
         print(outcome.to_json())
@@ -884,6 +887,7 @@ async def cmd_submit_reviewed(args: argparse.Namespace) -> int:
                 tenant=application.company,
                 lease_ttl_seconds=args.lease_ttl,
                 browser_lease=browser.lease,
+                private_home=home,
             )
     _project_csv_outcome(csv_path, application, outcome)
     print(outcome.to_json())

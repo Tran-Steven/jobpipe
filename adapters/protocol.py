@@ -275,6 +275,26 @@ _CONFIRMATION_URL_RE = re.compile(
 )
 
 
+async def _file_upload_recognized(
+    page: Any,
+    locator: Any,
+    path: Path,
+) -> bool:
+    try:
+        uploaded_name = await locator.evaluate(
+            "element => element.files && element.files.length ? element.files[0].name : ''"
+        )
+        if uploaded_name:
+            return True
+    except Exception:
+        pass
+    try:
+        marker = page.get_by_text(path.name, exact=True).first
+        return bool(await marker.is_visible(timeout=1200))
+    except Exception:
+        return False
+
+
 class BaseATSAdapter(ABC):
     """Template method implementation for a deterministic ATS application."""
 
@@ -368,6 +388,8 @@ class BaseATSAdapter(ABC):
                     name: element.name || '',
                     type: (element.type || element.tagName || 'text').toLowerCase(),
                     tag: element.tagName.toLowerCase(),
+                    required: Boolean(element.required)
+                        || element.getAttribute('aria-required') === 'true',
                     label: label.trim(),
                     selector,
                     options: element.tagName === 'SELECT'
@@ -394,10 +416,14 @@ class BaseATSAdapter(ABC):
             fields.append(
                 FieldIR(
                     canonical_key=canonical_key,
-                    label=raw["label"] or raw["name"] or "Unnamed required field",
+                    label=raw["label"] or raw["name"] or (
+                        "Unnamed required field"
+                        if raw["required"]
+                        else "Unnamed optional field"
+                    ),
                     selectors=(raw["selector"],),
                     kind=_kind_from_attributes(raw),
-                    required=True,
+                    required=bool(raw["required"]),
                     name=raw["name"],
                     element_id=raw["id"],
                     options=tuple(tuple(option) for option in raw["options"]),
@@ -475,10 +501,11 @@ class BaseATSAdapter(ABC):
                             await locator.set_input_files(
                                 str(item.resolved_path)
                             )
-                            uploaded_name = await locator.evaluate(
-                                "element => element.files && element.files.length ? element.files[0].name : ''"
-                            )
-                            if uploaded_name:
+                            if await _file_upload_recognized(
+                                page,
+                                locator,
+                                item.resolved_path,
+                            ):
                                 uploaded.append(
                                     item.canonical_material_key
                                 )
@@ -511,12 +538,7 @@ class BaseATSAdapter(ABC):
                                 unresolved.append(UnresolvedField("resume", form_field.label, "resume file is missing", form_field.sensitive))
                             continue
                         await locator.set_input_files(str(path))
-                        uploaded_name = await locator.evaluate(
-                            "element => element.files && element.files.length ? element.files[0].name : ''"
-                        )
-                        if uploaded_name:
-                            # Record the artifact role, never the private local
-                            # filename (which often contains the applicant name).
+                        if await _file_upload_recognized(page, locator, path):
                             uploaded.append(form_field.canonical_key)
                             filled.append(form_field.canonical_key)
                         elif form_field.required:
