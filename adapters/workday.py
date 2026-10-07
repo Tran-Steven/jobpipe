@@ -935,15 +935,8 @@ class WorkdayAdapter(BaseATSAdapter):
             return None
 
         if config.auto_register and signals.has_create_account:
-            scope = context.page
-            dialog = None
-            try:
-                candidate = context.page.locator('[role="dialog"]').first
-                if await candidate.is_visible(timeout=500):
-                    dialog = candidate
-                    scope = candidate
-            except Exception:
-                pass
+            dialog = await _active_auth_dialog(context.page)
+            scope = dialog if dialog is not None else context.page
             if dialog is not None:
                 try:
                     registration_password = context.page.locator(
@@ -1005,7 +998,9 @@ class WorkdayAdapter(BaseATSAdapter):
             )
         previous_password = existing.password if existing is not None else None
         if existing is not None and generated_password is None:
-            if await _click_named(context.page, ("Sign In", "Log In")):
+            dialog = await _active_auth_dialog(context.page)
+            scope = dialog if dialog is not None else context.page
+            if await _click_named(scope, ("Sign In", "Log In")):
                 return None, None
             return (
                 _needs_user(
@@ -2067,14 +2062,32 @@ async def _check_registration_terms(page: Any) -> tuple[str, ...]:
     return tuple(dict.fromkeys(unresolved))
 
 
-async def _fill_login(page: Any, email: str, password: str) -> bool:
-    scope = page
+async def _active_auth_dialog(page: Any) -> Any | None:
     try:
-        dialog = page.locator('[role="dialog"]').first
-        if await dialog.is_visible(timeout=500):
-            scope = dialog
+        matches = page.locator(
+            '[data-automation-id="popUpDialog"], [role="dialog"]'
+        )
+        for index in reversed(range(min(await matches.count(), 12))):
+            candidate = matches.nth(index)
+            if await candidate.is_visible(timeout=350):
+                return candidate
     except Exception:
         pass
+    return None
+
+
+async def _fill_login(page: Any, email: str, password: str) -> bool:
+    dialog = await _active_auth_dialog(page)
+    scope = dialog if dialog is not None else page
+    if dialog is not None:
+        try:
+            verify = dialog.locator(
+                '[data-automation-id="verifyPassword"]'
+            ).first
+            if await verify.is_visible(timeout=350):
+                return False
+        except Exception:
+            pass
     email_ok = await _fill_first(scope, LOGIN_EMAIL_SELECTORS, email)
     password_ok = await _fill_first(scope, PASSWORD_SELECTORS, password)
     return bool(email_ok and password_ok and await _click_named(scope, ("Sign In", "Log In")))
@@ -2107,20 +2120,36 @@ async def _fill_registration(
 
 async def _click_create_account_submit(page: Any) -> bool:
     try:
-        locator = page.locator(
-            '[data-automation-id="createAccountSubmitButton"]'
-        ).first
-        if await locator.is_visible(timeout=1000):
-            await locator.click()
-            return True
-    except Exception:
-        pass
-    try:
         form = page.locator(
             'form:has([data-automation-id="verifyPassword"])'
         ).first
         if await form.is_visible(timeout=800):
+            submit = form.locator(
+                '[data-automation-id="createAccountSubmitButton"]'
+            ).first
+            if await submit.is_visible(timeout=600):
+                await submit.click()
+                return True
             return await _click_named(form, ("Create Account", "Register"))
+    except Exception:
+        pass
+    try:
+        verify = page.locator(
+            '[data-automation-id="verifyPassword"]'
+        ).first
+        if not await verify.is_visible(timeout=500):
+            return False
+        buttons = page.locator(
+            '[data-automation-id="createAccountSubmitButton"]'
+        )
+        visible = []
+        for index in range(min(await buttons.count(), 10)):
+            button = buttons.nth(index)
+            if await button.is_visible(timeout=350):
+                visible.append(button)
+        if len(visible) == 1:
+            await visible[0].click()
+            return True
     except Exception:
         pass
     return False

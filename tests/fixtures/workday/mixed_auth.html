@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<body>
+<main>
+<section id="main-auth">
+<label>Email <input id="main-email" data-automation-id="email" type="email"></label>
+<label>Password <input id="main-password" data-automation-id="password" type="password"></label>
+<button id="main-signin" type="button" onclick="window.mainSignins=(window.mainSignins||0)+1">Sign In</button>
+<button id="main-create" type="button">Create Account</button>
+</section>
+<form id="registration-form">
+<label>Email <input type="email"></label>
+<label>Password <input type="password"></label>
+<label>Confirm Password <input data-automation-id="verifyPassword" type="password"></label>
+<button id="registration-navigation" type="button">Create Account</button>
+<button id="registration-submit" data-automation-id="createAccountSubmitButton" type="button" onclick="window.registrationSubmits=(window.registrationSubmits||0)+1">Create Account</button>
+</form>
+</main>
+<div role="dialog" data-automation-id="popUpDialog" aria-label="Sign In">
+<label>Email <input id="dialog-email" data-automation-id="email" type="email"></label>
+<label>Password <input id="dialog-password" data-automation-id="password" type="password"></label>
+<button id="dialog-signin" type="button" onclick="window.dialogSignins=(window.dialogSignins||0)+1">Sign In</button>
+<button id="dialog-create" type="button">Create Account</button>
+</div>
+</body>
+</html>

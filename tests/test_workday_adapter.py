@@ -17,6 +17,8 @@ from adapters.workday import (
     WorkdayStage,
     RegistrationFillResult,
     _check_registration_terms,
+    _fill_login,
+    _click_create_account_submit,
     _same_workday_session_url,
     _sanitize_confirmation_url,
     _validate_expected_readbacks,
@@ -1199,3 +1201,61 @@ async def test_fresh_registration_with_existing_credential_prefers_sign_in(monke
     assert password is None
     click.assert_awaited_once_with(context.page, ("Sign In", "Log In"))
     prepare.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_mixed_auth_uses_modal_login_instead_of_duplicate_background_controls():
+    playwright_module = pytest.importorskip("playwright.async_api")
+    async with playwright_module.async_playwright() as playwright:
+        try:
+            browser = await playwright.chromium.launch(headless=True)
+        except Exception as exc:
+            pytest.skip(f"Playwright Chromium is unavailable: {type(exc).__name__}")
+        try:
+            page = await browser.new_page()
+            await page.set_content((FIXTURES / "mixed_auth.html").read_text())
+            assert await _fill_login(page, "synthetic@example.test", "synthetic-secret")
+            assert await page.locator("#dialog-email").input_value() == "synthetic@example.test"
+            assert await page.locator("#dialog-password").input_value() == "synthetic-secret"
+            assert await page.locator("#main-email").input_value() == ""
+            assert await page.evaluate("window.dialogSignins") == 1
+            assert await page.evaluate("window.mainSignins || 0") == 0
+
+            store = InMemoryCredentialStore()
+            store.set(workday_service(WORKDAY_URL), "synthetic@example.test", "stored-secret")
+            context = WorkdayApplicationContext(
+                page=page,
+                job_url=WORKDAY_URL,
+                profile={"personal": {"email": "synthetic@example.test"}},
+                job_id="job-modal-login",
+                run_id="run-modal-login",
+                credential_store=store,
+            )
+            outcome, password = await WorkdayAdapter()._register(context, None)
+            assert outcome is None
+            assert password is None
+            assert await page.evaluate("window.dialogSignins") == 2
+            assert await page.evaluate("window.mainSignins || 0") == 0
+        finally:
+            await browser.close()
+
+
+@pytest.mark.asyncio
+async def test_mixed_auth_registration_uses_form_submit_not_duplicate_navigation():
+    playwright_module = pytest.importorskip("playwright.async_api")
+    async with playwright_module.async_playwright() as playwright:
+        try:
+            browser = await playwright.chromium.launch(headless=True)
+        except Exception as exc:
+            pytest.skip(f"Playwright Chromium is unavailable: {type(exc).__name__}")
+        try:
+            page = await browser.new_page()
+            await page.set_content((FIXTURES / "mixed_auth.html").read_text())
+            await page.locator('[role="dialog"]').evaluate(
+                "element => element.style.display='none'"
+            )
+            assert await _click_create_account_submit(page)
+            assert await page.evaluate("window.registrationSubmits") == 1
+            assert await page.evaluate("window.mainSignins || 0") == 0
+        finally:
+            await browser.close()
