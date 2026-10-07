@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
+  "claimed_at_utc": "2026-10-07T22:34:12.981271+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 41902,
+  "request_fingerprint": "da30806f1b1d9e25272ac47ffe42079c8c17fe3be406cf5ee21e85d14c525598",
+  "request_id": "jobpipe-bounded-full-suite-20261007-01",
+  "schema_version": 1
+}
