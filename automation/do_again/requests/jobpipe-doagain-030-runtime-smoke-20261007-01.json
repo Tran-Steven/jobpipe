@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-doagain-030-runtime-smoke-20261007-01",
+  "operation": "status",
+  "issued_at_utc": "2026-10-07T23:14:40.950Z",
+  "expires_at_utc": "2026-10-07T23:34:40.950Z",
+  "args": {},
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 90
+  }
+}
