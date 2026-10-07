@@ -21,6 +21,13 @@ async def run_pipeline(
     triage = triage_fn(profile_path, 0)
     resolution = await resolve_fn(resolve_limit)
     queue = enqueue_fn(queue_csv, 0)
+    considered = int(resolution.get("considered", 0))
+    archived = int(resolution.get("archived", 0))
+    unresolved = int(resolution.get("unresolved", 0))
+    failed = int(resolution.get("failed", 0))
+    matched = int(triage.get("matched", 0))
+    queued = int(queue.get("pending_rows", 0))
+    resolved = max(0, considered - archived - unresolved - failed)
     return {
         "discovery": discovery,
         "triage": triage,
@@ -29,11 +36,13 @@ async def run_pipeline(
         "summary": {
             "found": int(discovery.get("found", 0)),
             "new": int(discovery.get("new", 0)),
-            "matched": int(triage.get("matched", 0)),
+            "matched": matched,
             "skipped": int(triage.get("skipped", 0)),
-            "resolved": int(resolution.get("ats_direct", 0)) + int(resolution.get("updated", 0)),
-            "archived": int(resolution.get("archived", 0)),
-            "unresolved": int(resolution.get("unresolved", 0)),
-            "queued": int(queue.get("pending_rows", 0)),
+            "resolved": resolved,
+            "archived": archived,
+            "unresolved": unresolved,
+            "failed": failed,
+            "queued": queued,
+            "queue_blocked": max(0, matched - queued),
         },
     }

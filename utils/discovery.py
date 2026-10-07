@@ -180,7 +180,7 @@ async def discover_lever_jobs(company_slug: str, role_keywords: list[str]) -> li
     return jobs
 
 
-async def discover_all_jobs(profile: dict) -> list[Job]:
+async def discover_all_jobs(profile: dict, limit: int = 0) -> list[Job]:
     """
     Discover jobs from all configured sources in profile.yaml.
     Runs enabled sources: greenhouse, lever, jobspy, rss, career_pages.
@@ -212,14 +212,28 @@ async def discover_all_jobs(profile: dict) -> list[Job]:
             if jobs:
                 print(f"   ✅ {jobs[0].company}: {len(jobs)} matching jobs")
 
+    if limit > 0:
+        unique = deduplicate_jobs(all_jobs)
+        if len(unique) >= limit:
+            print(f"\n📊 Total: {limit} matching jobs found")
+            return unique[:limit]
+        all_jobs = unique
+
     # JobSpy — keyword search across Indeed, LinkedIn, Glassdoor, etc.
     search_config = profile.get("search", {})
     if search_config.get("enabled", True):
         try:
             from utils.jobspy_source import discover_jobspy_jobs
             print(f"\n🔍 Searching job boards via JobSpy...")
-            jobspy_jobs = discover_jobspy_jobs(profile)
+            remaining = max(0, limit - len(all_jobs)) if limit > 0 else 0
+            jobspy_jobs = discover_jobspy_jobs(profile, max_results=remaining)
             all_jobs.extend(jobspy_jobs)
+            if limit > 0:
+                unique = deduplicate_jobs(all_jobs)
+                if len(unique) >= limit:
+                    print(f"\n📊 Total: {limit} matching jobs found")
+                    return unique[:limit]
+                all_jobs = unique
         except Exception as e:
             print(f"  ⚠ JobSpy search failed: {e}")
 
@@ -266,5 +280,7 @@ async def discover_all_jobs(profile: dict) -> list[Job]:
     if before != len(all_jobs):
         print(f"\n🔄 Deduplicated: {before} -> {len(all_jobs)} unique jobs")
 
+    if limit > 0:
+        all_jobs = all_jobs[:limit]
     print(f"\n📊 Total: {len(all_jobs)} matching jobs found")
     return all_jobs

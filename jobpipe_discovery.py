@@ -27,9 +27,7 @@ def load_search_profile(path: str) -> dict[str, Any]:
 
 async def scout(profile_path: str, limit: int = 0) -> dict[str, Any]:
     profile = load_search_profile(profile_path)
-    jobs = await discover_all_jobs(profile)
-    if limit > 0:
-        jobs = jobs[:limit]
+    jobs = await discover_all_jobs(profile, limit=limit)
     discovered = 0
     existing = 0
     for job in jobs:

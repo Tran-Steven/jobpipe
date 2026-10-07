@@ -19,7 +19,7 @@ async def test_run_pipeline_connects_all_stages() -> None:
 
     async def resolve(limit: int):
         calls.append(("resolve", limit))
-        return {"ats_direct": 2, "updated": 1, "archived": 1, "unresolved": 0}
+        return {"considered": 4, "ats_direct": 2, "updated": 1, "archived": 1, "unresolved": 0, "failed": 0}
 
     def enqueue(path: str, limit: int):
         calls.append(("enqueue", path, limit))
@@ -50,5 +50,7 @@ async def test_run_pipeline_connects_all_stages() -> None:
         "resolved": 3,
         "archived": 1,
         "unresolved": 0,
+        "failed": 0,
         "queued": 3,
+        "queue_blocked": 0,
     }

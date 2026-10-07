@@ -22,7 +22,7 @@ def _clean(val, fallback=""):
     return s
 
 
-def discover_jobspy_jobs(profile: dict) -> list:
+def discover_jobspy_jobs(profile: dict, max_results: int = 0) -> list:
     """
     Search for jobs using python-jobspy across multiple job boards.
     Each source is independently optional — if one fails, others continue.
@@ -49,6 +49,9 @@ def discover_jobspy_jobs(profile: dict) -> list:
 
     # Sites to search
     sites = search_config.get("sites", ["indeed", "linkedin", "glassdoor"])
+    if max_results > 0:
+        search_count = max(1, len(queries) * len(locations) * max(1, len(sites)))
+        results_wanted = max(1, min(results_wanted, math.ceil(max_results / search_count)))
 
     for query in queries:
         for location in locations:
@@ -124,14 +127,22 @@ def discover_jobspy_jobs(profile: dict) -> list:
                             }
                         )
                         all_jobs.append(job)
-                    except Exception as e:
+                        if max_results > 0 and len(all_jobs) >= max_results:
+                            break
+                    except Exception:
                         continue
 
                 print(f"    Found {len(results)} jobs for '{query}' in '{location}'")
+                if max_results > 0 and len(all_jobs) >= max_results:
+                    break
 
             except Exception as e:
                 print(f"    ⚠ Search failed for '{query}' in '{location}': {e}")
                 continue
+        if max_results > 0 and len(all_jobs) >= max_results:
+            break
 
+    if max_results > 0:
+        all_jobs = all_jobs[:max_results]
     print(f"  📊 JobSpy total: {len(all_jobs)} jobs found")
     return all_jobs
