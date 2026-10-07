@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-resolve-live-001",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-07T15:01:16+00:00",
+  "expires_at_utc": "2026-10-07T16:01:16+00:00",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "import subprocess\nfrom pathlib import Path\n\nrepo = Path(\"/Users/steventran/jobpipe\")\npy = str(repo / \".venv\" / \"bin\" / \"python\")\ncommands = [\n    [py, \"-m\", \"py_compile\", \"jobpipe_resolve.py\", \"jobctl.py\"],\n    [py, \"jobpipe.py\", \"resolve\", \"--limit\", \"5\"],\n    [py, \"jobpipe.py\", \"enqueue\"],\n]\nfor command in commands:\n    run = subprocess.run(command, cwd=repo, capture_output=True, text=True, timeout=840)\n    print(\"$\", \" \".join(command))\n    print(run.stdout)\n    print(run.stderr)\n    if run.returncode != 0:\n        raise SystemExit(run.returncode)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 900
+  }
+}
