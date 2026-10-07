@@ -1,0 +1,59 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:42322:1791381911",
+  "error": null,
+  "finished_at_utc": "2026-10-07T14:55:07.222639+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "82208faa96deda622beaea2040d500dcd90350c3a707f2243f3491fa149d3b8e",
+  "request_id": "jobpipe-filter-cleanup-001",
+  "result": {
+    "authority_after": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "62af6fc0b8ad740df66be797b17c4f380ccaa0c3",
+      "revision": null
+    },
+    "authority_before": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "62af6fc0b8ad740df66be797b17c4f380ccaa0c3",
+      "revision": null
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "82208faa96deda622beaea2040d500dcd90350c3a707f2243f3491fa149d3b8e",
+    "result": {
+      "argv": [
+        "python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-filter-cleanup-001/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.025,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 3909,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-filter-cleanup-001/script.py",
+      "script_sha256": "83d3a6820fcf5db944f2ab3eabe736f6e38e791ea401ca800f365ab3f4f9b51e",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "tightened role/new-grad false-positive filters\nenqueue now rebuilds pending queue from current matches\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T14:55:07.117446+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
