@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:93987:1791414800:9e48d0bdac84",
+  "error": null,
+  "finished_at_utc": "2026-10-07T23:24:43.239666+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "2a3abc4ee51bc8e7977c9580088efa46f220b80b5402d31be3835353dbac0c22",
+  "request_id": "jobpipe-workday-register-diagnostics-20261007-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "9a2adc97d6dc3eab1f3c9bfa61cb5cd5076eebd4"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "20f89a36e78af4dc0f1559790947b17ff7d3ed54"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "2a3abc4ee51bc8e7977c9580088efa46f220b80b5402d31be3835353dbac0c22",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-register-diagnostics-20261007-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 277.973,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 4094,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-register-diagnostics-20261007-01/script.py",
+      "script_sha256": "a45712dd113762af008d2106e3eb07257db1d63a55e0e24cf69f250f198642da",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   20f89a3..9a2adc9  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "[main 9a2adc9] fix: preserve safe Workday registration control diagnostics\n 2 files changed, 45 insertions(+)\nTEST_COMMAND ['pytest', '-q', 'tests/test_workday_adapter.py'] EXIT 0\n........................................................................ [ 98%]\n.                                                                        [100%]\n73 passed in 35.68s\n\n\nTEST_COMMAND ['pytest', '-q', '--maxfail=1'] EXIT 0\n........................................................................ [  3%]\n........................................................................ [  7%]\n........................................................................ [ 11%]\n........................................................................ [ 15%]\n........................................................................ [ 19%]\n........................................................................ [ 23%]\n........................................................................ [ 26%]\n........................................................................ [ 30%]\n........................................................................ [ 34%]\n.........................................................s.............. [ 38%]\n........................................................................ [ 42%]\n........................................................................ [ 46%]\n........................................................................ [ 49%]\n........................................................................ [ 53%]\n........................................................................ [ 57%]\n....s................................................................... [ 61%]\n.............................................................sssssssssss [ 65%]\n....................................................s................... [ 69%]\n........................................................................ [ 72%]\n........................................................................ [ 76%]\n........................................................................ [ 80%]\n........................................................................ [ 84%]\n........................................................................ [ 88%]\n........................................................................ [ 92%]\n........................................................................ [ 95%]\n........................................................................ [ 99%]\n.....                                                                    [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.13/site-packages/fastapi/testclient.py:1\n  /Users/steventran/jobpipe/.venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n1863 passed, 14 skipped, 1 warning in 238.11s (0:03:58)\n\n\nCOMMITTED_AND_PUSHED\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T23:20:04.973600+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
