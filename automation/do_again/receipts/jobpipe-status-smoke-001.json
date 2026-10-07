@@ -1,0 +1,444 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:42322:1791381911",
+  "error": null,
+  "finished_at_utc": "2026-10-07T14:06:40.348589+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "status",
+  "request_fingerprint": "3e49223ad1a39ef31ce1b4f888b7db36f3135dbe4eee29c478cc92dd84564c51",
+  "request_id": "jobpipe-status-smoke-001",
+  "result": {
+    "authority_after": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": false,
+      "repo_head": "c962b97769e9de6d5cefddecc8156f6bd7f420b9",
+      "revision": null
+    },
+    "authority_before": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": false,
+      "repo_head": "c962b97769e9de6d5cefddecc8156f6bd7f420b9",
+      "revision": null
+    },
+    "operation": "status",
+    "request_fingerprint": "3e49223ad1a39ef31ce1b4f888b7db36f3135dbe4eee29c478cc92dd84564c51",
+    "result": {
+      "authority": {
+        "bundle_sha256": null,
+        "control_state": null,
+        "desired_mode": null,
+        "generation": null,
+        "lease_epoch": null,
+        "lease_id": null,
+        "repo_branch": "main",
+        "repo_dirty": false,
+        "repo_head": "c962b97769e9de6d5cefddecc8156f6bd7f420b9",
+        "revision": null
+      },
+      "checker": {
+        "actors": {
+          "com.steventran.direct-chat-cp1-bundle-activation-reconciler": {
+            "registered": true,
+            "running": false
+          },
+          "com.steventran.direct-chat-cp1-economic-sentinel": {
+            "registered": true,
+            "running": false
+          },
+          "com.steventran.direct-chat-cp1-keeper": {
+            "registered": true,
+            "running": true
+          },
+          "com.steventran.direct-chat-cp1-stage0": {
+            "registered": true,
+            "running": false
+          },
+          "com.steventran.direct-chat-cp1-supervisor": {
+            "registered": true,
+            "running": false
+          }
+        },
+        "bundle_sha256": "ae26f5184a0f12c0960ff202fdcb348014e508eb83bdd8ff2f27ccaf9ed170cb",
+        "checked_epoch": 1791259649.349302,
+        "generation_recovery_tax": {
+          "excessive": false,
+          "generation": null,
+          "seconds": 0.0,
+          "session_id": null,
+          "threshold_seconds": 600
+        },
+        "pending_intake": {
+          "count": 0,
+          "oldest_age_seconds": 0.0,
+          "oldest_request_id": null,
+          "stuck": false,
+          "threshold_seconds": 180
+        },
+        "status": "healthy"
+      },
+      "observed": {
+        "bundle_sha256": "ae26f5184a0f12c0960ff202fdcb348014e508eb83bdd8ff2f27ccaf9ed170cb",
+        "checked_epoch": 1791259657.243892,
+        "generation": 492,
+        "job": null,
+        "mode": "STOP",
+        "review_handoff_active": false,
+        "revision": 760,
+        "status": "reconciled"
+      },
+      "processes": {
+        "count": 595,
+        "relevant": [
+          {
+            "command": "/Library/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python tools/persona_annotation_app.py --tasks-dir /Users/steventran/llm-local-eval/persona_development_science/f1/sober_rereview_tasks --repo /Users/steventran/llm --submission-branch eval/persona-f1-sober-rereview-20261006 --reviewer Steven --host 127.0.0.1 --port 8771 --open",
+            "cpu_percent": 0.0,
+            "elapsed": "12:38:37",
+            "memory_percent": 0.0,
+            "pid": 1503,
+            "ppid": 67555,
+            "rss_kib": 5392
+          },
+          {
+            "command": "/Library/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python /Users/steventran/llm/tools/mac_operator_agent.py --repo /Users/steventran/llm --control-worktree /Users/steventran/.direct_chat_mac_operator/control --branch operator-control --policy /Users/steventran/llm/automation/mac_operator_policy.json --state-dir /Users/steventran/.direct_chat_mac_operator/state",
+            "cpu_percent": 0.0,
+            "elapsed": "10:12:27",
+            "memory_percent": 0.1,
+            "pid": 1643,
+            "ppid": 1,
+            "rss_kib": 15856
+          },
+          {
+            "command": "/Library/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python tools/persona_annotation_app.py --repo /tmp/llm-annotation-ui --tasks-dir /Users/steventran/llm-local-eval/persona_development_science/f1/judge_pilot_tasks --port 8768",
+            "cpu_percent": 0.0,
+            "elapsed": "01-14:00:19",
+            "memory_percent": 0.0,
+            "pid": 14853,
+            "ppid": 1,
+            "rss_kib": 4096
+          },
+          {
+            "command": "/Library/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python tools/persona_annotation_app.py --repo /tmp/llm-annotation-ui --tasks-dir /Users/steventran/llm-local-eval/persona_development_science/f1/judge_pilot_v2_tasks --port 8769",
+            "cpu_percent": 0.0,
+            "elapsed": "01-13:58:32",
+            "memory_percent": 0.0,
+            "pid": 18514,
+            "ppid": 1,
+            "rss_kib": 4096
+          },
+          {
+            "command": "/Library/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python tools/persona_annotation_app.py --repo /tmp/llm-annotation-ui --tasks-dir /Users/steventran/llm-local-eval/persona_development_science --port 8765 --open",
+            "cpu_percent": 0.0,
+            "elapsed": "01-19:26:01",
+            "memory_percent": 0.0,
+            "pid": 22856,
+            "ppid": 1,
+            "rss_kib": 4144
+          },
+          {
+            "command": "/Library/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python -m do_again.core.agent --repo /Users/steventran/jobpipe --control-worktree /Users/steventran/.do_again/jobpipe-control --branch operator-control --policy /Users/steventran/jobpipe/automation/do_again/policy.json --state-dir /Users/steventran/.do_again/jobpipe-state",
+            "cpu_percent": 1.1,
+            "elapsed": "01:29",
+            "memory_percent": 0.1,
+            "pid": 42322,
+            "ppid": 1,
+            "rss_kib": 20272
+          },
+          {
+            "command": "/bin/zsh -l -c set -e\\012cd /Users/steventran/.do_again/jobpipe-control\\012git pull --quiet origin operator-control\\012mkdir -p automation/do_again/requests automation/do_again/receipts\\012python3 - <<'PY'\\012from datetime import datetime, timedelta, timezone\\012from pathlib import Path\\012import json\\012now = datetime.now(timezone.utc)\\012req = {\\012  \"schema_version\": 1,\\012  \"request_id\": \"jobpipe-status-smoke-001\",\\012  \"operation\": \"status\",\\012  \"issued_at_utc\": now.isoformat(),\\012  \"expires_at_utc\": (now + timedelta(minutes=10)).isoformat(),\\012  \"args\": {},\\012  \"expected\": {},\\012  \"limits\": {\"timeout_seconds\": 30}\\012}\\012path = Path(\"automation/do_again/requests/jobpipe-status-smoke-001.json\")\\012path.write_text(json.dumps(req, indent=2, sort_keys=True) + \"\\n\")\\012PY\\012git add automation/do_again/requests/jobpipe-status-smoke-001.json\\012git commit -m 'Do Again request jobpipe-status-smoke-001'\\012git push origin operator-control\\012for i in 1 2 3 4 5 6 7 8; do sleep 2; git pull --quiet origin operator-control; if [ -f automation/do_again/receipts/jobpipe-status-smoke-001.json ]; then cat automation/do_again/receipts/jobpipe-status-smoke-001.json; exit 0; fi; done\\012exit 2",
+            "cpu_percent": 0.0,
+            "elapsed": "00:06",
+            "memory_percent": 0.0,
+            "pid": 43114,
+            "ppid": 67555,
+            "rss_kib": 4704
+          },
+          {
+            "command": "/Library/Developer/CommandLineTools/usr/bin/git -C /Users/steventran/.direct_chat_mac_operator/control fetch --quiet origin operator-control",
+            "cpu_percent": 0.4,
+            "elapsed": "00:01",
+            "memory_percent": 0.0,
+            "pid": 43449,
+            "ppid": 1643,
+            "rss_kib": 6432
+          },
+          {
+            "command": "npm exec @wonderwhy-er/desktop-commander@latest remote",
+            "cpu_percent": 0.0,
+            "elapsed": "01-00:15:32",
+            "memory_percent": 0.0,
+            "pid": 67502,
+            "ppid": 1,
+            "rss_kib": 4016
+          },
+          {
+            "command": "node /Users/steventran/.npm/_npx/4b4c857f6efdfb61/node_modules/.bin/desktop-commander remote",
+            "cpu_percent": 0.0,
+            "elapsed": "01-00:15:30",
+            "memory_percent": 0.3,
+            "pid": 67517,
+            "ppid": 67502,
+            "rss_kib": 56128
+          },
+          {
+            "command": "/Users/steventran/.nvm/versions/node/v24.14.0/bin/node /Users/steventran/.npm/_npx/4b4c857f6efdfb61/node_modules/@wonderwhy-er/desktop-commander/dist/index.js",
+            "cpu_percent": 0.0,
+            "elapsed": "01-00:15:27",
+            "memory_percent": 0.3,
+            "pid": 67555,
+            "ppid": 67517,
+            "rss_kib": 52784
+          },
+          {
+            "command": "/Library/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python tools/persona_annotation_app.py --tasks-dir /Users/steventran/llm-local-eval/persona_development_science/f1/checkpoint_review_tasks --repo /Users/steventran/llm --submission-branch eval/persona-f1-human-annotations-20261006 --reviewer Steven --host 127.0.0.1 --port 8770 --open",
+            "cpu_percent": 0.0,
+            "elapsed": "19:55:11",
+            "memory_percent": 0.0,
+            "pid": 77134,
+            "ppid": 67555,
+            "rss_kib": 5392
+          },
+          {
+            "command": "/Library/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python tools/persona_source_review_app.py --views /Users/steventran/llm-local-eval/persona_development_science/source_recovery/six_source_views_v2.jsonl --port 8766",
+            "cpu_percent": 0.0,
+            "elapsed": "01-19:53:05",
+            "memory_percent": 0.0,
+            "pid": 79141,
+            "ppid": 1,
+            "rss_kib": 4144
+          }
+        ],
+        "top_cpu": [
+          {
+            "command": "/Applications/League of Legends.app/Contents/LoL/LeagueClient.app/Contents/MacOS/LeagueClient --riotclient-auth-token=tDt5XUkTgvJPZfS6wkrnkg --riotclient-app-port=52459 --no-rads --disable-self-update --region=NA --locale=en_US --client-config-url=https://clientconfig.rpg.riotgames.com --riotgamesapi-standalone --riotgamesapi-settings=eyJjbGllbnQtY29uZmlnIjp7InVybCI6Imh0dHBzOi8vY2xpZW50Y29uZmlnLnJwZy5yaW90Z2FtZXMuY29tIn0sImRlZmF1bHRfcmVnaW9uIjoiTkEiLCJnbG9iYWxzIjp7InBhcmVudC1zZXNzaW9uLWlkIjoiM2Y0YTdkMTQtNmVlOS00ZjAxLWJmODEtMGFlN2ViZDI5NTg2In0sImxvY2FsaXphdGlvbiI6eyJsb2NhbGUiOiJlbl9VUyIsInJlZ2lvbiI6Ik5BIn0sInBhdGNobGluZV9pZCI6ImxpdmUiLCJwcm9kdWN0LWludGVncmF0aW9uIjp7ImFwcC11cGRhdGUtc3RhdHVzIjoiL1VzZXJzL1NoYXJlZC9SaW90IEdhbWVzL01ldGFkYXRhL2xlYWd1ZV9vZl9sZWdlbmRzLmxpdmUvbGVhZ3VlX29mX2xlZ2VuZHMubGl2ZS51cGRhdGUtc3RhdHVzLmpzb24iLCJoZWFydGJlYXQiOiIvVXNlcnMvc3RldmVudHJhbi9MaWJyYXJ5L0FwcGxpY2F0aW9uIFN1cHBvcnQvUmlvdCBHYW1lcy9SaW90IENsaWVudC9EYXRhL1Nlc3Npb25zLzkxMjYwYjU4LTUwNmEtNGQyYy04YWU3LTQ3YjE0MjQ5ZDFlZi90RHQ1WFVrVGd2SlBaZlM2d2tybmtnLmhlYXJ0YmVhdC5qc29uIiwibG9ja2ZpbGUiOiIvVXNlcnMvU2hhcmVkL1Jpb3QgR2FtZXMvTWV0YWRhdGEvbGVhZ3VlX29mX2xlZ2VuZHMubGl2ZS9sZWFndWVfb2ZfbGVnZW5kcy5saXZlLmxvY2tmaWxlIiwic2V0dGluZ3MiOiIvVXNlcnMvU2hhcmVkL1Jpb3QgR2FtZXMvTWV0YWRhdGEvbGVhZ3VlX29mX2xlZ2VuZHMubGl2ZS9sZWFndWVfb2ZfbGVnZW5kcy5saXZlLnByb2R1Y3Rfc2V0dGluZ3MueWFtbCJ9LCJwcm9kdWN0X2lkIjoibGVhZ3VlX29mX2xlZ2VuZHMiLCJwdWJsaXNoZXIiOiJyaW90IiwicmVnaW9uX2RhdGEiOnsiTkEiOnsiYXZhaWxhYmxlX2xvY2FsZXMiOlsiYXJfQUUiLCJpZF9JRCIsImNzX0NaIiwiZGVfREUiLCJlbF9HUiIsImVuX0FVIiwiZW5fR0IiLCJlbl9QSCIsImVuX1NHIiwiZW5fVVMiLCJlc19BUiIsImVzX0VTIiwiZXNfTVgiLCJmcl9GUiIsImh1X0hVIiwiaXRfSVQiLCJqYV9KUCIsImtvX0tSIiwicGxfUEwiLCJwdF9CUiIsInJvX1JPIiwicnVfUlUiLCJ0aF9USCIsInRyX1RSIiwidmlfVk4iLCJ6aF9NWSIsInpoX1RXIl0sImRlZmF1bHRfbG9jYWxlIjoiZW5fVVMiLCJyc28iOnsiY2xpZW50IjoibG9sIn19fSwicmlvdGNsaWVudCI6eyJhcHAtcG9ydCI6IjUyNDU5IiwiYXV0aC10b2tlbiI6InREdDVYVWtUZ3ZKUFpmUzZ3a3Jua2cifSwicmlvdGdhbWVzYXBpIjp7InBlcnNpc3RlbmNlLXBhdGgiOiIvVXNlcnMvc3RldmVudHJhbi9MaWJyYXJ5L0FwcGxpY2F0aW9uIFN1cHBvcnQvUmlvdCBHYW1lcy9MZWFndWUgb2YgTGVnZW5kcyJ9LCJyc29fYXV0aCI6eyJhdXRob3JpemF0aW9uLWtleSI6ImV5SmpiMlJsSWpvaVpGaGplRTlxUmtKVlNFNXNWakJrZGxJemFEQmhiRXBMVEZWc1NXRXljekJPV0dOMVducE9lV0ZJWjNwWmJtZ3pZbTFWZW1Wc2NFcFJibkJ0VlZaV01WRlJQVDBpTENKamIyUmxYM1psY21sbWFXVnlJam9pVXpkU1NpMXlRM1U1ZG5Ca05qZDVibWhJU1dGWlVWOUhiVU5PTmpkWVlUbDJXakJoV1dOWFQwMTJYMWh6Vm5OM1NtUkZVVmszUVdOWFpsUTRRV3hNYTJkaWEySTBlSGhvY21jNFNuZFBjRmhhYWtGb2RGRWlmUT09In19 --rga-lite --subject=6f334d14-ed38-5570-afb5-01df0a695618",
+            "cpu_percent": 69.1,
+            "elapsed": "37:45",
+            "memory_percent": 0.6,
+            "pid": 18844,
+            "ppid": 18709,
+            "rss_kib": 93616
+          },
+          {
+            "command": "/Applications/League of Legends.app/Contents/LoL/League of Legends.app/Contents/MacOS/LeagueClientUx --riotclient-auth-token=tDt5XUkTgvJPZfS6wkrnkg --riotclient-app-port=52459 --no-rads --disable-self-update --region=NA --locale=en_US --client-config-url=https://clientconfig.rpg.riotgames.com --riotgamesapi-standalone --riotgamesapi-settings=eyJjbGllbnQtY29uZmlnIjp7InVybCI6Imh0dHBzOi8vY2xpZW50Y29uZmlnLnJwZy5yaW90Z2FtZXMuY29tIn0sImRlZmF1bHRfcmVnaW9uIjoiTkEiLCJnbG9iYWxzIjp7InBhcmVudC1zZXNzaW9uLWlkIjoiM2Y0YTdkMTQtNmVlOS00ZjAxLWJmODEtMGFlN2ViZDI5NTg2In0sImxvY2FsaXphdGlvbiI6eyJsb2NhbGUiOiJlbl9VUyIsInJlZ2lvbiI6Ik5BIn0sInBhdGNobGluZV9pZCI6ImxpdmUiLCJwcm9kdWN0LWludGVncmF0aW9uIjp7ImFwcC11cGRhdGUtc3RhdHVzIjoiL1VzZXJzL1NoYXJlZC9SaW90IEdhbWVzL01ldGFkYXRhL2xlYWd1ZV9vZl9sZWdlbmRzLmxpdmUvbGVhZ3VlX29mX2xlZ2VuZHMubGl2ZS51cGRhdGUtc3RhdHVzLmpzb24iLCJoZWFydGJlYXQiOiIvVXNlcnMvc3RldmVudHJhbi9MaWJyYXJ5L0FwcGxpY2F0aW9uIFN1cHBvcnQvUmlvdCBHYW1lcy9SaW90IENsaWVudC9EYXRhL1Nlc3Npb25zLzkxMjYwYjU4LTUwNmEtNGQyYy04YWU3LTQ3YjE0MjQ5ZDFlZi90RHQ1WFVrVGd2SlBaZlM2d2tybmtnLmhlYXJ0YmVhdC5qc29uIiwibG9ja2ZpbGUiOiIvVXNlcnMvU2hhcmVkL1Jpb3QgR2FtZXMvTWV0YWRhdGEvbGVhZ3VlX29mX2xlZ2VuZHMubGl2ZS9sZWFndWVfb2ZfbGVnZW5kcy5saXZlLmxvY2tmaWxlIiwic2V0dGluZ3MiOiIvVXNlcnMvU2hhcmVkL1Jpb3QgR2FtZXMvTWV0YWRhdGEvbGVhZ3VlX29mX2xlZ2VuZHMubGl2ZS9sZWFndWVfb2ZfbGVnZW5kcy5saXZlLnByb2R1Y3Rfc2V0dGluZ3MueWFtbCJ9LCJwcm9kdWN0X2lkIjoibGVhZ3VlX29mX2xlZ2VuZHMiLCJwdWJsaXNoZXIiOiJyaW90IiwicmVnaW9uX2RhdGEiOnsiTkEiOnsiYXZhaWxhYmxlX2xvY2FsZXMiOlsiYXJfQUUiLCJpZF9JRCIsImNzX0NaIiwiZGVfREUiLCJlbF9HUiIsImVuX0FVIiwiZW5fR0IiLCJlbl9QSCIsImVuX1NHIiwiZW5fVVMiLCJlc19BUiIsImVzX0VTIiwiZXNfTVgiLCJmcl9GUiIsImh1X0hVIiwiaXRfSVQiLCJqYV9KUCIsImtvX0tSIiwicGxfUEwiLCJwdF9CUiIsInJvX1JPIiwicnVfUlUiLCJ0aF9USCIsInRyX1RSIiwidmlfVk4iLCJ6aF9NWSIsInpoX1RXIl0sImRlZmF1bHRfbG9jYWxlIjoiZW5fVVMiLCJyc28iOnsiY2xpZW50IjoibG9sIn19fSwicmlvdGNsaWVudCI6eyJhcHAtcG9ydCI6IjUyNDU5IiwiYXV0aC10b2tlbiI6InREdDVYVWtUZ3ZKUFpmUzZ3a3Jua2cifSwicmlvdGdhbWVzYXBpIjp7InBlcnNpc3RlbmNlLXBhdGgiOiIvVXNlcnMvc3RldmVudHJhbi9MaWJyYXJ5L0FwcGxpY2F0aW9uIFN1cHBvcnQvUmlvdCBHYW1lcy9MZWFndWUgb2YgTGVnZW5kcyJ9LCJyc29fYXV0aCI6eyJhdXRob3JpemF0aW9uLWtleSI6ImV5SmpiMlJsSWpvaVpGaGplRTlxUmtKVlNFNXNWakJrZGxJemFEQmhiRXBMVEZWc1NXRXljekJPV0dOMVducE9lV0ZJWjNwWmJtZ3pZbTFWZW1Wc2NFcFJibkJ0VlZaV01WRlJQVDBpTENKamIyUmxYM1psY21sbWFXVnlJam9pVXpkU1NpMXlRM1U1ZG5Ca05qZDVibWhJU1dGWlVWOUhiVU5PTmpkWVlUbDJXakJoV1dOWFQwMTJYMWh6Vm5OM1NtUkZVVmszUVdOWFpsUTRRV3hNYTJkaWEySTBlSGhvY21jNFNuZFBjRmhhYWtGb2RGRWlmUT09In19 --rga-lite --subject=6f334d14-ed38-5570-afb5-01df0a695618 --remoting-auth-token=djCe1_CQ5V5CQgPYYrKDLQ --app-port=52626 --install-directory=/Applications/League of Legends.app/Contents/LoL --app-name=LeagueClient --ux-name=LeagueClientUx --ux-helper-name=LeagueClientUxHelper --log-dir=LeagueClient Logs --crash-reporting=crashpad --crash-environment=NA1 --app-log-file-path=/Applications/League of Legends.app/Contents/LoL/Logs/LeagueClient Logs/2026-10-07T06-28-57_18844_LeagueClient.log --session-log-prefix=2026-10-07T06-28-57_18844_ --app-pid=18844 --output-base-dir=/Applications/League of Legends.app/Contents/LoL --no-proxy-server --ignore-certificate-errors",
+            "cpu_percent": 58.7,
+            "elapsed": "37:31",
+            "memory_percent": 0.4,
+            "pid": 18930,
+            "ppid": 18844,
+            "rss_kib": 69040
+          },
+          {
+            "command": "/Applications/Firefox Developer Edition.app/Contents/MacOS/plugin-container.app/Contents/MacOS/plugin-container -isForBrowser -prefsHandle 0:57888 -prefMapHandle 1:306106 -jsInitHandle 2:162336 -sbStartup -sbAppPath /Applications/Firefox Developer Edition.app -sbLevel 3 -parentBuildID 20261005090344 -ipcHandle 0 -initialChannelId {d08c1282-3b55-4205-840a-9ca454d961ac} -parentPid 10851 -crashHelperPid 10853 -crashHelperSend 3 -crashHelperRecv 0 -crashReporter gecko-crash-server-pipe.10851 -greomni /Applications/Firefox Developer Edition.app/Contents/Resources/omni.ja -appomni /Applications/Firefox Developer Edition.app/Contents/Resources/browser/omni.ja -appDir /Applications/Firefox Developer Edition.app/Contents/Resources/browser -profile /Users/steventran/Library/Application Support/Firefox/Profiles/ev0amkvt.dev-edition-default org.mozilla.machname.241519330 981 tab",
+            "cpu_percent": 48.1,
+            "elapsed": "09:35",
+            "memory_percent": 3.6,
+            "pid": 35669,
+            "ppid": 10851,
+            "rss_kib": 602704
+          },
+          {
+            "command": "/System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer -daemon",
+            "cpu_percent": 16.8,
+            "elapsed": "02-17:27:14",
+            "memory_percent": 0.4,
+            "pid": 629,
+            "ppid": 1,
+            "rss_kib": 68112
+          },
+          {
+            "command": "/Applications/Firefox Developer Edition.app/Contents/MacOS/plugin-container.app/Contents/MacOS/plugin-container -isForBrowser -prefsHandle 0:57888 -prefMapHandle 1:306106 -jsInitHandle 2:162336 -sbStartup -sbAppPath /Applications/Firefox Developer Edition.app -sbLevel 3 -parentBuildID 20261005090344 -ipcHandle 0 -initialChannelId {97a7e0ab-47b2-4dfa-bd6f-3923f3def515} -parentPid 10851 -crashHelperPid 10853 -crashHelperSend 3 -crashHelperRecv 0 -crashReporter gecko-crash-server-pipe.10851 -greomni /Applications/Firefox Developer Edition.app/Contents/Resources/omni.ja -appomni /Applications/Firefox Developer Edition.app/Contents/Resources/browser/omni.ja -appDir /Applications/Firefox Developer Edition.app/Contents/Resources/browser -profile /Users/steventran/Library/Application Support/Firefox/Profiles/ev0amkvt.dev-edition-default org.mozilla.machname.96220813 989 tab",
+            "cpu_percent": 14.0,
+            "elapsed": "04:37",
+            "memory_percent": 2.7,
+            "pid": 40189,
+            "ppid": 10851,
+            "rss_kib": 461072
+          },
+          {
+            "command": "/Applications/ClipMac.app/Contents/MacOS/ClipMac",
+            "cpu_percent": 13.6,
+            "elapsed": "02-17:27:03",
+            "memory_percent": 0.3,
+            "pid": 1099,
+            "ppid": 1,
+            "rss_kib": 49056
+          },
+          {
+            "command": "/Applications/Firefox Developer Edition.app/Contents/MacOS/gpu-helper.app/Contents/MacOS/Firefox Developer Edition GPU Helper -parentBuildID 20261005090344 -prefsHandle 0:49465 -prefMapHandle 1:306106 -sbStartup -sbAppPath /Applications/Firefox Developer Edition.app -ipcHandle 0 -initialChannelId {ec1c7467-f55a-40a7-bf17-daa163db6ea9} -parentPid 10851 -crashHelperPid 10853 -crashHelperSend 2 -crashHelperRecv 0 -crashReporter gecko-crash-server-pipe.10851 -appDir /Applications/Firefox Developer Edition.app/Contents/Resources/browser -profile /Users/steventran/Library/Application Support/Firefox/Profiles/ev0amkvt.dev-edition-default org.mozilla.machname.864313702 1 gpu",
+            "cpu_percent": 12.2,
+            "elapsed": "01-09:55:41",
+            "memory_percent": 0.5,
+            "pid": 10854,
+            "ppid": 10851,
+            "rss_kib": 84368
+          },
+          {
+            "command": "/Applications/Firefox Developer Edition.app/Contents/MacOS/firefox",
+            "cpu_percent": 11.0,
+            "elapsed": "01-09:55:41",
+            "memory_percent": 2.6,
+            "pid": 10851,
+            "ppid": 1,
+            "rss_kib": 435040
+          },
+          {
+            "command": "/System/Library/PrivateFrameworks/FileProvider.framework/Support/fileproviderd",
+            "cpu_percent": 5.3,
+            "elapsed": "02-17:27:10",
+            "memory_percent": 0.1,
+            "pid": 871,
+            "ppid": 1,
+            "rss_kib": 19840
+          },
+          {
+            "command": "/Applications/League of Legends.app/Contents/LoL/League of Legends.app/Contents/Frameworks/LeagueClientUx Helper (GPU).app/Contents/MacOS/LeagueClientUx Helper (GPU) --type=gpu-process --no-sandbox --framework-dir-path=/Applications/League of Legends.app/Contents/LoL/League of Legends.app/Contents/Frameworks/Chromium Embedded Framework.framework --log-severity=warning --user-agent-product=LeagueOfLegendsClient/16.20.824.8524 (CEF 108) --lang=en-US --user-data-dir=/Users/steventran/Library/Application Support/CEF/User Data --gpu-preferences=UAAAAAAAAAAgACgIAAAAAAAAAAAAAAAAAABgAAAAAAAwAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAACgFAAAAAAAAKAUAAAAAAAC4AQAANgAAALABAAAAAAAAuAEAAAAAAADAAQAAAAAAAMgBAAAAAAAA0AEAAAAAAADYAQAAAAAAAOABAAAAAAAA6AEAAAAAAADwAQAAAAAAAPgBAAAAAAAAAAIAAAAAAAAIAgAAAAAAABACAAAAAAAAGAIAAAAAAAAgAgAAAAAAACgCAAAAAAAAMAIAAAAAAAA4AgAAAAAAAEACAAAAAAAASAIAAAAAAABQAgAAAAAAAFgCAAAAAAAAYAIAAAAAAABoAgAAAAAAAHACAAAAAAAAeAIAAAAAAACAAgAAAAAAAIgCAAAAAAAAkAIAAAAAAACYAgAAAAAAAKACAAAAAAAAqAIAAAAAAACwAgAAAAAAALgCAAAAAAAAwAIAAAAAAADIAgAAAAAAANACAAAAAAAA2AIAAAAAAADgAgAAAAAAAOgCAAAAAAAA8AIAAAAAAAD4AgAAAAAAAAADAAAAAAAACAMAAAAAAAAQAwAAAAAAABgDAAAAAAAAIAMAAAAAAAAoAwAAAAAAADADAAAAAAAAOAMAAAAAAABAAwAAAAAAAEgDAAAAAAAAUAMAAAAAAABYAwAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAGAAAAEAAAAAAAAAAAAAAABwAAABAAAAAAAAAAAAAAAAgAAAAQAAAAAAAAAAAAAAAJAAAAEAAAAAAAAAAAAAAACwAAABAAAAAAAAAAAAAAAAwAAAAQAAAAAAAAAAAAAAAOAAAAEAAAAAAAAAAAAAAADwAAABAAAAAAAAAAAQAAAAAAAAAQAAAAAAAAAAEAAAAGAAAAEAAAAAAAAAABAAAABwAAABAAAAAAAAAAAQAAAAgAAAAQAAAAAAAAAAEAAAAJAAAAEAAAAAAAAAABAAAACwAAABAAAAAAAAAAAQAAAAwAAAAQAAAAAAAAAAEAAAAOAAAAEAAAAAAAAAABAAAADwAAABAAAAAAAAAABAAAAAAAAAAQAAAAAAAAAAQAAAAGAAAAEAAAAAAAAAAEAAAABwAAABAAAAAAAAAABAAAAAgAAAAQAAAAAAAAAAQAAAAJAAAAEAAAAAAAAAAEAAAACwAAABAAAAAAAAAABAAAAAwAAAAQAAAAAAAAAAQAAAAOAAAAEAAAAAAAAAAEAAAADwAAABAAAAAAAAAABwAAAAAAAAAQAAAAAAAAAAcAAAAGAAAAEAAAAAAAAAAHAAAABwAAABAAAAAAAAAABwAAAAgAAAAQAAAAAAAAAAcAAAAJAAAAEAAAAAAAAAAHAAAACwAAABAAAAAAAAAABwAAAAwAAAAQAAAAAAAAAAcAAAAOAAAAEAAAAAAAAAAHAAAADwAAABAAAAAAAAAACAAAAAAAAAAQAAAAAAAAAAgAAAAGAAAAEAAAAAAAAAAIAAAABwAAABAAAAAAAAAACAAAAAgAAAAQAAAAAAAAAAgAAAAJAAAAEAAAAAAAAAAIAAAACwAAABAAAAAAAAAACAAAAAwAAAAQAAAAAAAAAAgAAAAOAAAAEAAAAAAAAAAIAAAADwAAABAAAAAAAAAACgAAAAAAAAAQAAAAAAAAAAoAAAAGAAAAEAAAAAAAAAAKAAAABwAAABAAAAAAAAAACgAAAAgAAAAQAAAAAAAAAAoAAAAJAAAAEAAAAAAAAAAKAAAACwAAABAAAAAAAAAACgAAAAwAAAAQAAAAAAAAAAoAAAAOAAAAEAAAAAAAAAAKAAAADwAAAAgAAAAAAAAACAAAAAAAAAA= --log-file=/Users/steventran/Library/Logs/LeagueClientUx_debug.log --shared-files --field-trial-handle=1718379636,r,10045375498270506633,3914168271118447238,131072 --disable-features=HardwareMediaKeyHandling --app-name=LeagueClient --ux-name=LeagueClientUx --ux-helper-name=LeagueClientUxHelper --log-dir=LeagueClient Logs --app-port=52626 --output-base-dir=/Applications/League of Legends.app/Contents/LoL --crash-reporting=crashpad --crash-environment=NA1 --app-log-file-path=/Applications/League of Legends.app/Contents/LoL/Logs/LeagueClient Logs/2026-10-07T06-28-57_18844_LeagueClient.log --primary-ux-log-file-path=/Applications/League of Legends.app/Contents/LoL/Logs/LeagueClient Logs/2026-10-07T06-28-57_18844_18930_LeagueClientUx.log --session-log-prefix=2026-10-07T06-28-57_18844_",
+            "cpu_percent": 4.4,
+            "elapsed": "37:28",
+            "memory_percent": 0.4,
+            "pid": 18936,
+            "ppid": 18930,
+            "rss_kib": 71728
+          }
+        ],
+        "top_memory": [
+          {
+            "command": "/Applications/Firefox Developer Edition.app/Contents/MacOS/plugin-container.app/Contents/MacOS/plugin-container -isForBrowser -prefsHandle 0:57888 -prefMapHandle 1:306106 -jsInitHandle 2:162336 -sbStartup -sbAppPath /Applications/Firefox Developer Edition.app -sbLevel 3 -parentBuildID 20261005090344 -ipcHandle 0 -initialChannelId {d08c1282-3b55-4205-840a-9ca454d961ac} -parentPid 10851 -crashHelperPid 10853 -crashHelperSend 3 -crashHelperRecv 0 -crashReporter gecko-crash-server-pipe.10851 -greomni /Applications/Firefox Developer Edition.app/Contents/Resources/omni.ja -appomni /Applications/Firefox Developer Edition.app/Contents/Resources/browser/omni.ja -appDir /Applications/Firefox Developer Edition.app/Contents/Resources/browser -profile /Users/steventran/Library/Application Support/Firefox/Profiles/ev0amkvt.dev-edition-default org.mozilla.machname.241519330 981 tab",
+            "cpu_percent": 48.1,
+            "elapsed": "09:35",
+            "memory_percent": 3.6,
+            "pid": 35669,
+            "ppid": 10851,
+            "rss_kib": 602704
+          },
+          {
+            "command": "/Applications/Firefox Developer Edition.app/Contents/MacOS/plugin-container.app/Contents/MacOS/plugin-container -isForBrowser -prefsHandle 0:50464 -prefMapHandle 1:306106 -jsInitHandle 2:162336 -sbStartup -sbAppPath /Applications/Firefox Developer Edition.app -sbLevel 3 -parentBuildID 20261005090344 -ipcHandle 0 -initialChannelId {fde5a995-a3ec-4b73-b3b0-ee79caad68b5} -parentPid 10851 -crashHelperPid 10853 -crashHelperSend 3 -crashHelperRecv 0 -crashReporter gecko-crash-server-pipe.10851 -greomni /Applications/Firefox Developer Edition.app/Contents/Resources/omni.ja -appomni /Applications/Firefox Developer Edition.app/Contents/Resources/browser/omni.ja -appDir /Applications/Firefox Developer Edition.app/Contents/Resources/browser -profile /Users/steventran/Library/Application Support/Firefox/Profiles/ev0amkvt.dev-edition-default org.mozilla.machname.1690337223 6 tab",
+            "cpu_percent": 3.8,
+            "elapsed": "01-09:55:40",
+            "memory_percent": 3.2,
+            "pid": 10860,
+            "ppid": 10851,
+            "rss_kib": 541536
+          },
+          {
+            "command": "/Applications/Firefox Developer Edition.app/Contents/MacOS/plugin-container.app/Contents/MacOS/plugin-container -isForBrowser -prefsHandle 0:57888 -prefMapHandle 1:306106 -jsInitHandle 2:162336 -sbStartup -sbAppPath /Applications/Firefox Developer Edition.app -sbLevel 3 -parentBuildID 20261005090344 -ipcHandle 0 -initialChannelId {97a7e0ab-47b2-4dfa-bd6f-3923f3def515} -parentPid 10851 -crashHelperPid 10853 -crashHelperSend 3 -crashHelperRecv 0 -crashReporter gecko-crash-server-pipe.10851 -greomni /Applications/Firefox Developer Edition.app/Contents/Resources/omni.ja -appomni /Applications/Firefox Developer Edition.app/Contents/Resources/browser/omni.ja -appDir /Applications/Firefox Developer Edition.app/Contents/Resources/browser -profile /Users/steventran/Library/Application Support/Firefox/Profiles/ev0amkvt.dev-edition-default org.mozilla.machname.96220813 989 tab",
+            "cpu_percent": 14.0,
+            "elapsed": "04:37",
+            "memory_percent": 2.7,
+            "pid": 40189,
+            "ppid": 10851,
+            "rss_kib": 461072
+          },
+          {
+            "command": "/Applications/Firefox Developer Edition.app/Contents/MacOS/firefox",
+            "cpu_percent": 11.0,
+            "elapsed": "01-09:55:41",
+            "memory_percent": 2.6,
+            "pid": 10851,
+            "ppid": 1,
+            "rss_kib": 435040
+          },
+          {
+            "command": "/Applications/League of Legends.app/Contents/LoL/League of Legends.app/Contents/Frameworks/LeagueClientUx Helper (Renderer).app/Contents/MacOS/LeagueClientUx Helper (Renderer) --type=renderer --framework-dir-path=/Applications/League of Legends.app/Contents/LoL/League of Legends.app/Contents/Frameworks/Chromium Embedded Framework.framework --log-severity=warning --user-agent-product=LeagueOfLegendsClient/16.20.824.8524 (CEF 108) --disable-scroll-bounce --disable-spell-checking --user-data-dir=/Users/steventran/Library/Application Support/CEF/User Data --no-sandbox --autoplay-policy=no-user-gesture-required --enable-viewport --log-file=/Users/steventran/Library/Logs/LeagueClientUx_debug.log --max-active-webgl-contexts=20 --lang=en-US --num-raster-threads=4 --enable-zero-copy --enable-gpu-memory-buffer-compositor-resources --enable-main-frame-before-activation --renderer-client-id=5 --time-ticks-at-unix-epoch=-1791145255924817 --launch-time-ticks=234498313419 --shared-files --field-trial-handle=1718379636,r,10045375498270506633,3914168271118447238,131072 --disable-features=HardwareMediaKeyHandling --app-name=LeagueClient --ux-name=LeagueClientUx --ux-helper-name=LeagueClientUxHelper --log-dir=LeagueClient Logs --app-port=52626 --output-base-dir=/Applications/League of Legends.app/Contents/LoL --crash-reporting=crashpad --crash-environment=NA1 --app-log-file-path=/Applications/League of Legends.app/Contents/LoL/Logs/LeagueClient Logs/2026-10-07T06-28-57_18844_LeagueClient.log --primary-ux-log-file-path=/Applications/League of Legends.app/Contents/LoL/Logs/LeagueClient Logs/2026-10-07T06-28-57_18844_18930_LeagueClientUx.log --session-log-prefix=2026-10-07T06-28-57_18844_",
+            "cpu_percent": 2.5,
+            "elapsed": "37:26",
+            "memory_percent": 2.3,
+            "pid": 18965,
+            "ppid": 18930,
+            "rss_kib": 383760
+          },
+          {
+            "command": "/Applications/Firefox Developer Edition.app/Contents/MacOS/plugin-container.app/Contents/MacOS/plugin-container -isForBrowser -prefsHandle 0:57888 -prefMapHandle 1:306106 -jsInitHandle 2:162336 -sbStartup -sbAppPath /Applications/Firefox Developer Edition.app -sbLevel 3 -parentBuildID 20261005090344 -ipcHandle 0 -initialChannelId {329bbd52-d6f4-4897-a740-7358bb844745} -parentPid 10851 -crashHelperPid 10853 -crashHelperSend 3 -crashHelperRecv 0 -crashReporter gecko-crash-server-pipe.10851 -greomni /Applications/Firefox Developer Edition.app/Contents/Resources/omni.ja -appomni /Applications/Firefox Developer Edition.app/Contents/Resources/browser/omni.ja -appDir /Applications/Firefox Developer Edition.app/Contents/Resources/browser -profile /Users/steventran/Library/Application Support/Firefox/Profiles/ev0amkvt.dev-edition-default org.mozilla.machname.734180060 987 tab",
+            "cpu_percent": 0.1,
+            "elapsed": "06:24",
+            "memory_percent": 2.2,
+            "pid": 37812,
+            "ppid": 10851,
+            "rss_kib": 374512
+          },
+          {
+            "command": "/Applications/Firefox Developer Edition.app/Contents/MacOS/plugin-container.app/Contents/MacOS/plugin-container -isForBrowser -prefsHandle 0:57888 -prefMapHandle 1:306106 -jsInitHandle 2:162336 -sbStartup -sbAppPath /Applications/Firefox Developer Edition.app -sbLevel 3 -parentBuildID 20261005090344 -ipcHandle 0 -initialChannelId {3e1ddd35-bb81-4e71-b16d-430823451eb5} -parentPid 10851 -crashHelperPid 10853 -crashHelperSend 3 -crashHelperRecv 0 -crashReporter gecko-crash-server-pipe.10851 -greomni /Applications/Firefox Developer Edition.app/Contents/Resources/omni.ja -appomni /Applications/Firefox Developer Edition.app/Contents/Resources/browser/omni.ja -appDir /Applications/Firefox Developer Edition.app/Contents/Resources/browser -profile /Users/steventran/Library/Application Support/Firefox/Profiles/ev0amkvt.dev-edition-default org.mozilla.machname.103661131 982 tab",
+            "cpu_percent": 0.1,
+            "elapsed": "07:56",
+            "memory_percent": 1.5,
+            "pid": 36739,
+            "ppid": 10851,
+            "rss_kib": 258400
+          },
+          {
+            "command": "/Applications/Discord.app/Contents/Frameworks/Discord Helper (Renderer).app/Contents/MacOS/Discord Helper (Renderer) --type=renderer --user-data-dir=/Users/steventran/Library/Application Support/discord --standard-schemes=disclip --secure-schemes=disclip,sentry-ipc --bypasscsp-schemes=sentry-ipc --cors-schemes=disclip,sentry-ipc --fetch-schemes=disclip,sentry-ipc --streaming-schemes=disclip --app-path=/Applications/Discord.app/Contents/Resources/app.asar --no-sandbox --no-zygote --enable-blink-features=EnumerateDevices,AudioOutputDevices --autoplay-policy=no-user-gesture-required --lang=en-US --num-raster-threads=4 --enable-zero-copy --enable-gpu-memory-buffer-compositor-resources --enable-main-frame-before-activation --renderer-client-id=6 --time-ticks-at-unix-epoch=-1791145255921571 --launch-time-ticks=236472630508 --shared-files --field-trial-handle=1718379636,r,642946864888260726,11158696411815079177,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,ScreenCaptureKitPickerScreen,ScreenCaptureKitStreamPickerSonoma --disable-features=AllowAggressiveThrottlingWithWebSocket,DropInputEventsWhilePaintHolding,HardwareMediaKeyHandling,IntensiveWakeUpThrottling,LocalNetworkAccessChecks,MediaSessionService,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TimeoutHangingVideoCaptureStarts,TraceSiteInstanceGetProcessCreation,UseEcoQoSForBackgroundProcess,WinRetrieveSuggestionsOnlyOnDemand --variations-seed-version --pseudonymization-salt-handle=1935764596,r,17501639767507427240,7047179853596331484,4 --trace-process-track-uuid=3190708991934122588 --enable-node-leakage-in-renderers",
+            "cpu_percent": 1.0,
+            "elapsed": "04:32",
+            "memory_percent": 1.4,
+            "pid": 40223,
+            "ppid": 40203,
+            "rss_kib": 239312
+          },
+          {
+            "command": "/Applications/4K Tokkit.app/Contents/Frameworks/QtWebEngineCore.framework/Helpers/QtWebEngineProcess.app/Contents/MacOS/QtWebEngineProcess --type=renderer --webengine-schemes=qrc:sV --disable-speech-api --disable-databases --disable-blink-features=WebAuth,EyeDropperAPI,WebOTP --lang=en-SE --num-raster-threads=4 --enable-zero-copy --enable-gpu-memory-buffer-compositor-resources --enable-main-frame-before-activation --renderer-client-id=3 --time-ticks-at-unix-epoch=-1791145255737488 --launch-time-ticks=21139244539 --shared-files --field-trial-handle=1718379636,r,8756183814441113787,10745873903885944010,262144 --enable-features=NetworkServiceInProcess2,ScreenCaptureKitMacScreen,TracingServiceInProcess --disable-features=BackgroundFetch,EyeDropper,InstalledApp,WebOTP,WebPayments,WebUSB --variations-seed-version --seatbelt-client=42",
+            "cpu_percent": 0.0,
+            "elapsed": "02-11:53:26",
+            "memory_percent": 1.3,
+            "pid": 98730,
+            "ppid": 98633,
+            "rss_kib": 218784
+          },
+          {
+            "command": "/Applications/Firefox Developer Edition.app/Contents/MacOS/plugin-container.app/Contents/MacOS/plugin-container -isForBrowser -prefsHandle 0:57887 -prefMapHandle 1:306106 -jsInitHandle 2:162336 -sbStartup -sbAppPath /Applications/Firefox Developer Edition.app -sbLevel 3 -parentBuildID 20261005090344 -ipcHandle 0 -initialChannelId {9537d3b2-e791-4e94-84b5-67495a6fec6e} -parentPid 10851 -crashHelperPid 10853 -crashHelperSend 3 -crashHelperRecv 0 -crashReporter gecko-crash-server-pipe.10851 -greomni /Applications/Firefox Developer Edition.app/Contents/Resources/omni.ja -appomni /Applications/Firefox Developer Edition.app/Contents/Resources/browser/omni.ja -appDir /Applications/Firefox Developer Edition.app/Contents/Resources/browser -profile /Users/steventran/Library/Application Support/Firefox/Profiles/ev0amkvt.dev-edition-default org.mozilla.machname.177226498 941 tab",
+            "cpu_percent": 1.5,
+            "elapsed": "07:20:02",
+            "memory_percent": 1.1,
+            "pid": 98337,
+            "ppid": 10851,
+            "rss_kib": 184976
+          }
+        ]
+      },
+      "supervisor": {
+        "active_failure_class": "bridge_process_failure",
+        "autoheal_blocked_reason": "Recoverable bridge circuit exhausted 3 attributed process recycles for generation 492.",
+        "bundle_sha256": "ae26f5184a0f12c0960ff202fdcb348014e508eb83bdd8ff2f27ccaf9ed170cb",
+        "last_error": null,
+        "last_exit_code": 1,
+        "last_generation_seen": 492,
+        "last_progress_utc": "2026-10-02T02:57:57+00:00",
+        "phase": "session_complete",
+        "pid": 8580,
+        "status": "STOPPED_CLEAN",
+        "updated_utc": "2026-10-04T20:49:12+00:00"
+      },
+      "system": {
+        "disk": {
+          "available_bytes": 24355033088,
+          "filesystem": "/dev/disk3s1s1",
+          "mount": "/",
+          "total_bytes": 245107195904,
+          "used_bytes": 12644438016,
+          "used_percent": "35%"
+        },
+        "memory": {
+          "active_bytes": 4081745920,
+          "compressed_bytes": 5463982080,
+          "free_bytes": 130547712,
+          "inactive_bytes": 4050747392,
+          "page_size": 16384,
+          "total_bytes": 17179869184,
+          "wired_bytes": 2862333952
+        }
+      }
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T14:06:40.189129+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
