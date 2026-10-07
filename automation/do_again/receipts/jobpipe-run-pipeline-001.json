@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
+  "error": null,
+  "finished_at_utc": "2026-10-07T15:41:43.788795+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "bd52a082825db80ebee2f35c5ce4caccc0775ca4fa7e2b1288d95be2c7b80ca1",
+  "request_id": "jobpipe-run-pipeline-001",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "186e5a323568f5fa4f7ee512730822b1beefafb9"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": false,
+      "repo_head": "186e5a323568f5fa4f7ee512730822b1beefafb9"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "bd52a082825db80ebee2f35c5ce4caccc0775ca4fa7e2b1288d95be2c7b80ca1",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-run-pipeline-001/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.023,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 4844,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-run-pipeline-001/script.py",
+      "script_sha256": "dffe434cca52b5d70edc7a9b145d79edec510cc904877e423d0016357c674261",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "added jobpipe run orchestration\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T15:41:43.672461+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
