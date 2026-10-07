@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:93987:1791414800:9e48d0bdac84",
+  "claimed_at_utc": "2026-10-07T23:47:45.404675+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 93987,
+  "request_fingerprint": "558cb0249725b28541818a16b16f084854edc43c2f341c3fc0813b2f2f8102b9",
+  "request_id": "jobpipe-jobvite-failure-isolation-20261007-01",
+  "schema_version": 1
+}
