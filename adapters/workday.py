@@ -1081,6 +1081,7 @@ class WorkdayAdapter(BaseATSAdapter):
                     ReasonCode.LOGIN_REQUIRED,
                     "Workday account creation control could not be activated",
                     checkpoint="workday.auth.register",
+                    details={"diagnostics": await _stage_diagnostics(context.page)},
                 ),
                 password,
             )
@@ -2348,6 +2349,14 @@ async def _stage_diagnostics(page: Any) -> dict[str, Any]:
                         .map(el => (el.innerText || el.getAttribute('aria-label') || '').replace(/\s+/g, ' ').trim())
                         .filter(Boolean)
                         .slice(0, 30),
+                    account_creation_controls: Array.from(document.querySelectorAll('[data-automation-id="createAccountSubmitButton"]'))
+                        .filter(visible)
+                        .slice(0, 10)
+                        .map(el => ({
+                            disabled: Boolean(el.disabled || el.getAttribute('aria-disabled') === 'true'),
+                            in_dialog: Boolean(el.closest('[role="dialog"]')),
+                            in_form: Boolean(el.closest('form')),
+                        })),
                 };
             }"""
         )

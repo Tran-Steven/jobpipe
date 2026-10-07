@@ -1403,3 +1403,39 @@ async def test_workday_autofill_rechecks_authentication_after_missing_next(monke
             assert await _visible_workday_auth_stage(page) is WorkdayStage.REGISTER
         finally:
             await browser.close()
+
+
+
+@pytest.mark.asyncio
+async def test_registration_create_account_failure_returns_nonsecret_diagnostics(monkeypatch):
+    page = AsyncMock()
+    context = WorkdayApplicationContext(
+        page=page,
+        job_url=WORKDAY_URL,
+        profile={"personal": {"email": "synthetic@example.test"}},
+        job_id="registration-diagnostic",
+        run_id="registration-diagnostic-run",
+        navigate=False,
+        request_submit=False,
+    )
+    monkeypatch.setattr(
+        "adapters.workday._fill_registration",
+        AsyncMock(return_value=RegistrationFillResult(fields_ready=True)),
+    )
+    monkeypatch.setattr(
+        "adapters.workday._click_create_account_submit",
+        AsyncMock(return_value=False),
+    )
+    monkeypatch.setattr(
+        "adapters.workday._stage_diagnostics",
+        AsyncMock(return_value={"account_creation_controls": [{"disabled": True, "in_form": True}]}),
+    )
+    monkeypatch.setattr(
+        WorkdayAdapter, "_save_generated_credential", lambda *args: True,
+    )
+    monkeypatch.setattr(
+        WorkdayAdapter, "_restore_generated_credential", lambda *args: None,
+    )
+    outcome, _ = await WorkdayAdapter()._register(context, None)
+    assert outcome.checkpoint == "workday.auth.register"
+    assert outcome.details["diagnostics"]["account_creation_controls"][0]["disabled"]
