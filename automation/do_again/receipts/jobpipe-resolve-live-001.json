@@ -1,0 +1,59 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:42322:1791381911",
+  "error": null,
+  "finished_at_utc": "2026-10-07T15:03:08.229964+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "7ba4c7ef08d7089832cc3dfa49078e51cc18757ba5cbd74901553c3f1357c16e",
+  "request_id": "jobpipe-resolve-live-001",
+  "result": {
+    "authority_after": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "88d7010652ed08918334b8fb8cbe354cf1b2de9e",
+      "revision": null
+    },
+    "authority_before": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "88d7010652ed08918334b8fb8cbe354cf1b2de9e",
+      "revision": null
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "7ba4c7ef08d7089832cc3dfa49078e51cc18757ba5cbd74901553c3f1357c16e",
+    "result": {
+      "argv": [
+        "python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-resolve-live-001/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 66.766,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 556,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-resolve-live-001/script.py",
+      "script_sha256": "0dccb6094096ea2e99667973008e04b636394a7cfab5c4bd09f83fc5d232ddea",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "$ /Users/steventran/jobpipe/.venv/bin/python -m py_compile jobpipe_resolve.py jobctl.py\n\n\n$ /Users/steventran/jobpipe/.venv/bin/python jobpipe.py resolve --limit 5\n{\n  \"ats_direct\": 1,\n  \"considered\": 5,\n  \"failed\": 0,\n  \"results\": [\n    {\n      \"company\": \"SpaceX\",\n      \"id\": \"jobspy_cea87c5624012eeb\",\n      \"resolution\": \"apply_link\",\n      \"title\": \"Application Software Engineer, Employee Experience\",\n      \"url\": \"https://my.greenhouse.io/users/sign_in?job_board=spacex&source=job_alert_post\"\n    },\n    {\n      \"company\": \"Alteryx\",\n      \"id\": \"jobspy_e5b4ad3865ac1284\",\n      \"resolution\": \"ats_direct\",\n      \"title\": \"Software Engineer\",\n      \"url\": \"https://alteryx.wd108.myworkdayjobs.com/en-US/AlteryxCareers/job/US---Remote/Software-Engineer_R12529\"\n    },\n    {\n      \"company\": \"Businessolver\",\n      \"id\": \"jobspy_617f7778dd8c818d\",\n      \"resolution\": \"unresolved\",\n      \"title\": \"Software Engineer II, UI/UX React (Remote) New\",\n      \"url\": \"https://www.businessolver.com/careers/openings/?gh_jid=8256316\"\n    },\n    {\n      \"company\": \"Affirm\",\n      \"id\": \"jobspy_e1b64c0b84fcf32f\",\n      \"resolution\": \"unresolved\",\n      \"title\": \"Software Engineer II, Backend (Identity Decisioning)\",\n      \"url\": \"https://www.linkedin.com/jobs/view/4470009946\"\n    },\n    {\n      \"company\": \"Los Angeles Capital Management\",\n      \"id\": \"jobspy_94c87924a56728a1\",\n      \"resolution\": \"apply_link\",\n      \"title\": \"Software Engineer I\",\n      \"url\": \"https://www.linkedin.com/jobs/view/new-graduate-engineer-software-application-software-at-spacex-4456373787?refId=Tmxg9UdTCjifQyCD3SH1uA%3D%3D&trackingId=EpUq3vDhlpbOjyS0Hb8IVw%3D%3D\"\n    }\n  ],\n  \"unresolved\": 2,\n  \"updated\": 2\n}\n\n\n$ /Users/steventran/jobpipe/.venv/bin/python jobpipe.py enqueue\n{\n  \"matched_considered\": 5,\n  \"pending_rows\": 5,\n  \"preserved_non_pending\": 0,\n  \"queue\": \"/Users/steventran/Library/Application Support/Jobops/queue/job_pool.csv\",\n  \"total_rows\": 5\n}\n\n\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T15:02:01.348565+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
