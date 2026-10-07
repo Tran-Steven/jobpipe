@@ -3,7 +3,7 @@
   "control_worktree": "/Users/steventran/.do_again/jobpipe-control",
   "host": "Stevens-Mac-mini.local",
   "instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
-  "last_request_id": "jobpipe-opt-in-live-form-tests-20261007-01",
+  "last_request_id": "jobpipe-workday-late-auth-transition-20261007-01",
   "last_request_state": "succeeded",
   "pid": 41902,
   "remote": "origin",
@@ -11,5 +11,5 @@
   "schema_version": 1,
   "started_at_utc": "2026-10-07T15:37:22.291720+00:00",
   "state": "ready",
-  "updated_at_utc": "2026-10-07T22:40:07.223742+00:00"
+  "updated_at_utc": "2026-10-07T22:40:23.562706+00:00"
 }
