@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-retriage-001",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-07T14:46:53Z",
+  "expires_at_utc": "2026-10-07T15:46:53Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\n\nrepo = Path(\"/Users/steventran/jobpipe\")\n\ntracker = repo / \"utils\" / \"tracker.py\"\ntext = tracker.read_text(encoding=\"utf-8\")\nold = '''def log_skipped(job_id: str, reason: str) -> None:\n    \"\"\"Mark a job as skipped.\"\"\"\n    conn = get_db()\n    conn.execute(\"\"\"\n        UPDATE applications\n        SET status = 'skipped', reasoning = ?\n        WHERE id = ?\n    \"\"\", (reason, job_id))\n    conn.commit()\n    conn.close()\n'''\nnew = '''def log_skipped(job_id: str, reason: str, score: int | None = None) -> None:\n    \"\"\"Mark a job as skipped and persist the current score when provided.\"\"\"\n    conn = get_db()\n    conn.execute(\"\"\"\n        UPDATE applications\n        SET status = 'skipped', reasoning = ?, match_score = COALESCE(?, match_score)\n        WHERE id = ?\n    \"\"\", (reason, score, job_id))\n    conn.commit()\n    conn.close()\n'''\nif old in text:\n    text = text.replace(old, new, 1)\ntracker.write_text(text, encoding=\"utf-8\")\n\ndisc = repo / \"jobpipe_discovery.py\"\ntext = disc.read_text(encoding=\"utf-8\")\nstart = text.index(\"def triage_jobs(\")\nend = text.find(\"\\n\\ndef \", start + 10)\nif end == -1:\n    end = len(text)\nreplacement = '''def triage_jobs(profile_path: str, limit: int = 0) -> dict[str, Any]:\n    profile = load_search_profile(profile_path)\n    jobs: list[dict[str, Any]] = []\n    for status in (\"discovered\", \"matched\", \"skipped\"):\n        rows, _ = get_all_jobs(status=status, limit=10000)\n        jobs.extend(rows)\n    jobs.sort(key=lambda item: str(item.get(\"discovered_at\") or \"\"))\n    if limit > 0:\n        jobs = jobs[:limit]\n\n    from utils.tracker import log_matched, log_skipped\n\n    threshold = int(profile.get(\"preferences\", {}).get(\"min_match_score\", 70))\n    matched = skipped = 0\n    scored = []\n    for job in jobs:\n        score, reasons = _score_job(job, profile)\n        reason = \"; \".join(reasons)\n        if score >= threshold:\n            log_matched(job[\"id\"], score, reason, \"\")\n            matched += 1\n            decision = \"matched\"\n        else:\n            log_skipped(job[\"id\"], reason, score)\n            skipped += 1\n            decision = \"skipped\"\n        scored.append({\n            \"id\": job[\"id\"],\n            \"title\": job[\"title\"],\n            \"company\": job[\"company\"],\n            \"score\": score,\n            \"decision\": decision,\n        })\n    scored.sort(key=lambda item: item[\"score\"], reverse=True)\n    return {\n        \"evaluated\": len(jobs),\n        \"matched\": matched,\n        \"skipped\": skipped,\n        \"threshold\": threshold,\n        \"top\": scored[:20],\n    }\n'''\ntext = text[:start] + replacement + text[end:]\ndisc.write_text(text, encoding=\"utf-8\")\n\nprint(\"retriage now reevaluates discovered/matched/skipped jobs\")\nprint(\"skipped jobs persist current score\")\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 90
+  }
+}
