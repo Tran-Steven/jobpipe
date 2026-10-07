@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
+  "claimed_at_utc": "2026-10-07T22:37:14.188132+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 41902,
+  "request_fingerprint": "82f6dc3dfe71e3990b0b47c02c2b87d87bc65882cb3843bd9e7566f2f4952596",
+  "request_id": "jobpipe-workday-visible-auth-signal-20261007-01",
+  "schema_version": 1
+}
