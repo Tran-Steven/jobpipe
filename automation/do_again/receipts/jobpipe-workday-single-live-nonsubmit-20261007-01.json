@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
+  "error": null,
+  "finished_at_utc": "2026-10-07T22:31:09.439310+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "2c2c3cdd39ba09076bbc87749e8f1e17acc5a765b775ebf2a0d0d30d50f7ecb7",
+  "request_id": "jobpipe-workday-single-live-nonsubmit-20261007-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "4040779cd7792654b1df535e2514f015bd573f3c"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "4040779cd7792654b1df535e2514f015bd573f3c"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "2c2c3cdd39ba09076bbc87749e8f1e17acc5a765b775ebf2a0d0d30d50f7ecb7",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-workday-single-live-nonsubmit-20261007-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 37.086,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1242,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-workday-single-live-nonsubmit-20261007-01/script.py",
+      "script_sha256": "23064b2df262a9c3b73e5b1eee6e8636186efadb066148ddfcfde843b69cb113",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "LIVE_NON_SUBMIT_ATTEMPTED=true\nTARGET_COMPANY=Alteryx\nREQUEST_SUBMIT=false\nexit_code= 20\nstdout_tail= {\"adapter\":\"workday\",\"checkpoint\":\"workday.application.autofillWithResume\",\"created_at\":\"2026-10-07T22:31:09.329252Z\",\"details\":{\"diagnostics\":{\"automation_ids\":[\"accessibilitySkipToMainContent\",\"legalNotice\",\"legalNoticeDeclineButton\",\"legalNoticeAcceptButton\",\"header\",\"logoLink\",\"logo\",\"headerTitle\",\"navigationContainer\",\"utilityButtonBar\",\"utilityButtonSignIn\",\"navigationItem-Search for Jobs\",\"hammyMenuIcon\",\"applyFlowPage\",\"backToJobPosting\",\"jobTitleHeading\",\"progressBar\",\"progressBarActiveStep\",\"progressBarInactiveStep\",\"progressBarInactiveStep\",\"progressBarInactiveStep\",\"progressBarInactiveStep\",\"progressBarInactiveStep\",\"progressBarInactiveStep\",\"progressBarInactiveStep\",\"signInContent\",\"passwordRulesList\",\"richText\",\"signInFormo\",\"formField-email\",\"email\",\"formField-password\",\"password\",\"formField-verifyPassword\",\"verifyPassword\",\"richText\",\"createAccountExpandButton\",\"formField-\",\"createAccountCheckbox\",\"noCaptchaWrapper\"],\"buttons\":[\"Decline\",\"Accept Cookies\",\"Sign In\",\"Search for Jobs\",\"main menu\",\"Back to Job Posting\",\"Read More\",\"Create Account\",\"Create Account\",\"Sign In\",\"Forgot your password?\"],\"dialogs\":[],\"inputs\":[{\"automation_id\":\"email\",\"form_automation_id\":\"signInFormo\",\"in_dialog\":false,\"name\":\"\",\"type\":\"text\",\"visible\":true},{\"automation_id\":\"password\",\"form_automation_id\":\"signInFormo\",\"in_dialog\":false,\"name\":\"\",\"type\":\"password\",\"visible\":true},{\"automation_id\":\"verifyPassword\",\"form_automation_id\":\"signInFormo\",\"in_dialog\":false,\"name\":\"\",\"type\":\"password\",\"visible\":true},{\"automation_id\":\"createAccountCheckbox\",\"form_automation_id\":\"signInFormo\",\"in_dialog\":false,\"name\":\"\",\"type\":\"checkbox\",\"visible\":true},{\"automation_id\":\"beecatcher\",\"form_automation_id\":\"\",\"in_dialog\":false,\"name\":\"website\",\"type\":\"text\",\"visible\":true}]},\"filled\":0,\"stage\":\"autofillWithResume\"},\"evidence_refs\":[],\"job_id\":\"job-66b3262969a79ef7e74afa76\",\"message\":\"Workday stage could not advance\",\"phase\":\"FILL\",\"reason_code\":\"VALIDATION_FAILED\",\"retryable\":true,\"run_id\":\"run-cdaa1574f76b4d0ba83342fb30ea2b28\",\"schema_version\":1,\"status\":\"FAILED_RETRYABLE\"}\n{\n  \"attempted\": 1,\n  \"outcomes\": {\n    \"FAILED_RETRYABLE\": 1\n  },\n  \"queue\": \"[local-path] Support/Jobops/queue/job_pool.csv\"\n}\n\nstderr_tail= \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T22:30:32.258907+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
