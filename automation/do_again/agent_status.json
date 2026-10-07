@@ -3,13 +3,13 @@
   "control_worktree": "/Users/steventran/.do_again/jobpipe-control",
   "host": "Stevens-Mac-mini.local",
   "instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
-  "last_request_id": "jobpipe-workday-single-live-nonsubmit-20261007-01",
-  "last_request_state": "succeeded",
+  "last_request_id": "jobpipe-workday-hydration-guard-20261007-01",
+  "last_request_state": "failed",
   "pid": 41902,
   "remote": "origin",
   "repo": "/Users/steventran/jobpipe",
   "schema_version": 1,
   "started_at_utc": "2026-10-07T15:37:22.291720+00:00",
   "state": "ready",
-  "updated_at_utc": "2026-10-07T22:31:11.742670+00:00"
+  "updated_at_utc": "2026-10-07T22:32:36.279611+00:00"
 }
