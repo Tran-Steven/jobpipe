@@ -1,0 +1,59 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:42322:1791381911",
+  "error": null,
+  "finished_at_utc": "2026-10-07T14:58:27.593151+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "8d2eea4769bab138583dd16b320a26f29698a44a0d6ac9aceb37841760cba795",
+  "request_id": "jobpipe-playwright-install-001",
+  "result": {
+    "authority_after": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": false,
+      "repo_head": "88d7010652ed08918334b8fb8cbe354cf1b2de9e",
+      "revision": null
+    },
+    "authority_before": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": false,
+      "repo_head": "88d7010652ed08918334b8fb8cbe354cf1b2de9e",
+      "revision": null
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "8d2eea4769bab138583dd16b320a26f29698a44a0d6ac9aceb37841760cba795",
+    "result": {
+      "argv": [
+        "python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-playwright-install-001/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 8.438,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 253,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-playwright-install-001/script.py",
+      "script_sha256": "53479ee5f288dbdc89721bcc9ba6b81e36bf8723aa9b2aad265d6c8e4ae7b533",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "Downloading Chrome for Testing 153.0.8010.12 (playwright chromium v1243) from https://cdn.playwright.dev/builds/cft/153.0.8010.12/mac-arm64/chrome-mac-arm64.zip\n|                                                                                |   0% of 182.1 MiB\n|■■■■■■■■                                                                        |  10% of 182.1 MiB\n|■■■■■■■■■■■■■■■■                                                                |  20% of 182.1 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 182.1 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 182.1 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 182.1 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 182.1 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 182.1 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 182.1 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 182.1 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 182.1 MiB\nChrome for Testing 153.0.8010.12 (playwright chromium v1243) downloaded to /Users/steventran/Library/Caches/ms-playwright/chromium-1243\nDownloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-mac-arm64.zip\n|                                                                                |   0% of 1 MiB\n|■■■■■■■■                                                                        |  10% of 1 MiB\n|■■■■■■■■■■■■■■■■                                                                |  20% of 1 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  31% of 1 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 1 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 1 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 1 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  71% of 1 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 1 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 1 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 1 MiB\nFFmpeg (playwright ffmpeg v1011) downloaded to /Users/steventran/Library/Caches/ms-playwright/ffmpeg-1011\nDownloading Chrome Headless Shell 153.0.8010.12 (playwright chromium-headless-shell v1243) from https://cdn.playwright.dev/builds/cft/153.0.8010.12/mac-arm64/chrome-headless-shell-mac-arm64.zip\n|                                                                                |   0% of 94.3 MiB\n|■■■■■■■■                                                                        |  10% of 94.3 MiB\n|■■■■■■■■■■■■■■■■                                                                |  20% of 94.3 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 94.3 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 94.3 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 94.3 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 94.3 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 94.3 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 94.3 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 94.3 MiB\n|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 94.3 MiB\nChrome Headless Shell 153.0.8010.12 (playwright chromium-headless-shell v1243) downloaded to /Users/steventran/Library/Caches/ms-playwright/chromium_headless_shell-1243\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T14:58:19.064943+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
