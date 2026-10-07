@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:93987:1791414800:9e48d0bdac84",
+  "error": null,
+  "finished_at_utc": "2026-10-07T23:48:15.306903+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "558cb0249725b28541818a16b16f084854edc43c2f341c3fc0813b2f2f8102b9",
+  "request_id": "jobpipe-jobvite-failure-isolation-20261007-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "56a4a6bdb129e99ef765f15e5816a474b7d19fc1"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "56a4a6bdb129e99ef765f15e5816a474b7d19fc1"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "558cb0249725b28541818a16b16f084854edc43c2f341c3fc0813b2f2f8102b9",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-jobvite-failure-isolation-20261007-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 28.239,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 637,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-jobvite-failure-isolation-20261007-01/script.py",
+      "script_sha256": "24ca1b98904385bb96684de56d84a6fe6f02b865dfc6f1b6c99908793ef28359",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "COMMAND ['git', 'status', '--short'] EXIT 0\nSTDOUT  M adapters/protocol.py\n M do-again.toml\n M jobctl.py\n M tests/test_jobctl.py\n?? do-again-policy.json\n\nSTDERR \nCOMMAND ['/Users/steventran/jobpipe/.venv/bin/python', '-m', 'pytest', '-q', 'tests/test_ats_adapter_contract.py', '-k', 'jobvite and explicit_confirmation_produces_verified_evidence', '--maxfail=1'] EXIT 0\nSTDOUT .                                                                        [100%]\n1 passed, 35 deselected in 25.15s\n\nSTDERR \nCOMMAND ['/Users/steventran/jobpipe/.venv/bin/python', '-m', 'pytest', '-q', 'tests/test_jobctl.py', '--maxfail=1'] EXIT 0\nSTDOUT .............                                                            [100%]\n13 passed in 1.15s\n\nSTDERR \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T23:47:46.788632+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
