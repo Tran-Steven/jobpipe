@@ -1282,6 +1282,19 @@ class WorkdayAdapter(BaseATSAdapter):
             )
         self._remember_expected_readbacks(context, report.expected_readbacks)
         if not await _click_next(context.page):
+            if stage is WorkdayStage.AUTOFILL_WITH_RESUME:
+                auth_stage = await _visible_workday_auth_stage(context.page)
+                if auth_stage is not None:
+                    return None
+                refreshed = detect_workday_stage(
+                    await inspect_workday_signals(context.page)
+                )
+                if refreshed not in {
+                    WorkdayStage.AUTOFILL_WITH_RESUME,
+                    WorkdayStage.LOADING,
+                    WorkdayStage.OTHER,
+                }:
+                    return None
             diagnostics = await _stage_diagnostics(context.page)
             return ApplicationOutcome(
                 run_id=context.run_id,
