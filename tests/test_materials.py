@@ -7,7 +7,11 @@ from pathlib import Path
 import pytest
 
 from core.bundles import JobSpec, file_sha256
-from core.materials import MaterialValidationError, build_tier_materials
+from core.materials import (
+    MaterialValidationError,
+    build_tier_materials,
+    materialize_existing_resume,
+)
 from core.event_ledger import hash_job_url
 from core.policy import AutonomyMode, JobTier, PolicyConfig, PolicyEngine, RiskSignals
 from core.private_home import PrivateHome
@@ -145,3 +149,25 @@ def test_low_tier_routes_existing_resume_without_manifest(tmp_path: Path) -> Non
 
     assert materials.resume_path == fallback.resolve()
     assert not materials.cover_letter
+
+
+def test_materialize_existing_resume_creates_subject_scoped_managed_pdf(
+    tmp_path: Path,
+) -> None:
+    home = PrivateHome(tmp_path / "private")
+    home.ensure()
+    source = home.paths.master_documents / "resume.pdf"
+    source.write_bytes(b"%PDF-1.4\nsynthetic resume\n%%EOF\n")
+
+    managed = materialize_existing_resume(
+        home=home,
+        resume_path=source,
+        subject_id="candidate@example.test",
+        job_id="job-synthetic",
+    )
+
+    relative = managed.relative_to(home.paths.root)
+    assert relative.parts[:2] == ("state", "preparation")
+    assert any(part.startswith("subject-") for part in relative.parts)
+    assert managed.read_bytes() == source.read_bytes()
+    assert file_sha256(managed) == file_sha256(source)

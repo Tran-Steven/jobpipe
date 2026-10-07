@@ -30,7 +30,11 @@ from core.bundles import (
     file_sha256,
     priority_to_tier,
 )
-from core.materials import MaterialValidationError, build_tier_materials
+from core.materials import (
+    MaterialValidationError,
+    build_tier_materials,
+    materialize_existing_resume,
+)
 from core.event_ledger import hash_job_url
 from core.outcomes import (
     ApplicationOutcome,
@@ -39,7 +43,12 @@ from core.outcomes import (
     OutcomeStatus,
     ReasonCode,
 )
-from core.policy import ApprovalActor, PolicyEngine, RiskSignals
+from core.policy import (
+    ApprovalActor,
+    MaterialStrategy,
+    PolicyEngine,
+    RiskSignals,
+)
 from core.private_home import PrivateHome
 from core.profile_store import CandidateVault
 from core.secrets import load_or_create_permit_secret
@@ -260,11 +269,25 @@ def _build_application_bundle(
             answers_verified=answer_report.all_projected_answers_verified,
         ),
     )
+    execution_profile = vault.application_profile(
+        resume_path=fallback_resume,
+        job_id=job.job_id,
+    )
+    routed_resume = fallback_resume
+    if decision.material_strategy is MaterialStrategy.ROUTE_EXISTING:
+        personal = execution_profile.get("personal") or {}
+        subject_id = str(personal.get("email") or "").strip().casefold()
+        routed_resume = materialize_existing_resume(
+            home=home,
+            resume_path=fallback_resume,
+            subject_id=subject_id,
+            job_id=job.job_id,
+        )
     materials = build_tier_materials(
         home=home,
         job=job,
         policy=decision,
-        fallback_resume=fallback_resume,
+        fallback_resume=routed_resume,
     )
     execution_profile = vault.application_profile(
         resume_path=materials.resume_path,

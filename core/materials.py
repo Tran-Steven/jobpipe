@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from dataclasses import dataclass
 from datetime import datetime
@@ -27,6 +28,46 @@ class MaterialManifest:
     document: Mapping[str, Any]
     resume_path: Path
     cover_letter_path: Path | None
+
+
+def materialize_existing_resume(
+    *,
+    home: PrivateHome,
+    resume_path: str | Path,
+    subject_id: str,
+    job_id: str,
+) -> Path:
+    source = home.contained_path(Path(resume_path).expanduser())
+    if source.is_symlink() or not source.is_file():
+        raise MaterialValidationError("existing resume is missing or unsafe")
+    content = source.read_bytes()
+    if not content.startswith(b"%PDF-"):
+        raise MaterialValidationError("existing resume must be a PDF")
+    normalized_subject = str(subject_id or "").strip()
+    normalized_job = str(job_id or "").strip()
+    if not normalized_subject or not normalized_job:
+        raise MaterialValidationError("managed existing resume requires subject and job identity")
+    subject_key = (
+        "subject-"
+        + hashlib.sha256(normalized_subject.encode("utf-8")).hexdigest()
+    )
+    digest = hashlib.sha256(content).hexdigest()
+    target = (
+        home.paths.preparation
+        / "route-existing"
+        / subject_key
+        / normalized_job
+        / f"resume-{digest}.pdf"
+    )
+    home.write_bytes_if_absent(target, content)
+    resolved = home.contained_path(target)
+    if (
+        resolved.is_symlink()
+        or not resolved.is_file()
+        or file_sha256(resolved) != digest
+    ):
+        raise MaterialValidationError("managed existing resume failed integrity verification")
+    return resolved
 
 
 def _nonempty_timestamp(value: Any) -> bool:
@@ -171,4 +212,5 @@ __all__ = [
     "MaterialValidationError",
     "build_tier_materials",
     "load_material_manifest",
+    "materialize_existing_resume",
 ]
