@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:93987:1791414800:9e48d0bdac84",
+  "error": null,
+  "finished_at_utc": "2026-10-07T23:54:55.757258+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "5b12b4d99941137492e95a3c7763c4ca786fb2fe373acfe6d05da2e0ded3dc1d",
+  "request_id": "jobpipe-submission-confirmation-audit-20261007-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "cf84a220a60b9c34a054b04a697c37e857a1713c"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "cf84a220a60b9c34a054b04a697c37e857a1713c"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "5b12b4d99941137492e95a3c7763c4ca786fb2fe373acfe6d05da2e0ded3dc1d",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-submission-confirmation-audit-20261007-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.283,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 642,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-submission-confirmation-audit-20261007-01/script.py",
+      "script_sha256": "cc0f47850d32487217461635d320f9fce18f6a4f88ba9a0bd7dcaeae7812c85b",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "FILE core/application_engine.py LOCATIONS [146, 181, 207, 216, 403, 524, 725, 765, 777, 799, 816]\nCONTEXT 146 raise ValueError(\"existing run belongs to a different job\") self._record_outcome(outcome)  def submission_preflight( self, bundle: ApplicationBundle ) -> ApplicationOutcome | None: \"\"\"Fail closed before browser launch for any durable submit guard.  The lookup is read-only.  PENDING, SUBMITTING, and UNKNOWN are all\nCONTEXT 181 return ApplicationOutcome( run_id=bundle.run_id, job_id=bundle.job.job_id, status=OutcomeStatus.SUBMIT_UNKNOWN, phase=OutcomePhase.VERIFY, reason_code=ReasonCode.SUBMISSION_CONFIRMATION_MISSING, message=( \"A prior submission intent remains unresolved; automatic retry is \" \"blocked until a human reconciles it\"\nCONTEXT 207 details = dict(outcome.details) details.update( { \"adapter_reported_status\": OutcomeStatus.SUBMITTED_VERIFIED.value, \"core_submission_authorized\": False, \"do_not_retry_submit\": True, \"human_reconciliation_required\": True, } )\nCONTEXT 216 return ApplicationOutcome( run_id=outcome.run_id, job_id=outcome.job_id, status=OutcomeStatus.SUBMIT_UNKNOWN, phase=OutcomePhase.VERIFY, reason_code=ReasonCode.SUBMISSION_CONFIRMATION_MISSING, message=reason, adapter=outcome.adapter, checkpoint=outcome.checkpoint,\nCONTEXT 403 raise ValueError( \"plan-scoped submission permit does not bind this bundle\" ) submission_guard = self.submission_preflight(bundle) if submission_guard is not None: self._record_outcome(submission_guard) return submission_guard previously_reviewed_outcome = self.latest_review_outcome(bundle.run_id) previously_reviewed_hash = (\nFILE core/outcomes.py LOCATIONS [44, 45, 188, 233, 237, 394]\nCONTEXT 44 NEEDS_USER_ACCOUNT_LOCKED = \"NEEDS_USER_ACCOUNT_LOCKED\" NEEDS_USER_SENSITIVE_ANSWER = \"NEEDS_USER_SENSITIVE_ANSWER\" SUBMITTING = \"SUBMITTING\" SUBMITTED_VERIFIED = \"SUBMITTED_VERIFIED\" SUBMIT_UNKNOWN = \"SUBMIT_UNKNOWN\" SKIPPED_POLICY = \"SKIPPED_POLICY\" FAILED_RETRYABLE = \"FAILED_RETRYABLE\" FAILED_UNSUPPORTED = \"FAILED_UNSUPPORTED\" FAILED_TERMINAL = \"FAILED_TERMINAL\"\nCONTEXT 45 NEEDS_USER_SENSITIVE_ANSWER = \"NEEDS_USER_SENSITIVE_ANSWER\" SUBMITTING = \"SUBMITTING\" SUBMITTED_VERIFIED = \"SUBMITTED_VERIFIED\" SUBMIT_UNKNOWN = \"SUBMIT_UNKNOWN\" SKIPPED_POLICY = \"SKIPPED_POLICY\" FAILED_RETRYABLE = \"FAILED_RETRYABLE\" FAILED_UNSUPPORTED = \"FAILED_UNSUPPORTED\" FAILED_TERMINAL = \"FAILED_TERMINAL\" INTERNAL_ERROR = \"INTERNAL_ERROR\"\nCONTEXT 188 # A submission whose result cannot be confirmed is intentionally not a generic # resumable \"Needs user\" state.  It still exits through the broad NEEDS_USER # process category, but queue orchestration must keep it out of automatic retry. _HARD_STOP_STATUSES = frozenset({OutcomeStatus.SUBMIT_UNKNOWN})   @dataclass(frozen=True, slots=True) class ApplicationOutcome: \"\"\"Structured result returned by adapters and orchestration commands.\"\"\"\nCONTEXT 233 f\"unsupported outcome schema version {self.schema_version}; \" f\"expected {OUTCOME_SCHEMA_VERSION}\" ) if self.status is OutcomeStatus.SUBMITTED_VERIFIED and not any( evidence.kind in SUBMISSION_EVIDENCE_KINDS for evidence in self.evidence_refs ): raise ValueError(\"SUBMITTED_VERIFIED requires explicit submission evidence\") if self.status is OutcomeStatus.FAILED_RETRYABLE and not self.retryable:\nCONTEXT 237 evidence.kind in SUBMISSION_EVIDENCE_KINDS for evidence in self.evidence_refs ): raise ValueError(\"SUBMITTED_VERIFIED requires explicit submission evidence\") if self.status is OutcomeStatus.FAILED_RETRYABLE and not self.retryable: object.__setattr__(self, \"retryable\", True)  @property def exit_code(self) -> ExitCode:\nFILE jobctl.py LOCATIONS [163, 172, 313, 316, 347, 670, 839]\nCONTEXT 163 adapter = str(outcome.get(\"adapter\") or \"\") if adapter in SUPPORTED_ATS and run_id: supported_runs.add(run_id) if outcome.get(\"status\") in {\"REVIEW_READY\", \"SUBMITTED_VERIFIED\"}: review_runs.add(run_id) details = outcome.get(\"details\") if isinstance(details, dict) and isinstance(details.get(\"model_calls\"), int): model_calls.append(details[\"model_calls\"]) \nCONTEXT 172 verified = [ outcome for outcome in latest.values() if outcome.get(\"status\") == \"SUBMITTED_VERIFIED\" ] verified_with_evidence = sum( bool(outcome.get(\"evidence_refs\")) for outcome in verified ) return {\nCONTEXT 313 outcome: ApplicationOutcome, ) -> None: fields = set(application.row) if outcome.status is OutcomeStatus.SUBMITTED_VERIFIED: status = \"Submitted\" next_action = \"Monitor the application ledger and mailbox for follow-up.\" elif outcome.status is OutcomeStatus.SUBMIT_UNKNOWN: status = \"Submission unknown\" next_action = (\nCONTEXT 316 if outcome.status is OutcomeStatus.SUBMITTED_VERIFIED: status = \"Submitted\" next_action = \"Monitor the application ledger and mailbox for follow-up.\" elif outcome.status is OutcomeStatus.SUBMIT_UNKNOWN: status = \"Submission unknown\" next_action = ( \"Human: reconcile the prior submission before any retry; do not \" \"requeue this row as Needs user.\" )\nCONTEXT 347 \"status\": status, \"blocker\": \"\" if outcome.status in { OutcomeStatus.REVIEW_READY, OutcomeStatus.SUBMITTED_VERIFIED, } else outcome.message, \"next_action\": next_action, }.items() if key in fields }\nSTATUS  M adapters/protocol.py\n M do-again.toml\n?? do-again-policy.json\n\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T23:54:55.081143+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
