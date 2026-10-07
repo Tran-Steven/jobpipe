@@ -1,0 +1,59 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:42322:1791381911",
+  "error": null,
+  "finished_at_utc": "2026-10-07T15:00:36.112349+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "954a94e06f00890f13cedc941c933e54184f9a4ab4cedd10488f875bbd155ef7",
+  "request_id": "jobpipe-resolve-001",
+  "result": {
+    "authority_after": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "88d7010652ed08918334b8fb8cbe354cf1b2de9e",
+      "revision": null
+    },
+    "authority_before": {
+      "bundle_sha256": null,
+      "control_state": null,
+      "desired_mode": null,
+      "generation": null,
+      "lease_epoch": null,
+      "lease_id": null,
+      "repo_branch": "main",
+      "repo_dirty": false,
+      "repo_head": "88d7010652ed08918334b8fb8cbe354cf1b2de9e",
+      "revision": null
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "954a94e06f00890f13cedc941c933e54184f9a4ab4cedd10488f875bbd155ef7",
+    "result": {
+      "argv": [
+        "python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-resolve-001/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.044,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 4437,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-resolve-001/script.py",
+      "script_sha256": "bb208ee35ce56de3d7e8736e41d825adde7386610e571ac316e17918d2e922c0",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "added jobpipe resolve command\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T15:00:35.964358+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
