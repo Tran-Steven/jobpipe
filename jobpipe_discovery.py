@@ -54,6 +54,46 @@ def print_json(value: Any) -> None:
     print(json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False, default=str))
 
 
+def _remote_scope(*values: str) -> str:
+    normalized_values = [
+        re.sub(r"[^a-z]+", " ", str(value or "").casefold()).strip()
+        for value in values
+    ]
+    joined = " ".join(value for value in normalized_values if value)
+    padded = f" {joined} "
+    if " remote " not in padded:
+        return "not_remote"
+    non_us = (
+        " remote europe ",
+        " remote european union ",
+        " remote emea ",
+        " remote united kingdom ",
+        " remote uk ",
+        " remote canada ",
+        " remote latam ",
+        " remote latin america ",
+        " remote apac ",
+        " remote india ",
+        " remote australia ",
+        " remote germany ",
+        " remote france ",
+        " remote netherlands ",
+        " remote ireland ",
+    )
+    if any(value in padded for value in non_us):
+        return "non_us"
+    us = (
+        " remote united states ",
+        " remote usa ",
+        " remote us ",
+        " remote u s ",
+        " remote north america ",
+    )
+    if any(value in padded for value in us):
+        return "us"
+    return "unspecified"
+
+
 def _score_job(job: dict[str, Any], profile: dict[str, Any]) -> tuple[int, list[str]]:
     title = str(job.get("title") or "").casefold()
     desc = str(job.get("description") or "").casefold()
@@ -103,7 +143,7 @@ def _score_job(job: dict[str, Any], profile: dict[str, Any]) -> tuple[int, list[
         if 0 < value < 20:
             years.append(value)
     if years:
-        required = min(years)
+        required = max(years)
         if required >= candidate_years + 4:
             score -= 35
             reasons.append(f"{required}+ YOE requirement")
@@ -114,9 +154,21 @@ def _score_job(job: dict[str, Any], profile: dict[str, Any]) -> tuple[int, list[
             score -= 6
             reasons.append(f"{required}+ YOE slight stretch")
 
-    if "remote" in location:
+    remote_scope = _remote_scope(
+        location,
+        desc[:240],
+        str(job.get("apply_url") or ""),
+        str(job.get("url") or ""),
+    )
+    if remote_scope == "non_us":
+        score -= 55
+        reasons.append("remote outside US")
+    elif remote_scope == "us":
         score += 12
-        reasons.append("remote")
+        reasons.append("US remote")
+    elif remote_scope == "unspecified":
+        score += 6
+        reasons.append("remote country unspecified")
     elif any(v in location for v in ("los angeles", "culver city", "santa monica", "burbank", "glendale", "pasadena", "hawthorne", "torrance", "el segundo", "beverly hills", "playa vista")):
         score += 12
         reasons.append("LA area")
