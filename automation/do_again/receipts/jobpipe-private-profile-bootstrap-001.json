@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:41902:1791387442:49e0a069caf6",
+  "error": null,
+  "finished_at_utc": "2026-10-07T16:24:32.779392+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "50eace2f44f7efea82738e083f57600640a52b73ff91b9c81db6859c66191547",
+  "request_id": "jobpipe-private-profile-bootstrap-001",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": false,
+      "repo_head": "5a9ceb69fabad93312f4a885b45ef8179f0eba4a"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": false,
+      "repo_head": "5a9ceb69fabad93312f4a885b45ef8179f0eba4a"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "50eace2f44f7efea82738e083f57600640a52b73ff91b9c81db6859c66191547",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+        "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-private-profile-bootstrap-001/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.045,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 5055,
+      "script_path": "/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-private-profile-bootstrap-001/script.py",
+      "script_sha256": "54437f04391b6bc084a019db4086a7a7932c6bdde8c7360b9c16bacec95695fd",
+      "stderr": "Traceback (most recent call last):\n  File \"/Users/steventran/.do_again/jobpipe-state/scratch/jobpipe-private-profile-bootstrap-001/script.py\", line 11, in <module>\n    from core.private_home import PrivateHome\nModuleNotFoundError: No module named 'core'\n",
+      "stderr_truncated": false,
+      "stdout": "",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-07T16:24:32.622808+00:00",
+  "state": "failed",
+  "traceback": null
+}
