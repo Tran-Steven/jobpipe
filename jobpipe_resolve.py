@@ -22,6 +22,38 @@ def _greenhouse_slug(company: str) -> str:
     return re.sub(r"[^a-z0-9]", "", str(company or "").casefold())
 
 
+def _greenhouse_board_token_from_html(html: str) -> str:
+    patterns = (
+        r"boards\.greenhouse\.io/embed/job_board/js\?for=([a-zA-Z0-9_-]+)",
+        r"boards\.greenhouse\.io/embed/job_board\?for=([a-zA-Z0-9_-]+)",
+        r"job-boards\.greenhouse\.io/([a-zA-Z0-9_-]+)",
+        r"boards\.greenhouse\.io/([a-zA-Z0-9_-]+)",
+    )
+    for pattern in patterns:
+        match = re.search(pattern, html or "", re.I)
+        if match:
+            return match.group(1)
+    return ""
+
+
+async def _greenhouse_board_token_from_wrapper(
+    client: httpx.AsyncClient,
+    base_url: str,
+) -> str:
+    try:
+        response = await client.get(
+            base_url,
+            headers={"Accept": "text/html", "User-Agent": "jobpipe/0.1"},
+            follow_redirects=True,
+        )
+    except httpx.HTTPError:
+        return ""
+    if response.status_code != 200:
+        return ""
+    content = response.text[:2_000_000]
+    return _greenhouse_board_token_from_html(content)
+
+
 def _base_url(job: dict[str, Any]) -> str:
     metadata = job.get("metadata")
     if isinstance(metadata, str):
@@ -68,25 +100,74 @@ async def _greenhouse_lookup(job: dict[str, Any], base_url: str) -> dict[str, An
         or bool(gh_id)
     )
 
-    api = f"https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true"
     try:
         async with httpx.AsyncClient(timeout=12, follow_redirects=False) as client:
-            response = await client.get(api, headers={"Accept": "application/json", "User-Agent": "jobpipe/0.1"})
+            board_tokens = [slug]
+            if gh_id and parsed.hostname not in {
+                "grnh.se",
+                "boards.greenhouse.io",
+                "job-boards.greenhouse.io",
+                "my.greenhouse.io",
+            }:
+                wrapper_token = await _greenhouse_board_token_from_wrapper(
+                    client,
+                    base_url,
+                )
+                if wrapper_token and wrapper_token not in board_tokens:
+                    board_tokens.insert(0, wrapper_token)
+
+            jobs = None
+            resolved_token = ""
+            for token in board_tokens:
+                api = (
+                    "https://boards-api.greenhouse.io/v1/boards/"
+                    f"{token}/jobs?content=true"
+                )
+                response = await client.get(
+                    api,
+                    headers={
+                        "Accept": "application/json",
+                        "User-Agent": "jobpipe/0.1",
+                    },
+                )
+                if response.status_code != 200:
+                    continue
+                try:
+                    candidate_jobs = response.json().get("jobs", [])
+                except Exception:
+                    continue
+                if isinstance(candidate_jobs, list):
+                    jobs = candidate_jobs
+                    resolved_token = token
+                    break
     except httpx.HTTPError:
         return None
-    if response.status_code != 200:
-        return None
-    try:
-        jobs = response.json().get("jobs", [])
-    except Exception:
-        return None
-    if not isinstance(jobs, list):
+    if jobs is None:
         return None
 
     if gh_id:
         for item in jobs:
             if str(item.get("id") or "") == gh_id:
-                return {"state": "found", "url": str(item.get("absolute_url") or base_url), "source": "greenhouse_id"}
+                if resolved_token and parsed.hostname not in {
+                    "grnh.se",
+                    "boards.greenhouse.io",
+                    "job-boards.greenhouse.io",
+                    "my.greenhouse.io",
+                }:
+                    embed_url = (
+                        "https://job-boards.greenhouse.io/embed/job_app"
+                        f"?for={resolved_token}&token={gh_id}"
+                    )
+                    return {
+                        "state": "found",
+                        "url": embed_url,
+                        "source": "greenhouse_embed",
+                    }
+                return {
+                    "state": "found",
+                    "url": str(item.get("absolute_url") or base_url),
+                    "source": "greenhouse_id",
+                }
 
     matches = [item for item in jobs if _normalize_title(str(item.get("title") or "")) == title]
     if matches:

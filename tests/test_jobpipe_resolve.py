@@ -37,3 +37,8 @@ async def test_resolve_matched_missing_url(monkeypatch):
 
     assert result["failed"] == 1
     assert result["results"][0]["resolution"] == "missing_url"
+
+
+def test_greenhouse_board_token_from_wrapper_html() -> None:
+    html = '<script src="https://boards.greenhouse.io/embed/job_board/js?for=businessolver"></script>'
+    assert jobpipe_resolve._greenhouse_board_token_from_html(html) == "businessolver"
