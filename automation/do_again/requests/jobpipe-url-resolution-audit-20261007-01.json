@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-url-resolution-audit-20261007-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-07T23:25:00Z",
+  "expires_at_utc": "2026-10-08T00:25:00Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess\nrepo=Path('/Users/steventran/jobpipe')\nfor file in ['core/application_bundle_assembly.py','core/job_discovery.py','source_connectors/contract.py','core/non_submit_application_execution.py']:\n lines=(repo/file).read_text().splitlines()\n matches=[(i+1,line.strip()[:200]) for i,line in enumerate(lines) if 'application_url' in line or 'source_url' in line and 'url' in line]\n print('FILE',file,'URL_REFERENCES',matches[:35])\nr=subprocess.run([str(repo/'.venv/bin/python'),'-m','pytest','-q','tests/test_job_discovery.py','tests/test_job_search.py','tests/test_lever_source_connector.py','tests/test_greenhouse_source_connector.py'],cwd=repo,capture_output=True,text=True,timeout=160)\nprint('TARGETED_URL_TEST_EXIT',r.returncode)\nprint(r.stdout[-5000:])\nprint(r.stderr[-700:])\nraise SystemExit(r.returncode)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 190
+  }
+}
