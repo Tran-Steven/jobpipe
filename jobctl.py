@@ -45,6 +45,7 @@ from core.profile_store import CandidateVault
 from core.secrets import load_or_create_permit_secret
 from scripts.migrate_private_home import migrate
 from utils.csv_apply import CSVApplication, load_csv_queue, update_csv_application
+from jobpipe_discovery import list_jobs as jobpipe_list_jobs, print_json as jobpipe_print_json, scout as jobpipe_scout
 
 
 DEFAULT_STATUSES = "Needs user,Pending,Ready to apply"
@@ -959,6 +960,14 @@ def build_parser() -> argparse.ArgumentParser:
     invalidate_parser.add_argument("--csv", default="")
     invalidate_parser.add_argument("--resume-dir", default="")
 
+    scout_parser = subparsers.add_parser("scout", help="Discover and persist jobs from configured sources")
+    scout_parser.add_argument("--profile", default="config/jobpipe.search.yaml")
+    scout_parser.add_argument("--limit", type=int, default=0)
+
+    jobs_parser = subparsers.add_parser("jobs", help="List persisted discovered jobs")
+    jobs_parser.add_argument("--status", default="")
+    jobs_parser.add_argument("--limit", type=int, default=50)
+
     subparsers.add_parser("policy", help="Show tier-specific material and permit policy")
     status_parser = subparsers.add_parser("status", help="Summarize the event ledger")
     status_parser.add_argument("--run-id", default="")
@@ -981,6 +990,12 @@ def main() -> int:
             return cmd_mailbox(args)
         if args.command == "queue":
             return cmd_queue(args)
+        if args.command == "scout":
+            jobpipe_print_json(asyncio.run(jobpipe_scout(args.profile, args.limit)))
+            return 0
+        if args.command == "jobs":
+            jobpipe_print_json(jobpipe_list_jobs(args.status, args.limit))
+            return 0
         if args.command == "policy":
             return cmd_policy(args)
         if args.command == "status":
@@ -992,7 +1007,7 @@ def main() -> int:
         if args.command == "invalidate-review":
             return cmd_invalidate_review(args)
     except (FileNotFoundError, ValueError, RuntimeError) as exc:
-        parser.exit(int(ExitCode.INVALID_INPUT), f"jobctl: {exc}\n")
+        parser.exit(int(ExitCode.INVALID_INPUT), f"jobpipe: {exc}\n")
     return int(ExitCode.INTERNAL_ERROR)
 
 

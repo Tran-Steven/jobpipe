@@ -1,0 +1,38 @@
+preferences:
+  roles:
+    - Software Engineer
+    - Backend Engineer
+    - Full Stack Engineer
+    - Platform Engineer
+    - Java Engineer
+  keywords:
+    - Java
+    - Spring Boot
+    - PostgreSQL
+    - React
+    - TypeScript
+    - Docker
+    - Kubernetes
+    - AWS
+  min_match_score: 70
+  remote_only: false
+  locations:
+    - Los Angeles, CA
+    - Remote
+  exclude_companies: []
+target_boards:
+  greenhouse: []
+  lever: []
+search:
+  enabled: true
+  queries:
+    - Software Engineer
+    - Backend Engineer
+    - Full Stack Engineer
+  locations:
+    - Los Angeles, CA
+    - Remote
+  distance_miles: 50
+  results_per_query: 25
+  salary_min: 0
+custom_career_pages: []
