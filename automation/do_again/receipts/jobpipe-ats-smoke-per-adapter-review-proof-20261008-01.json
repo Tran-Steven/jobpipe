@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:70110:1791434979:7696abc569f9",
+  "error": null,
+  "finished_at_utc": "2026-10-08T05:20:46.247486+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "fe7fe013803a97c3688c26299476cd86bb0805e6aa40e6454311e6676b3d4584",
+  "request_id": "jobpipe-ats-smoke-per-adapter-review-proof-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "591832cea7d132086751ab806d269f6e58f67bc0"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "591832cea7d132086751ab806d269f6e58f67bc0"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "fe7fe013803a97c3688c26299476cd86bb0805e6aa40e6454311e6676b3d4584",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-ats-smoke-per-adapter-review-proof-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 22.646,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 3836,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-ats-smoke-per-adapter-review-proof-20261008-01/script.py",
+      "script_sha256": "f6c0b1ba1669a8cd143b4bdc50bd00a5e28e2496b0e4e5b0eb8c52a4894b8b60",
+      "stderr": "SMOKE_FAILURE\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT 0 ....                                                                     [100%]\n4 passed in 0.11s\n \nRESULT 1 ============================= test session starts ==============================\nplatform darwin -- Python 3.13.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: /Users/steventran/jobpipe\nconfigfile: pytest.ini\nplugins: asyncio-1.4.0, anyio-4.15.1\nasyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 36 items / 27 deselected / 9 selected\n\ntests/test_ats_adapter_contract.py .........                             [100%]\n\n====================== 9 passed, 27 deselected in 19.76s =======================\nATS_FIXTURE_REVIEW_GATE=FAIL; LIVE_REVIEW=NOT_VERIFIED; SUBMISSIONS=NOT_ATTEMPTED\n \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T05:20:23.314918+00:00",
+  "state": "failed",
+  "traceback": null
+}
