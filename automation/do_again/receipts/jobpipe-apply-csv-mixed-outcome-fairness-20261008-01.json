@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "error": null,
+  "finished_at_utc": "2026-10-08T06:30:11.384463+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "200855be1446d089ffae855fd6984fa2d921eba7dcccb85a6d303d1245694f7c",
+  "request_id": "jobpipe-apply-csv-mixed-outcome-fairness-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "bcdc0a0e3e4cc857dcb29367f4567b2a59926517"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "fa14160ffaa13df9c6a999eb58fac24ef05f6991"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "200855be1446d089ffae855fd6984fa2d921eba7dcccb85a6d303d1245694f7c",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-apply-csv-mixed-outcome-fairness-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 4.767,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 3992,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-apply-csv-mixed-outcome-fairness-20261008-01/script.py",
+      "script_sha256": "4a73dfdfe82102665474e87b2a06fbf30889e31ac09598a5890daa0930f9c8d1",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   fa14160..bcdc0a0  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT 0 ..........                                                               [100%]\n10 passed in 0.93s\n \n[main bcdc0a0] test: ensure blocked ATS queue row does not starve later Review outcome\n 1 file changed, 41 insertions(+)\nVERIFIED_PUSH bcdc0a0e3e4cc857dcb29367f4567b2a59926517\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T06:30:06.149864+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
