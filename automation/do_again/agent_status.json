@@ -3,13 +3,11 @@
   "control_worktree": "/Users/steventran/.do_again/projects/42ba1b7dcb92/control",
   "host": "Stevens-Mac-mini.local",
   "instance_id": "Stevens-Mac-mini.local:42552:1791437690:5f46a06c9e0b",
-  "last_request_id": "jobpipe-ats-smoke-loopback-coverage-20261008-01",
-  "last_request_state": "succeeded",
   "pid": 42552,
   "remote": "origin",
   "repo": "/Users/steventran/jobpipe",
   "schema_version": 1,
   "started_at_utc": "2026-10-08T05:34:50.934120+00:00",
-  "state": "ready",
-  "updated_at_utc": "2026-10-08T05:38:53.369245+00:00"
+  "state": "stopped",
+  "updated_at_utc": "2026-10-08T05:41:43.616780+00:00"
 }
