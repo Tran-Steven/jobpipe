@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-five-commit-milestone-audit-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T01:51:00Z",
+  "expires_at_utc": "2026-10-08T02:51:00Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess\nrepo=Path('/Users/steventran/jobpipe')\ndef run(*argv):\n p=subprocess.run(argv,cwd=repo,capture_output=True,text=True,timeout=35,check=True)\n return p.stdout.strip()\nprint('HEAD',run('git','rev-parse','HEAD'))\nprint('ORIGIN',run('git','rev-parse','origin/main'))\nprint('DIRTY',run('git','status','--short'))\nprint('FIVE_COMMITS',run('git','log','-5','--format=%h %s'))\nprint('CHANGED_FILES',run('git','diff','--name-only','56a4a6bdb129e99ef765f15e5816a474b7d19fc1','HEAD'))\nfor f in ['core/job_salary_eligibility.py','core/job_discovery.py','core/current_priority_queue.py','core/current_application_execution_queue.py']:\n txt=(repo/f).read_text()\n print('CAPABILITY',f,'salary_evidence',('SalaryEvidence' in txt),'decide_salary',('decide_salary' in txt))\nprint('ACCEPTANCE', 'Milestone independent review: 5 commits versus issue 1; distinguish fixture test success from live ATS proof, note missing queue integration, preserve user changes and no live submission. No file modifications.')\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 95
+  }
+}
