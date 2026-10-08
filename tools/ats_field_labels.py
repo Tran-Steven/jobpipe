@@ -8,7 +8,10 @@ _FIELD_SCRIPT = r"""els => els.filter(e => !['hidden', 'password'].includes((e.t
   const referenced = (e.getAttribute('aria-labelledby')||'').split(/\\s+/).map(id => document.getElementById(id)).filter(Boolean).map(x=>x.innerText).join(' ');
   const group = e.closest('fieldset,[role="group"],[role="radiogroup"]');
   const legend = group && group.querySelector('legend,[role="heading"],[data-question]');
-  const question = clean(referenced || (legend && legend.innerText) || '');
+  const leverQuestion = e.closest('li.application-question');
+  // Restrict to the containing question; never traverse sibling questions.
+  const leverLabel = leverQuestion && leverQuestion.querySelector('.application-label');
+  const question = clean(referenced || (legend && legend.innerText) || (leverLabel && leverLabel.innerText) || '');
   return {type:(e.type||e.tagName).toLowerCase(), required:!!e.required || e.getAttribute('aria-required')==='true',
     label:direct,question:question,ambiguous:!question && (!direct || /^(yes|no)$/i.test(direct))};
 })"""
