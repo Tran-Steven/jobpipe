@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:46487:1791434177:b54c78afd413",
+  "error": null,
+  "finished_at_utc": "2026-10-08T04:48:00.427607+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "b6a462b6c11dfed2e4e911e00461c6dbdd1c368626dffe46fdc53b0c8628beb0",
+  "request_id": "jobpipe-p1-answer-fanout-hang-isolation-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "48c1c8dc12abae84a349548f50f64bd48f7691ed"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "67be58a8404f5429ae8554712e8c651f9d559ab7"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "b6a462b6c11dfed2e4e911e00461c6dbdd1c368626dffe46fdc53b0c8628beb0",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-answer-fanout-hang-isolation-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 18.523,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 6061,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-answer-fanout-hang-isolation-20261008-01/script.py",
+      "script_sha256": "2ec0b7bf2847ed6c61cc10078df9d38a88abb077ec0effd24a814642e0ba5b4a",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   67be58a..48c1c8d  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT ['tests/test_application_answer_resolution.py', '-k', 'slow_shared_answer_job_does_not_starve_later_jobs'] 1 F\n=================================== FAILURES ===================================\n____________ test_slow_shared_answer_job_does_not_starve_later_jobs ____________\ntests/test_application_answer_resolution.py:480: in test_slow_shared_answer_job_does_not_starve_later_jobs\n    monkeypatch.setattr(resolution_module, \"SHARED_ANSWER_PREPARATION_TIMEOUT_SECONDS\", 0.025)\nE   AttributeError: <module 'core.application_answer_resolution' from '/Users/steventran/jobpipe/core/application_answer_resolution.py'> has no attribute 'SHARED_ANSWER_PREPARATION_TIMEOUT_SECONDS'\n=========================== short test summary info ============================\nFAILED tests/test_application_answer_resolution.py::test_slow_shared_answer_job_does_not_starve_later_jobs\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 7 deselected in 2.70s\n \nRESULT ['tests/test_application_answer_resolution.py'] 0 ........                                                                 [100%]\n8 passed in 1.66s\n \nRESULT ['tests/test_application_answers.py', 'tests/test_human_attention_queue.py'] 0 .......................................                                  [100%]\n39 passed in 7.05s\n \n[main 48c1c8d] fix: bound blocked shared-answer preparation so later jobs progress\n 2 files changed, 54 insertions(+), 8 deletions(-)\nVERIFIED_PUSH 48c1c8dc12abae84a349548f50f64bd48f7691ed\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T04:47:41.578725+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
