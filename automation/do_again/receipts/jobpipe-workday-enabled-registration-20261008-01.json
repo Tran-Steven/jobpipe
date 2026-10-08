@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:93987:1791414800:9e48d0bdac84",
+  "error": null,
+  "finished_at_utc": "2026-10-08T01:00:40.019755+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "f4712aea1bea379e5e24e748570191e5d8d6c874bacf6c73c5c68382f5415496",
+  "request_id": "jobpipe-workday-enabled-registration-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "cf84a220a60b9c34a054b04a697c37e857a1713c"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "cf84a220a60b9c34a054b04a697c37e857a1713c"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "f4712aea1bea379e5e24e748570191e5d8d6c874bacf6c73c5c68382f5415496",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-enabled-registration-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 204.831,
+      "language": "python",
+      "returncode": 124,
+      "script_bytes": 4755,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-enabled-registration-20261008-01/script.py",
+      "script_sha256": "5e5f95b7ebe88271599b0f620a7a0d1a09aeec43554ead5dc792dd155a6978f1",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "RED_TEST_EXIT 1 F                                                                        [100%]\n=================================== FAILURES ===================================\n__________ test_registration_uses_only_enabled_create_account_control __________\n\n    @pytest.mark.asyncio\n    async def test_registration_uses_only_enabled_create_account_control():\n        playwright_module = pytest.importorskip(\"playwright.async_api\")\n        async with playwright_module.async_playwright() as playwright:\n            try:\n                browser = await playwright.chromium.launch(headless=True)\n            except Exception as exc:\n                pytest.skip(f\"Chromium unavailable: {type(exc).__name__}\")\n            try:\n                page = await browser.new_page()\n                await page.set_content(\n                    '<form><input data-automation-id=\"verifyPassword\" type=\"password\">'\n                    '<button data-automation-id=\"createAccountSubmitButton\" disabled>Creating...</button>'\n                    '<button data-automation-id=\"createAccountSubmitButton\" type=\"button\" onclick=\"window.createClicks=(window.createClicks||0)+1\">Create Account</button>'\n                    '</form>'\n                )\n>               assert await _click_create_account_submit(page)\nE               assert False\n\ntests/test_workday_adapter.py:1461: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_workday_adapter.py::test_registration_uses_only_enabled_create_account_control\n1 failed, 73 deselected in 33.65s\n \nTEST_TIMEOUT tests/test_ats_adapter_contract.py ........................................................................ [ 65%]\n........................... \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T00:57:14.898482+00:00",
+  "state": "failed",
+  "traceback": null
+}
