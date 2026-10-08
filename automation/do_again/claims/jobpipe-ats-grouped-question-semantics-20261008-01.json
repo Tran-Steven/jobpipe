@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "claimed_at_utc": "2026-10-08T14:01:22.955068+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 54526,
+  "request_fingerprint": "ce66e49dd7f021396c01a8ad06fabc3b4350d23b6ae793e2793cc6e8f4a0e5c7",
+  "request_id": "jobpipe-ats-grouped-question-semantics-20261008-01",
+  "schema_version": 1
+}
