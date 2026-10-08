@@ -1076,7 +1076,14 @@ def build_parser() -> argparse.ArgumentParser:
     autopilot_parser.add_argument("--apply-limit", type=int, default=0)
     autopilot_parser.add_argument("--submit", action="store_true")
     autopilot_parser.add_argument("--approve-gate-a", action="store_true")
-    autopilot_parser.add_argument("--continue-on-user", action="store_true")
+    # Autonomous queue processing must not let a blocked application starve others.
+    # Standalone apply-csv retains its conservative stop-on-user default.
+    autopilot_parser.add_argument(
+        "--continue-on-user", dest="continue_on_user", action="store_true", default=True
+    )
+    autopilot_parser.add_argument(
+        "--stop-on-user", dest="continue_on_user", action="store_false"
+    )
     autopilot_parser.add_argument("--semantic-mapper", action="store_true")
     autopilot_parser.add_argument("--headless", action="store_true")
     autopilot_parser.add_argument("--lease-ttl", type=float, default=1800.0)
