@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "error": null,
+  "finished_at_utc": "2026-10-08T06:36:23.105257+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "44825692c6ba7fb53b8602ec6cd73a0c1a80d5e67f6aa2256effffc5f3555b9f",
+  "request_id": "jobpipe-apply-csv-browser-lease-mixed-fairness-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "bcdc0a0e3e4cc857dcb29367f4567b2a59926517"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "bcdc0a0e3e4cc857dcb29367f4567b2a59926517"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "44825692c6ba7fb53b8602ec6cd73a0c1a80d5e67f6aa2256effffc5f3555b9f",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-apply-csv-browser-lease-mixed-fairness-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 2.726,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 4498,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-apply-csv-browser-lease-mixed-fairness-20261008-01/script.py",
+      "script_sha256": "283bad5e627c64c5723f8c8b769756d1b230c5071358d0556c30b0e1c8b846c4",
+      "stderr": "TEST_FAILED_NO_COMMIT\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT 1 ...F.......                                                              [100%]\n=================================== FAILURES ===================================\n__________ test_blocked_row_then_browser_leased_review_is_not_starved __________\ntests/test_apply_csv_queue_fairness.py:131: in test_blocked_row_then_browser_leased_review_is_not_starved\n    rc=await jobctl.cmd_apply_csv(args)\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\njobctl.py:724: in cmd_apply_csv\n    tenant=application.company,\n           ^^^^^^^^^^^^^^^^^^^\nE   AttributeError: 'types.SimpleNamespace' object has no attribute 'company'\n----------------------------- Captured stdout call -----------------------------\n{\"status\":\"NEEDS_USER\"}\n=========================== short test summary info ============================\nFAILED tests/test_apply_csv_queue_fairness.py::test_blocked_row_then_browser_leased_review_is_not_starved\n1 failed, 10 passed in 1.09s\n \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T06:36:19.932437+00:00",
+  "state": "failed",
+  "traceback": null
+}
