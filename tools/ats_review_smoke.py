@@ -16,7 +16,7 @@ PATTERNS = (
 )
 
 def main() -> int:
-    command = [sys.executable, "-m", "pytest", "-q", "--tb=short", TEST,
+    command = [sys.executable, "-m", "pytest", "-vv", "--tb=short", TEST,
                "-k", " or ".join(PATTERNS)]
     proc = subprocess.Popen(command, cwd=ROOT, start_new_session=True,
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
@@ -37,7 +37,24 @@ def main() -> int:
     count = int(match.group(1)) if match else 0
     # At least four distinct adapter Review fixtures + five safety assertions;
     # skips are disallowed because Chromium may be missing.
-    good = rc == 0 and count >= 9 and not re.search(r"\d+ skipped", output)
+    required = (
+        "test_adapter_reaches_review_with_required_fields_and_upload[greenhouse-",
+        "test_adapter_reaches_review_with_required_fields_and_upload[lever-",
+        "test_adapter_reaches_review_with_required_fields_and_upload[ashby-",
+        "test_adapter_reaches_review_with_required_fields_and_upload[jobvite-",
+    )
+    review_verified = all(
+        any(required_name in line and " PASSED" in line
+            for line in output.splitlines())
+        for required_name in required
+    )
+    safeguard_verified = any(
+        "test_submit_requires_gate_b" in line and " PASSED" in line
+        for line in output.splitlines()
+    )
+    good = (rc == 0 and count >= 9
+            and not re.search(r"\d+ skipped", output)
+            and review_verified and safeguard_verified)
     print(f"ATS_FIXTURE_REVIEW_GATE={'PASS' if good else 'FAIL'}; LIVE_REVIEW=NOT_VERIFIED; SUBMISSIONS=NOT_ATTEMPTED", flush=True)
     return 0 if good else (rc or 1)
 
