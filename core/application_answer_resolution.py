@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import inspect
 import json
@@ -41,6 +42,9 @@ from .human_attention_queue import (
 )
 from .private_home import PrivateHome
 
+
+# Limits preparation-only fan-out; this operation never interacts with Submit.
+SHARED_ANSWER_PREPARATION_TIMEOUT_SECONDS = 15.0
 
 APPLICATION_ANSWER_RESOLUTION_CONTRACT_VERSION = (
     "application-answer-resolution-v1"
@@ -651,15 +655,18 @@ async def resolve_application_answer(
                     continue
                 seen_plans.add(candidate.application_plan_id)
                 try:
-                    await preparation_callable(
-                        RunApplicationPreparationCommand(
-                            subject_id=subject,
-                            application_plan_id=candidate.application_plan_id,
-                            now=command.now,
-                        )
+                    await asyncio.wait_for(
+                        preparation_callable(
+                            RunApplicationPreparationCommand(
+                                subject_id=subject,
+                                application_plan_id=candidate.application_plan_id,
+                                now=command.now,
+                            )
+                        ),
+                        timeout=SHARED_ANSWER_PREPARATION_TIMEOUT_SECONDS,
                     )
-                except (OSError, RuntimeError, TypeError, ValueError):
-                    pass  # Other jobs remain individually resumable.
+                except (OSError, RuntimeError, TypeError, ValueError, asyncio.TimeoutError):
+                    pass  # Timed-out jobs remain resumable; continue other plans.
         receipt = ApplicationAnswerResolutionReceipt.create(
             subject_id=subject,
             attention_item_id=item.item_id,

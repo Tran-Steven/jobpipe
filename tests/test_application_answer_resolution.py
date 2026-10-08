@@ -471,3 +471,42 @@ async def test_shared_basic_answer_isolates_failed_job_and_continues_later_jobs(
     replay=await resolve_application_answer(command,**common)
     assert replay.status is ApplicationAnswerResolutionStatus.UNCHANGED
     assert calls==["plan-1","plan-2","plan-3"]
+
+
+@pytest.mark.asyncio
+async def test_slow_shared_answer_job_does_not_starve_later_jobs(tmp_path, monkeypatch):
+    import asyncio
+    import core.application_answer_resolution as resolution_module
+    monkeypatch.setattr(resolution_module, "SHARED_ANSWER_PREPARATION_TIMEOUT_SECONDS", 0.025)
+    home=PrivateHome(tmp_path/"private")
+    home.ensure()
+    primary=_item(key=CanonicalApplicationAnswerKey.EMAIL)
+    def item(number):
+        return _raw(type(primary),item_id="human-attention-item-"+str(number)*64,
+            subject_id=SUBJECT,application_plan_id=f"plan-{number}",job_id=f"job-{number}",
+            audience=HumanAttentionAudience.USER,attention_kind=HumanAttentionKind.USER_FACT_REQUIRED,
+            source_stage=ApplicationPreparationStage.APPLICATION_ANSWERS,
+            canonical_answer_key=CanonicalApplicationAnswerKey.EMAIL,
+            required_action="Provide email",source_record_id=f"answer-set-{number}")
+    queue=_raw(HumanAttentionQueueResult,status=HumanAttentionQueueStatus.SUCCEEDED,
+               subject_id=SUBJECT,items=(primary,item(2),item(3)))
+    calls=[]
+    async def prepare(command):
+        calls.append(command.application_plan_id)
+        if command.application_plan_id=="plan-2":
+            await asyncio.Event().wait()
+        return _preparation(ApplicationPreparationStatus.COMPLETED)
+    parser=_Parser(ApplicationAnswerResolutionProposal(
+        canonical_key=CanonicalApplicationAnswerKey.EMAIL,
+        resolution_kind=ApplicationAnswerResolutionKind.FACT,
+        value="shared@example.test",evidence_text="shared@example.test",unambiguous=True))
+    result=await asyncio.wait_for(resolve_application_answer(
+        ApplicationAnswerResolutionCommand(SUBJECT,primary.item_id,
+            "My email is shared@example.test",NOW),
+        queue_reader=lambda **kw:queue,parser=parser,fact_write_service=_Writer(),
+        attestation_repository=PlanScopedApplicationAttestationRepository(home),
+        preparation_callable=prepare,
+        receipt_repository=ApplicationAnswerResolutionReceiptRepository(home)
+    ),timeout=1)
+    assert result.status is ApplicationAnswerResolutionStatus.RESOLVED_AND_PREPARATION_COMPLETED
+    assert calls==["plan-1","plan-2","plan-3"]
