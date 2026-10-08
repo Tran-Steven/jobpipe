@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import signal
 import subprocess
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,20 +18,28 @@ PATTERNS = (
 def main() -> int:
     command = [sys.executable, "-m", "pytest", "-q", "--tb=short", TEST,
                "-k", " or ".join(PATTERNS)]
-    proc = subprocess.Popen(command, cwd=ROOT, start_new_session=True)
+    proc = subprocess.Popen(command, cwd=ROOT, start_new_session=True,
+                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     try:
-        rc = proc.wait(timeout=300)
+        output, _ = proc.communicate(timeout=300)
+        rc = proc.returncode
     except subprocess.TimeoutExpired:
         os.killpg(proc.pid, signal.SIGTERM)
         try:
-            proc.wait(timeout=8)
+            proc.communicate(timeout=8)
         except subprocess.TimeoutExpired:
             os.killpg(proc.pid, signal.SIGKILL)
-            proc.wait()
+            proc.communicate()
         print("ATS_FIXTURE_REVIEW_GATE=TIMEOUT; LIVE_REVIEW=NOT_VERIFIED; SUBMISSIONS=NOT_ATTEMPTED", flush=True)
         return 124
-    print(f"ATS_FIXTURE_REVIEW_GATE={'PASS' if rc == 0 else 'FAIL'}; LIVE_REVIEW=NOT_VERIFIED; SUBMISSIONS=NOT_ATTEMPTED", flush=True)
-    return rc
+    print(output, end="" if output.endswith("\n") else "\n", flush=True)
+    match = re.search(r"(?<!\d)(\d+) passed", output)
+    count = int(match.group(1)) if match else 0
+    # At least four distinct adapter Review fixtures + five safety assertions;
+    # skips are disallowed because Chromium may be missing.
+    good = rc == 0 and count >= 9 and not re.search(r"\d+ skipped", output)
+    print(f"ATS_FIXTURE_REVIEW_GATE={'PASS' if good else 'FAIL'}; LIVE_REVIEW=NOT_VERIFIED; SUBMISSIONS=NOT_ATTEMPTED", flush=True)
+    return 0 if good else (rc or 1)
 
 if __name__ == "__main__":
     raise SystemExit(main())
