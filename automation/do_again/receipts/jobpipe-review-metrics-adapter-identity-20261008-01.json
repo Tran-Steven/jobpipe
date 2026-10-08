@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "error": null,
+  "finished_at_utc": "2026-10-08T06:04:15.602526+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "fdd54990e3f5b12fca3682121e0a5a124c88fb8d7f42af72be5a168eaa261b8d",
+  "request_id": "jobpipe-review-metrics-adapter-identity-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "ba110b4cf910d6bfe32a24999e8da7f746219973"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "ba110b4cf910d6bfe32a24999e8da7f746219973"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "fdd54990e3f5b12fca3682121e0a5a124c88fb8d7f42af72be5a168eaa261b8d",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-review-metrics-adapter-identity-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.414,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 3729,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-review-metrics-adapter-identity-20261008-01/script.py",
+      "script_sha256": "64b2175aef807a0edc4428ee8fd757cfe8695336f590e93221e74fe83715ba5d",
+      "stderr": "DETAILS_ANCHOR_CHANGED\n",
+      "stderr_truncated": false,
+      "stdout": "",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T06:04:14.683671+00:00",
+  "state": "failed",
+  "traceback": null
+}
