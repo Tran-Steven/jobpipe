@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-workday-override-gate-status-fix-20261008-04",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T02:58:45Z",
+  "expires_at_utc": "2026-10-08T03:58:45Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess,os,signal\nrepo=Path('/Users/steventran/jobpipe');src=repo/'jobctl.py';tests=repo/'tests/test_jobctl.py'\nexpected='227b00fb0142aa92df0c826f27980b65e2a452ad'\ndef run_git(args):\n return subprocess.run(['git',*args],cwd=repo,capture_output=True,text=True,check=True).stdout\nif run_git(['rev-parse','HEAD']).strip()!=expected or run_git(['rev-parse','origin/main']).strip()!=expected:raise SystemExit('HEAD_CHANGED')\nstatus=run_git(['status','--porcelain=v1','-z'])\nitems=[entry for entry in status.split('\\0') if entry]\nprint('STATUS_ENTRIES',repr(items))\nallowed={'adapters/protocol.py','do-again.toml','do-again-policy.json','jobctl.py','tests/test_jobctl.py'}\nif any(entry[3:] not in allowed for entry in items):raise SystemExit('UNEXPECTED_DIRTY')\nif not any(entry[3:]=='jobctl.py' for entry in items) or not any(entry[3:]=='tests/test_jobctl.py' for entry in items):raise SystemExit('EXPECTED_FIX_MISSING')\nsource=src.read_text()\nif 'registration uncertain' not in source or 'getattr(item, \"row\", {})' not in source:raise SystemExit('SAFETY_GUARD_MISSING')\nif 'test_apply_csv_explicit_uncertain_status_never_initializes_ats' not in tests.read_text():raise SystemExit('TEST_MISSING')\ndef check(args,seconds):\n p=subprocess.Popen([str(repo/'.venv/bin/python'),'-m','pytest','-q','--maxfail=1']+args,cwd=repo,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)\n try:o,e=p.communicate(timeout=seconds)\n except subprocess.TimeoutExpired:\n  os.killpg(p.pid,signal.SIGTERM)\n  try:o,e=p.communicate(timeout=8)\n  except subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);o,e=p.communicate()\n  print('TIMEOUT',args,o[-1300:]);raise SystemExit(124)\n print('TEST',args,'EXIT',p.returncode,o[-2400:],e[-300:])\n return p.returncode\nif check(['tests/test_ats_adapter_contract.py','-k','explicit_confirmation_produces_verified_evidence'],225):raise SystemExit('ASHBY_OR_ATS_FAILURE')\nif check(['tests/test_jobctl.py'],100):raise SystemExit('JOBCTL_FAILURE')\nif check([],670):raise SystemExit('FULL_SUITE_FAILURE')\nsubprocess.run(['git','add','--','jobctl.py','tests/test_jobctl.py'],cwd=repo,check=True)\nsubprocess.run(['git','commit','-m','fix: block uncertain Workday registration under status overrides'],cwd=repo,check=True)\nsubprocess.run(['git','push','origin','main'],cwd=repo,check=True,timeout=90)\nprint('VERIFIED_PUSH',run_git(['rev-parse','HEAD']).strip())\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 1320
+  }
+}
