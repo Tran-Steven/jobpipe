@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T15:19:22.065220+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "7a1b68d9d3901017fd73d222b705a9788c359b48f5d7d30bdd553c3851a3991b",
+  "request_id": "jobpipe-live-jobctl-capture-review-e2e-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "9e5a5c9016245a1162597e548060bc5543152316"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "9e5a5c9016245a1162597e548060bc5543152316"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "7a1b68d9d3901017fd73d222b705a9788c359b48f5d7d30bdd553c3851a3991b",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-live-jobctl-capture-review-e2e-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 8.975,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 2116,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-live-jobctl-capture-review-e2e-20261008-01/script.py",
+      "script_sha256": "3f6ee9ae0b32d44b0134f367ecc48b514898e7e203450744dd34d66efcb6c42c",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "CLI_EXIT 0 ERROR \nLIVE_JOBCTL_CAPTURE_REVIEW {\"fields\": 34, \"no_value_leak\": true, \"private_mode\": \"0600\", \"review_items\": 18, \"submission\": \"not_attempted\", \"synthetic_verified_answer_matches\": 1, \"verified_profile_candidates\": 3}\nVERIFIED_READONLY_CLI_END_TO_END\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T15:19:12.755499+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
