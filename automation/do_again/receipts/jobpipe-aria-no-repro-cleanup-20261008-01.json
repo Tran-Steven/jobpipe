@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T01:32:53.491123+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "76da2f41d99720fc0e835fc357ae09b10103ce536467e3eaf4fe562c21544686",
+  "request_id": "jobpipe-aria-no-repro-cleanup-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "66d63886d9851360bf7d548c3bfa2ee78a758fbd"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "66d63886d9851360bf7d548c3bfa2ee78a758fbd"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "76da2f41d99720fc0e835fc357ae09b10103ce536467e3eaf4fe562c21544686",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-aria-no-repro-cleanup-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.405,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1183,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-aria-no-repro-cleanup-20261008-01/script.py",
+      "script_sha256": "29a9a7bd8a0ab38158cef4f512f15ef067c1810d514dadd8bd3826d62b1329d1",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "STATUS_BEFORE  M adapters/protocol.py\n M do-again.toml\n M tests/test_workday_adapter.py\n?? do-again-policy.json\n\nRESTORED_ONLY_OWN_FAILED_REQUEST_TEST\nSTATUS_AFTER  M adapters/protocol.py\n M do-again.toml\n?? do-again-policy.json\n\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T01:32:52.493449+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
