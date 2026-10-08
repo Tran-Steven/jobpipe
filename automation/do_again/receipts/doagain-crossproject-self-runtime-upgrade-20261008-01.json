@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T13:51:55.999503+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "ed290d50d41d87a0139d35687da519daf4a4f444f3cb80ef9de111f7969e46cb",
+  "request_id": "doagain-crossproject-self-runtime-upgrade-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "b8a787b5b6c9df5bda03db4b5c9f3da67d80317a"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "b8a787b5b6c9df5bda03db4b5c9f3da67d80317a"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "ed290d50d41d87a0139d35687da519daf4a4f444f3cb80ef9de111f7969e46cb",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/doagain-crossproject-self-runtime-upgrade-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 1.236,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 1778,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/doagain-crossproject-self-runtime-upgrade-20261008-01/script.py",
+      "script_sha256": "808a062a8ca091ab9183bad191fb357927dd41cb430b933b4e64761a36a6a971",
+      "stderr": "target not quiescent; no upgrade attempted: [{\"kind\": \"browser_delivery_pending\", \"request_ids\": [\"selfdev-self-clean-new-main-upgrade-preflight-20261008-138\"], \"state\": \"browser_unresponsive\"}]\n",
+      "stderr_truncated": false,
+      "stdout": "=== preflight ===\n{\n  \"applied\": false,\n  \"deferred\": true,\n  \"effective_blockers\": [\n    {\n      \"kind\": \"browser_delivery_pending\",\n      \"request_ids\": [\n        \"selfdev-self-clean-new-main-upgrade-preflight-20261008-138\"\n      ],\n      \"state\": \"browser_unresponsive\"\n    }\n  ],\n  \"offline\": false,\n  \"preflight\": {\n    \"blockers\": [\n      {\n        \"kind\": \"browser_delivery_pending\",\n        \"request_ids\": [\n          \"selfdev-self-clean-new-main-upgrade-preflight-20261008-138\"\n        ],\n        \"state\": \"browser_unresponsive\"\n      }\n    ],\n    \"features\": {\n      \"liveness\": true,\n      \"rollout\": true\n    },\n    \"ignored_shared_browser_children\": [],\n    \"outbox_pending\": [\n      \"selfdev-self-clean-new-main-upgrade-preflight-20261008-138\"\n    ],\n    \"pending_requests\": [],\n    \"repo\": \"/Users/steventran/do-again\",\n    \"runtime_hash\": \"70e28a0c60720b27f80f468fd5426d63cc3166aeea088252b6a960febf610757\",\n    \"safe\": false,\n    \"service\": {\n      \"control_worktree\": \"/Users/steventran/.do_again/projects/41857a676462/control\",\n      \"installed\": true,\n      \"label\": \"io.github.tran-steven.do-again.41857a676462\",\n      \"pid\": 49258,\n      \"platform\": \"macos\",\n      \"repo\": \"/Users/steventran/do-again\",\n      \"running\": true,\n      \"runtime_dir\": \"/Users/steventran/.do_again/projects/41857a676462\",\n      \"service_manager\": \"launchd\"\n    },\n    \"started_requests\": []\n  }\n}\n\n\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T13:51:54.282790+00:00",
+  "state": "failed",
+  "traceback": null
+}
