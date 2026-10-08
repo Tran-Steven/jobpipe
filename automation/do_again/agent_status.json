@@ -3,13 +3,13 @@
   "control_worktree": "/Users/steventran/.do_again/projects/42ba1b7dcb92/control",
   "host": "Stevens-Mac-mini.local",
   "instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
-  "last_request_id": "jobpipe-p1-cross-job-answer-reuse-seam-20261008-01",
-  "last_request_state": "succeeded",
+  "last_request_id": "jobpipe-p1-two-job-verified-answer-acceptance-20261008-01",
+  "last_request_state": "failed",
   "pid": 94823,
   "remote": "origin",
   "repo": "/Users/steventran/jobpipe",
   "schema_version": 1,
   "started_at_utc": "2026-10-08T01:13:17.146713+00:00",
   "state": "ready",
-  "updated_at_utc": "2026-10-08T03:55:12.485103+00:00"
+  "updated_at_utc": "2026-10-08T03:58:43.421934+00:00"
 }
