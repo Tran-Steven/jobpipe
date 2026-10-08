@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T15:28:55.056082+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "a091069aa1e964bc02f8998d77436307ce5f340097be622251c8fd8dedd47a51",
+  "request_id": "jobpipe-jobctl-interactive-review-command-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "10c68b26ad4ad42876c9a05d7986279da87b32c7"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "10c68b26ad4ad42876c9a05d7986279da87b32c7"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "a091069aa1e964bc02f8998d77436307ce5f340097be622251c8fd8dedd47a51",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-jobctl-interactive-review-command-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 5.189,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 5549,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-jobctl-interactive-review-command-20261008-01/script.py",
+      "script_sha256": "d300c02547413a31052d1bd8f4201fe9b285987fae26f6de876522f61c063506",
+      "stderr": "TESTS_FAILED_NO_COMMIT\n",
+      "stderr_truncated": false,
+      "stdout": "TEST_EXIT 1 STDOUT ,str(bank),\"--employer\",\"Example\"]\n        answers=iter([\"SYNTHETIC_PRIVATE_ANSWER\",\"employer\",\"VERIFY\",\"SAVE\"])\n        with patch.object(sys,\"argv\",argv),patch(\"builtins.input\",side_effect=lambda _:next(answers)):\n>           assert jobctl.main()==0\n                   ^^^^^^^^^^^^^\n\ntests/test_ats_interactive_jobctl.py:18: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \njobctl.py:1187: in main\n    summary = review_interactively(Path(args.bank), batch[\"human_review\"], args.employer)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntools/ats_review_interactive.py:16: in review_interactively\n    answer=input_fn(\"Answer (blank to skip): \")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <_pytest.capture.DontReadFromInput object at 0x108d778c0>, size = -1\n\n    def read(self, size: int = -1) -> str:\n>       raise OSError(\n            \"pytest: reading from stdin while output is captured!  Consider using `-s`.\"\n        )\nE       OSError: pytest: reading from stdin while output is captured!  Consider using `-s`.\n\n.venv/lib/python3.13/site-packages/_pytest/capture.py:229: OSError\n----------------------------- Captured stdout call -----------------------------\n[Required] Do you use AI?\nAnswer (blank to skip): \n___________________________ test_abort_does_not_save ___________________________\n\ntmp_path = PosixPath('/private/var/folders/hz/0lpwv9355wl9kvss20pbt19c0000gn/T/pytest-of-steventran/pytest-111/test_abort_does_not_save0')\ncapsys = <_pytest.capture.CaptureFixture object at 0x109f7d090>\n\n    def test_abort_does_not_save(tmp_path,capsys):\n        fields=tmp_path/\"fields.json\";bank=tmp_path/\"bank.json\"\n        save_snapshot(fields,[{\"question\":\"Q\",\"type\":\"textarea\",\"required\":True}])\n        argv=[\"jobctl.py\",\"ats-review-interactive\",\"--fields\",str(fields),\"--bank\",str(bank),\"--employer\",\"Example\"]\n        answers=iter([\"SYNTHETIC\",\"global\",\"VERIFY\",\"CANCEL\"])\n        with patch.object(sys,\"argv\",argv),patch(\"builtins.input\",side_effect=lambda _:next(answers)):\n>           assert jobctl.main()==0\n                   ^^^^^^^^^^^^^\n\ntests/test_ats_interactive_jobctl.py:31: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \njobctl.py:1187: in main\n    summary = review_interactively(Path(args.bank), batch[\"human_review\"], args.employer)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntools/ats_review_interactive.py:16: in review_interactively\n    answer=input_fn(\"Answer (blank to skip): \")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <_pytest.capture.DontReadFromInput object at 0x108d778c0>, size = -1\n\n    def read(self, size: int = -1) -> str:\n>       raise OSError(\n            \"pytest: reading from stdin while output is captured!  Consider using `-s`.\"\n        )\nE       OSError: pytest: reading from stdin while output is captured!  Consider using `-s`.\n\n.venv/lib/python3.13/site-packages/_pytest/capture.py:229: OSError\n----------------------------- Captured stdout call -----------------------------\n[Required] Q\nAnswer (blank to skip): \n=========================== short test summary info ============================\nFAILED tests/test_ats_interactive_jobctl.py::test_end_to_end_interactive_verification_not_submission\nFAILED tests/test_ats_interactive_jobctl.py::test_abort_does_not_save - OSErr...\n2 failed, 57 passed in 3.87s\n STDERR \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T15:28:49.589696+00:00",
+  "state": "failed",
+  "traceback": null
+}
