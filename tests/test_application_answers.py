@@ -944,3 +944,92 @@ def test_verified_global_answer_reused_across_distinct_job_plans_without_scope_l
     for plan, result, values in prepared[:2]:
         assert values[CanonicalApplicationAnswerKey.PHONE].value == "+1 555 0104"
     assert CanonicalApplicationAnswerKey.PHONE not in prepared[2][2]
+
+
+@pytest.mark.asyncio
+async def test_one_verified_basic_answer_prepares_two_real_distinct_job_answer_sets(tmp_path):
+    from core.application_answer_resolution import (
+        ApplicationAnswerResolutionCommand, ApplicationAnswerResolutionKind,
+        ApplicationAnswerResolutionProposal, ApplicationAnswerResolutionReceiptRepository,
+        ApplicationAnswerResolutionStatus, resolve_application_answer,
+    )
+    from core.application_attestation import PlanScopedApplicationAttestationRepository
+    from core.application_fact_writer import ApplicationFactWriteService
+    from core.application_preparation_orchestrator import (
+        ApplicationPreparationStage, ApplicationPreparationStatus,
+        RunApplicationPreparationResult,
+    )
+    from core.human_attention_queue import (
+        HumanAttentionAudience, HumanAttentionKind,
+        HumanAttentionQueueItem, HumanAttentionQueueResult, HumanAttentionQueueStatus,
+    )
+    from types import SimpleNamespace
+    home=PrivateHome(tmp_path/"private")
+    _write_vault(home, [])
+    plans=PrivateHomeApplicationPlanRepository(home)
+    answers=PrivateHomePreparedApplicationAnswerSetRepository(home)
+    queue_items=[]
+    for index in (1,2):
+        plan=ApplicationPlan.create(
+            subject_id=SUBJECT,job_id=f"job-shared-{index}",job_revision=1,
+            job_content_hash=("%064x" % (80+index)),
+            priority_decision_id=f"decision-shared-{index}",
+            policy_id="priority-policy-v1",policy_version=1,
+            policy_content_hash="a"*64,
+            accepted_job_intent_id=f"intent-shared-{index}",
+            priority_level=ProposedPriorityLevel.P1,created_at=NOW)
+        assert plans.save(plan).plan==plan
+        item=object.__new__(HumanAttentionQueueItem)
+        for key,value in dict(
+           item_id="human-attention-item-"+str(index)*64,
+           subject_id=SUBJECT,application_plan_id=plan.plan_id,job_id=plan.job_id,
+           audience=HumanAttentionAudience.USER,
+           attention_kind=HumanAttentionKind.USER_FACT_REQUIRED,
+           source_stage=ApplicationPreparationStage.APPLICATION_ANSWERS,
+           canonical_answer_key=CanonicalApplicationAnswerKey.EMAIL,
+           required_action="Provide verified email",source_record_id=f"missing-email-{index}",
+        ).items():object.__setattr__(item,key,value)
+        queue_items.append(item)
+    queue=object.__new__(HumanAttentionQueueResult)
+    for key,value in dict(status=HumanAttentionQueueStatus.SUCCEEDED,
+                          subject_id=SUBJECT,items=tuple(queue_items)).items():
+        object.__setattr__(queue,key,value)
+    class Parser:
+        def parse(self,_):
+            return ApplicationAnswerResolutionProposal(
+                canonical_key=CanonicalApplicationAnswerKey.EMAIL,
+                resolution_kind=ApplicationAnswerResolutionKind.FACT,
+                value="shared@example.test",
+                evidence_text="shared@example.test",unambiguous=True)
+    seen=[]
+    async def rerun(command):
+        result=prepare_application_answers(
+            PrepareApplicationAnswersCommand(
+                subject_id=command.subject_id,application_plan_id=command.application_plan_id,
+                now=command.now),
+            application_plan_repository=plans,
+            fact_provider=PrivateHomeApplicationFactProvider(home),
+            answer_policy=ApplicationAnswerPolicy.default(),
+            answer_set_repository=answers)
+        assert result.answer_set is not None
+        assert _answers_by_key(result)[CanonicalApplicationAnswerKey.EMAIL].value=="shared@example.test"
+        seen.append(command.application_plan_id)
+        value=object.__new__(RunApplicationPreparationResult)
+        for key,datum in dict(status=ApplicationPreparationStatus.COMPLETED,
+                              run=None,reason_code=None).items():
+            object.__setattr__(value,key,datum)
+        return value
+    command=ApplicationAnswerResolutionCommand(
+        SUBJECT,queue_items[0].item_id,"My email is shared@example.test",NOW)
+    common=dict(queue_reader=lambda **kwargs:queue,parser=Parser(),
+        fact_write_service=ApplicationFactWriteService(home),
+        attestation_repository=PlanScopedApplicationAttestationRepository(home),
+        preparation_callable=rerun,
+        receipt_repository=ApplicationAnswerResolutionReceiptRepository(home))
+    first=await resolve_application_answer(command,**common)
+    assert first.status is ApplicationAnswerResolutionStatus.RESOLVED_AND_PREPARATION_COMPLETED
+    assert set(seen)=={x.application_plan_id for x in queue_items}
+    assert len(seen)==2
+    second=await resolve_application_answer(command,**common)
+    assert second.status is ApplicationAnswerResolutionStatus.UNCHANGED
+    assert len(seen)==2
