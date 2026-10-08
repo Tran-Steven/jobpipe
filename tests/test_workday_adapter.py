@@ -1482,3 +1482,29 @@ async def test_registration_never_clicks_when_create_controls_disabled():
             assert not await _click_create_account_submit(page)
         finally:
             await browser.close()
+
+@pytest.mark.asyncio
+async def test_registration_click_exception_never_retries_potential_account_creation(monkeypatch):
+    playwright_module = pytest.importorskip("playwright.async_api")
+    from playwright.async_api import Locator
+    async with playwright_module.async_playwright() as playwright:
+        try:
+            browser = await playwright.chromium.launch(headless=True)
+        except Exception as exc:
+            pytest.skip(f"Chromium unavailable: {type(exc).__name__}")
+        try:
+            page = await browser.new_page()
+            await page.set_content(
+                '<form><input data-automation-id="verifyPassword" type="password">'
+                '<button data-automation-id="createAccountSubmitButton" type="button" onclick="window.clickCount=(window.clickCount||0)+1">Create Account</button>'
+                '</form>'
+            )
+            original_click = Locator.click
+            async def click_then_lose_response(self, *args, **kwargs):
+                await original_click(self, *args, **kwargs)
+                raise TimeoutError('simulated click response lost after DOM event')
+            monkeypatch.setattr(Locator, 'click', click_then_lose_response)
+            assert not await _click_create_account_submit(page)
+            assert await page.evaluate('window.clickCount') == 1
+        finally:
+            await browser.close()

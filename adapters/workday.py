@@ -2172,6 +2172,7 @@ async def _fill_registration(
 
 
 async def _click_create_account_submit(page: Any) -> bool:
+    click_attempted = False
     try:
         form = page.locator(
             'form:has([data-automation-id="verifyPassword"])'
@@ -2186,13 +2187,15 @@ async def _click_create_account_submit(page: Any) -> bool:
                 if await candidate.is_visible(timeout=350) and await candidate.is_enabled():
                     enabled.append(candidate)
             if len(enabled) == 1:
+                click_attempted = True
                 await enabled[0].click()
                 return True
             if len(enabled) > 1:
                 return False
             return await _click_named(form, ("Create Account", "Register"))
     except Exception:
-        pass
+        if click_attempted:
+            return False  # Browser may have delivered the account-creation click.
     try:
         verify = page.locator(
             '[data-automation-id="verifyPassword"]'
