@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "claimed_at_utc": "2026-10-08T06:11:09.698298+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 56125,
+  "request_fingerprint": "c105b2ebfda716dfa4687152781f4233a697224043249bb4133b31ae105dc56f",
+  "request_id": "jobpipe-autopilot-continue-blocked-jobs-20261008-01",
+  "schema_version": 1
+}
