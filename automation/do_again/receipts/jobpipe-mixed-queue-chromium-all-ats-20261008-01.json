@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "error": null,
+  "finished_at_utc": "2026-10-08T06:49:54.863861+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "035d8d7f64062f28ed518663b4128ad3432c6c9b007ceca6affde6cfeb5728c5",
+  "request_id": "jobpipe-mixed-queue-chromium-all-ats-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "d3300bde5d8938bcb502185591b052488ec5c20c"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "9d52bb31992ab0e867e6816e449c4d26cce9136b"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "035d8d7f64062f28ed518663b4128ad3432c6c9b007ceca6affde6cfeb5728c5",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-mixed-queue-chromium-all-ats-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 17.88,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 3080,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-mixed-queue-chromium-all-ats-20261008-01/script.py",
+      "script_sha256": "3342eb88a02df93d9c7b756ed6d55d03feeff85330d90118745368c50771f463",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   9d52bb3..d3300bd  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT 0 ....                                                                     [100%]\n4 passed, 40 deselected in 14.53s\n \n[main d3300bd] test: cover mixed-queue Chromium Review across four ATS adapters\n 1 file changed, 10 insertions(+), 7 deletions(-)\nVERIFIED_PUSH d3300bde5d8938bcb502185591b052488ec5c20c\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T06:49:36.579208+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
