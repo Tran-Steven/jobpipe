@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "claimed_at_utc": "2026-10-08T07:02:49.388478+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 56125,
+  "request_fingerprint": "24ce91db18685a6d71fbeb7a89ab8bc45a17438e4aacef67411ba0ffb36d4134",
+  "request_id": "jobpipe-live-ats-readonly-diagnostics-20261008-01",
+  "schema_version": 1
+}
