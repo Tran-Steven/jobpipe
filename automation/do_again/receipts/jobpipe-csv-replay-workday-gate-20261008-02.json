@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T03:50:06.842083+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "d7840622d51847c7a1a8e6bb73e471ca247481d88f193f29e8b3f773415a75b9",
+  "request_id": "jobpipe-csv-replay-workday-gate-20261008-02",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "2b57fff8ec673fef7fbeb6fe5ce00110a48a3f34"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "3fb4d24d11ee6f7f407c54e9265dcb490ee9024e"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "d7840622d51847c7a1a8e6bb73e471ca247481d88f193f29e8b3f773415a75b9",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-csv-replay-workday-gate-20261008-02/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 176.09,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 2170,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-csv-replay-workday-gate-20261008-02/script.py",
+      "script_sha256": "d6a105ad35742cf6919abd4469c71b9cf352e82856e1d374459e13f548f82b7f",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   3fb4d24..2b57fff  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "TARGET utils/csv_apply.py M utils/csv_apply.py\nTARGET tests/test_csv_apply.py M tests/test_csv_apply.py\nRESULT ['tests/test_csv_apply.py', 'tests/test_jobctl.py'] 0 .....................                                                    [100%]\n21 passed in 8.88s\n \nRESULT ['tests/test_workday_adapter.py'] 0 ........................................................................ [ 93%]\n.....                                                                    [100%]\n77 passed in 161.95s (0:02:41)\n \n[main 2b57fff] fix: exclude uncertain registration from CSV queue even with explicit statuses\n 2 files changed, 22 insertions(+)\nVERIFIED_PUSH 2b57fff8ec673fef7fbeb6fe5ce00110a48a3f34\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T03:47:10.239492+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
