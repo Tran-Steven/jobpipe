@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "claimed_at_utc": "2026-10-08T06:56:09.930796+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 56125,
+  "request_fingerprint": "82f7f582c45e66dc47734150e0321501248e454708a8983d488bba3af3cd467c",
+  "request_id": "jobpipe-ats-gate-mixed-queue-chromium-20261008-01",
+  "schema_version": 1
+}
