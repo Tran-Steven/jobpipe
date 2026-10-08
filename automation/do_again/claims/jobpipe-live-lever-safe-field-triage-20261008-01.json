@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "claimed_at_utc": "2026-10-08T14:31:52.089508+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 54526,
+  "request_fingerprint": "12a987d03281abedaae76b9da5cb1ba58da1c9360a09348729fd82f763163695",
+  "request_id": "jobpipe-live-lever-safe-field-triage-20261008-01",
+  "schema_version": 1
+}
