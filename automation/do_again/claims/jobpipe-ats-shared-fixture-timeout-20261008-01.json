@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T03:04:26.786668+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "35cc489b6639af7523191ba93a2998604901d152a5d710f7439f64bb19149040",
+  "request_id": "jobpipe-ats-shared-fixture-timeout-20261008-01",
+  "schema_version": 1
+}
