@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:93987:1791414800:9e48d0bdac84",
+  "error": null,
+  "finished_at_utc": "2026-10-08T01:01:20.897210+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "7e1dffb7dc8ea61e06b612cf0ebb3fb9673ae275fe883418886c0b83c043fb1e",
+  "request_id": "jobpipe-workday-enabled-fix-inspection-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "cf84a220a60b9c34a054b04a697c37e857a1713c"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "cf84a220a60b9c34a054b04a697c37e857a1713c"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "7e1dffb7dc8ea61e06b612cf0ebb3fb9673ae275fe883418886c0b83c043fb1e",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-enabled-fix-inspection-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.327,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 354,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-enabled-fix-inspection-20261008-01/script.py",
+      "script_sha256": "86e8f0bdf498ce76e4ca4f4f0f210ddc209d564958819433f569dc91604962ac",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "CMD ['git', 'status', '--short'] EXIT 0 OUT  M adapters/protocol.py\n M adapters/workday.py\n M do-again.toml\n M tests/test_workday_adapter.py\n?? do-again-policy.json\n ERR \nCMD ['git', 'diff', '--', 'adapters/workday.py', 'tests/test_workday_adapter.py'] EXIT 0 OUT diff --git a/adapters/workday.py b/adapters/workday.py\nindex f85a0b1..9860689 100644\n--- a/adapters/workday.py\n+++ b/adapters/workday.py\n@@ -2177,12 +2177,19 @@ async def _click_create_account_submit(page: Any) -> bool:\n             'form:has([data-automation-id=\"verifyPassword\"])'\n         ).first\n         if await form.is_visible(timeout=800):\n-            submit = form.locator(\n+            candidates = form.locator(\n                 '[data-automation-id=\"createAccountSubmitButton\"]'\n-            ).first\n-            if await submit.is_visible(timeout=600):\n-                await submit.click()\n+            )\n+            enabled = []\n+            for index in range(min(await candidates.count(), 10)):\n+                candidate = candidates.nth(index)\n+                if await candidate.is_visible(timeout=350) and await candidate.is_enabled():\n+                    enabled.append(candidate)\n+            if len(enabled) == 1:\n+                await enabled[0].click()\n                 return True\n+            if len(enabled) > 1:\n+                return False\n             return await _click_named(form, (\"Create Account\", \"Register\"))\n     except Exception:\n         pass\n@@ -2198,7 +2205,7 @@ async def _click_create_account_submit(page: Any) -> bool:\n         visible = []\n         for index in range(min(await buttons.count(), 10)):\n             button = buttons.nth(index)\n-            if await button.is_visible(timeout=350):\n+            if await button.is_visible(timeout=350) and await button.is_enabled():\n                 visible.append(button)\n         if len(visible) == 1:\n             await visible[0].click()\ndiff --git a/tests/test_workday_adapter.py b/tests/test_workday_adapter.py\nindex d6a4973..90cfab8 100644\n--- a/tests/test_workday_adapter.py\n+++ b/tests/test_workday_adapter.py\n@@ -1439,3 +1439,26 @@ async def test_registration_create_account_failure_returns_nonsecret_diagnostics\n     outcome, _ = await WorkdayAdapter()._register(context, None)\n     assert outcome.checkpoint == \"workday.auth.register\"\n     assert outcome.details[\"diagnostics\"][\"account_creation_controls\"][0][\"disabled\"]\n+\n+\n+\n+@pytest.mark.asyncio\n+async def test_registration_uses_only_enabled_create_account_control():\n+    playwright_module = pytest.importorskip(\"playwright.async_api\")\n+    async with playwright_module.async_playwright() as playwright:\n+        try:\n+            browser = await playwright.chromium.launch(headless=True)\n+        except Exception as exc:\n+            pytest.skip(f\"Chromium unavailable: {type(exc).__name__}\")\n+        try:\n+            page = await browser.new_page()\n+            await page.set_content(\n+                '<form><input data-automation-id=\"verifyPassword\" type=\"password\">'\n+                '<button data-automation-id=\"createAccountSubmitButton\" disabled>Creating...</button>'\n+                '<button data-automation-id=\"createAccountSubmitButton\" type=\"button\" onclick=\"window.createClicks=(window.createClicks||0)+1\">Create Account</button>'\n+                '</form>'\n+            )\n+            assert await _click_create_account_submit(page)\n+            assert await page.evaluate(\"window.createClicks\") == 1\n+        finally:\n+            await browser.close()\n ERR \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T01:01:19.932870+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
