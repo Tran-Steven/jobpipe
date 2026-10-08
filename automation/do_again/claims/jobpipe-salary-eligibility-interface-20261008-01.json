@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T01:35:01.923885+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "07da8e8e05fde052b25fc87e65ed2afb2a72e4954dad3b22ac765a5e193e698d",
+  "request_id": "jobpipe-salary-eligibility-interface-20261008-01",
+  "schema_version": 1
+}
