@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T03:55:08.023019+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "1f7d26c637157aaacdd550a5be7136a859421d89b31a96be8beb68a758beb917",
+  "request_id": "jobpipe-p1-cross-job-answer-reuse-seam-20261008-01",
+  "schema_version": 1
+}
