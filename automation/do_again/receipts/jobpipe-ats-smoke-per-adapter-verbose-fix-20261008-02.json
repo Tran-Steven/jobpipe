@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:70110:1791434979:7696abc569f9",
+  "error": null,
+  "finished_at_utc": "2026-10-08T05:21:58.875790+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "f6343588a50501666f9aa5327815a5d14a163030272a114170569bd8b45aa4cc",
+  "request_id": "jobpipe-ats-smoke-per-adapter-verbose-fix-20261008-02",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "f6f52b85a5778d283990a979033163865a88f6f0"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "591832cea7d132086751ab806d269f6e58f67bc0"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "f6343588a50501666f9aa5327815a5d14a163030272a114170569bd8b45aa4cc",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-ats-smoke-per-adapter-verbose-fix-20261008-02/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 32.344,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1992,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-ats-smoke-per-adapter-verbose-fix-20261008-02/script.py",
+      "script_sha256": "78d6de4340009001752f29fb5f40d6c9211fa2bfa6f4a40f749f03e86dea950a",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   591832c..f6f52b8  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT 0 ....                                                                     [100%]\n4 passed in 0.05s\n \nRESULT 0 ============================= test session starts ==============================\nplatform darwin -- Python 3.13.15, pytest-9.1.1, pluggy-1.6.0 -- /Users/steventran/jobpipe/.venv/bin/python\ncachedir: .pytest_cache\nrootdir: /Users/steventran/jobpipe\nconfigfile: pytest.ini\nplugins: asyncio-1.4.0, anyio-4.15.1\nasyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollecting ... collected 36 items / 27 deselected / 9 selected\n\ntests/test_ats_adapter_contract.py::test_adapter_reaches_review_with_required_fields_and_upload[greenhouse-GreenhouseAdapter-expected0] PASSED [ 11%]\ntests/test_ats_adapter_contract.py::test_adapter_reaches_review_with_required_fields_and_upload[lever-LeverAdapter-expected1] PASSED [ 22%]\ntests/test_ats_adapter_contract.py::test_adapter_reaches_review_with_required_fields_and_upload[ashby-AshbyAdapter-expected2] PASSED [ 33%]\ntests/test_ats_adapter_contract.py::test_adapter_reaches_review_with_required_fields_and_upload[jobvite-JobviteAdapter-expected3] PASSED [ 44%]\ntests/test_ats_adapter_contract.py::test_submit_requires_gate_b[greenhouse-GreenhouseAdapter-_expected0] PASSED [ 55%]\ntests/test_ats_adapter_contract.py::test_submit_requires_gate_b[lever-LeverAdapter-_expected1] PASSED [ 66%]\ntests/test_ats_adapter_contract.py::test_submit_requires_gate_b[ashby-AshbyAdapter-_expected2] PASSED [ 77%]\ntests/test_ats_adapter_contract.py::test_submit_requires_gate_b[jobvite-JobviteAdapter-_expected3] PASSED [ 88%]\ntests/test_ats_adapter_contract.py::test_review_requires_a_final_submit_control PASSED [100%]\n\n====================== 9 passed, 27 deselected in 28.28s =======================\nATS_FIXTURE_REVIEW_GATE=PASS; LIVE_REVIEW=NOT_VERIFIED; SUBMISSIONS=NOT_ATTEMPTED\n \n[main f6f52b8] fix: report per-adapter ATS Review evidence from verbose pytest\n 2 files changed, 33 insertions(+), 3 deletions(-)\nVERIFIED_PUSH f6f52b85a5778d283990a979033163865a88f6f0\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T05:21:26.235691+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
