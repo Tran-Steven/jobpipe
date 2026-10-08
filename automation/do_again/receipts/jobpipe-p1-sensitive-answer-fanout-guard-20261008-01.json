@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T04:10:11.648218+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "2ee8924fe7e6deb00f3a3314268ee539d980329371cf807676229d9b72679d14",
+  "request_id": "jobpipe-p1-sensitive-answer-fanout-guard-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "97cc0982f4a1f656ebd053872e61f26eb9f0142b"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "97cc0982f4a1f656ebd053872e61f26eb9f0142b"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "2ee8924fe7e6deb00f3a3314268ee539d980329371cf807676229d9b72679d14",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-sensitive-answer-fanout-guard-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 5.791,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 3755,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-sensitive-answer-fanout-guard-20261008-01/script.py",
+      "script_sha256": "e92aabea05595e2c3f65cac584e0de5ba1247bb7410f5f9810b213c34038aa60",
+      "stderr": "SAFETY_REGRESSION_FAILED_STOP_NO_COMMIT\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT ['tests/test_application_answer_resolution.py'] 1 ....F\n=================================== FAILURES ===================================\n_ test_sensitive_answer_never_fans_out_to_other_job_plans[work_authorization-USER_FACT_REQUIRED-True] _\ntests/test_application_answer_resolution.py:422: in test_sensitive_answer_never_fans_out_to_other_job_plans\n    assert result.status is ApplicationAnswerResolutionStatus.RESOLVED_AND_PREPARATION_COMPLETED\nE   AssertionError: assert <ApplicationAnswerResolutionStatus.DEFERRED_AMBIGUOUS_INPUT: 'DEFERRED_AMBIGUOUS_INPUT'> is <ApplicationAnswerResolutionStatus.RESOLVED_AND_PREPARATION_COMPLETED: 'RESOLVED_AND_PREPARATION_COMPLETED'>\nE    +  where <ApplicationAnswerResolutionStatus.DEFERRED_AMBIGUOUS_INPUT: 'DEFERRED_AMBIGUOUS_INPUT'> = ApplicationAnswerResolutionResult(status=<ApplicationAnswerResolutionStatus.DEFERRED_AMBIGUOUS_INPUT: 'DEFERRED_AMBIGUOUS_INPUT'>, receipt=None, reason_code='AMBIGUOUS_INPUT', message='The response is not explicit enough to save safely.').status\nE    +  and   <ApplicationAnswerResolutionStatus.RESOLVED_AND_PREPARATION_COMPLETED: 'RESOLVED_AND_PREPARATION_COMPLETED'> = ApplicationAnswerResolutionStatus.RESOLVED_AND_PREPARATION_COMPLETED\n=========================== short test summary info ============================\nFAILED tests/test_application_answer_resolution.py::test_sensitive_answer_never_fans_out_to_other_job_plans[work_authorization-USER_FACT_REQUIRED-True]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 4 passed in 2.54s\n \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T04:10:05.290223+00:00",
+  "state": "failed",
+  "traceback": null
+}
