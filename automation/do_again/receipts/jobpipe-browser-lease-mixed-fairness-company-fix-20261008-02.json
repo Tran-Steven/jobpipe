@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "error": null,
+  "finished_at_utc": "2026-10-08T06:37:11.676393+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "ebc9bf9e6b744866b1825d412be1f1dbf923ffbfb165dc96f2208813b3db80df",
+  "request_id": "jobpipe-browser-lease-mixed-fairness-company-fix-20261008-02",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "09262dbf2ec916e30a49e6323af09b0774bb7927"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "bcdc0a0e3e4cc857dcb29367f4567b2a59926517"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "ebc9bf9e6b744866b1825d412be1f1dbf923ffbfb165dc96f2208813b3db80df",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-browser-lease-mixed-fairness-company-fix-20261008-02/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 4.414,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1954,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-browser-lease-mixed-fairness-company-fix-20261008-02/script.py",
+      "script_sha256": "e87c22ca09fdc53e80bce17f77e5adcd42ebf798be59c7403395d5fb49e511e5",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   bcdc0a0..09262db  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT 0 ...........                                                              [100%]\n11 passed in 0.98s\n \n[main 09262db] test: cover leased browser continuation after blocked queue row\n 1 file changed, 52 insertions(+)\nVERIFIED_PUSH 09262dbf2ec916e30a49e6323af09b0774bb7927\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T06:37:06.868907+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
