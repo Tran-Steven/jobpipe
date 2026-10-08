@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "claimed_at_utc": "2026-10-08T14:51:13.048336+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 54526,
+  "request_fingerprint": "9ad432a8d5ca0b5020ae0fefe5a485e3fb7bfe8c29e8545efb6ea28708f257b1",
+  "request_id": "jobpipe-reviewed-answer-integration-targeted-test-repair-20261008-01",
+  "schema_version": 1
+}
