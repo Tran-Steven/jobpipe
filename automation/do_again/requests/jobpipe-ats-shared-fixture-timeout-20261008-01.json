@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-ats-shared-fixture-timeout-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T03:02:00Z",
+  "expires_at_utc": "2026-10-08T04:02:00Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess,os,signal\nrepo=Path('/Users/steventran/jobpipe'); fixture=repo/'tests/test_ats_adapter_contract.py'; jobctl=repo/'jobctl.py'; jobtest=repo/'tests/test_jobctl.py'\nexpected='227b00fb0142aa92df0c826f27980b65e2a452ad'\ndef git(*a):return subprocess.run(['git',*a],cwd=repo,check=True,capture_output=True,text=True).stdout\nif git('rev-parse','HEAD').strip()!=expected or git('rev-parse','origin/main').strip()!=expected:raise SystemExit('AUTHORITY_CHANGED')\nentries=[e for e in git('status','--porcelain=v1','-z').split('\\0') if e]\nprint('DIRTY',repr(entries))\nallowed={'adapters/protocol.py','do-again.toml','do-again-policy.json','jobctl.py','tests/test_jobctl.py'}\nif any(e[3:] not in allowed for e in entries):raise SystemExit('UNEXPECTED_DIRTY')\nif 'test_apply_csv_explicit_uncertain_status_never_initializes_ats' not in jobtest.read_text():raise SystemExit('GUARD_TEST_MISSING')\nif 'getattr(item, \"row\", {})' not in jobctl.read_text():raise SystemExit('GUARD_MISSING')\ns=fixture.read_text()\nold='''    page.set_default_timeout(2_000)'''\nnew='''    # Local Chromium can stall briefly under concurrent desktop workloads.\n    # Keep fixture actions bounded without treating a 2s scheduling delay as an ATS failure.\n    page.set_default_timeout(10_000)'''\nif s.count(old)!=1:raise SystemExit('TIMEOUT_ANCHOR_CHANGED')\nfixture.write_text(s.replace(old,new,1))\ndef check(args,timeout):\n p=subprocess.Popen([str(repo/'.venv/bin/python'),'-m','pytest','-q','--maxfail=1']+args,cwd=repo,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)\n try:o,e=p.communicate(timeout=timeout)\n except subprocess.TimeoutExpired:\n  os.killpg(p.pid,signal.SIGTERM)\n  try:o,e=p.communicate(timeout=8)\n  except subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);o,e=p.communicate()\n  print('TIMEOUT',args,o[-1500:]);raise SystemExit(124)\n print('TEST',args,'EXIT',p.returncode,o[-2500:],e[-380:])\n return p.returncode\nfor args,seconds in [(['tests/test_ats_adapter_contract.py','-k','explicit_confirmation_produces_verified_evidence'],210),(['tests/test_jobctl.py'],100),([],640)]:\n if check(args,seconds):raise SystemExit('GATE_FAILED')\nsubprocess.run(['git','add','--','tests/test_ats_adapter_contract.py','jobctl.py','tests/test_jobctl.py'],cwd=repo,check=True)\nsubprocess.run(['git','commit','-m','fix: stabilize ATS fixture timing and guard uncertain Workday replay'],cwd=repo,check=True)\nsubprocess.run(['git','push','origin','main'],cwd=repo,check=True,timeout=90)\nprint('VERIFIED_PUSH',git('rev-parse','HEAD').strip())\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 1260
+  }
+}
