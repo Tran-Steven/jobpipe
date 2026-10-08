@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "claimed_at_utc": "2026-10-08T13:06:45.947509+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 56125,
+  "request_fingerprint": "d69a128c23178486d6e7b79839f202ec0e4a3d99d0c678acbbf9e37fe2179165",
+  "request_id": "jobpipe-live-ats-redirect-navigation-guard-20261008-01",
+  "schema_version": 1
+}
