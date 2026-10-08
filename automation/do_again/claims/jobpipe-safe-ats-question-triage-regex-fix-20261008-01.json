@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "claimed_at_utc": "2026-10-08T14:24:47.728363+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 54526,
+  "request_fingerprint": "8ccb0e9be1dfd124c2447da13fad73094475d9366c20ed9bb29068e0f405f887",
+  "request_id": "jobpipe-safe-ats-question-triage-regex-fix-20261008-01",
+  "schema_version": 1
+}
