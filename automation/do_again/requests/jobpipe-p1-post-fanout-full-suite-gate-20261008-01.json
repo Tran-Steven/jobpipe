@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-p1-post-fanout-full-suite-gate-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T04:53:20Z",
+  "expires_at_utc": "2026-10-08T05:53:20Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess,os,signal\nrepo=Path('/Users/steventran/jobpipe')\nbase='48c1c8dc12abae84a349548f50f64bd48f7691ed'\ndef git(*args):return subprocess.run(['git',*args],cwd=repo,text=True,capture_output=True,check=True).stdout.strip()\nhead=git('rev-parse','HEAD');remote=git('rev-parse','origin/main')\nprint('HEAD',head,'ORIGIN',remote,flush=True)\nif head!=base or remote!=base:raise SystemExit('AUTHORITY_CHANGED')\nprint('DIRTY',repr(git('status','--short')),flush=True)\nfiles=sorted((repo/'tests').glob('test_*.py'))\nprint('TEST_FILE_COUNT',len(files),flush=True)\nif len(files)<120:raise SystemExit('TEST_DISCOVERY_UNEXPECTED')\ngroups=[files[i::4] for i in range(4)]\npassed=skipped=0\nfor index,group in enumerate(groups,1):\n args=[str(repo/'.venv/bin/python'),'-m','pytest','-q','--tb=short','--maxfail=1']+[str(p.relative_to(repo)) for p in group]\n p=subprocess.Popen(args,cwd=repo,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)\n try:o,e=p.communicate(timeout=720)\n except subprocess.TimeoutExpired:\n  os.killpg(p.pid,signal.SIGTERM)\n  try:o,e=p.communicate(timeout=10)\n  except subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);o,e=p.communicate()\n  print('SHARD_TIMEOUT',index,o[-3000:],e[-600:],flush=True);raise SystemExit(124)\n print('SHARD',index,'FILES',len(group),'EXIT',p.returncode,'TAIL',o[-3400:],'STDERR',e[-800:],flush=True)\n if p.returncode:raise SystemExit('SUITE_REGRESSION_SHARD_'+str(index))\nprint('FULL_SUITE_VERIFIED_AT',head,flush=True)\nprint('NO_CODE_CHANGES_NO_PUSH',flush=True)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 3450
+  }
+}
