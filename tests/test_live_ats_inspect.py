@@ -54,3 +54,30 @@ async def test_redirect_to_unapproved_host_aborted_without_form_actions():
     with patch("tools.live_ats_inspect.async_playwright",return_value=Context()):
         with pytest.raises(ValueError,match="Navigation left"):
             await inspect("https://boards.greenhouse.io/valid")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("status,expected",[(200,True),(404,False),(403,False)])
+async def test_live_probe_http_status_is_not_confused_with_form_readiness(status,expected):
+    from unittest.mock import AsyncMock,patch
+    from tools.live_ats_inspect import inspect
+    class Page:
+        url="https://jobs.lever.co/example/123"
+        def set_default_timeout(self,*a):pass
+        async def route(self,*a):pass
+        async def goto(self,*a,**kw):return type("Response",(),{"status":status})()
+        def locator(self,selector):
+            return type("Locator",(),{"count":AsyncMock(return_value=0)})()
+    class Browser:
+        async def new_page(self,**kw):return Page()
+        async def close(self):pass
+    class Context:
+        async def __aenter__(self):return type("P",(),{"chromium":type("C",(),{"launch":AsyncMock(return_value=Browser())})()})()
+        async def __aexit__(self,*a):pass
+    with patch("tools.live_ats_inspect.async_playwright",return_value=Context()):
+        result=await inspect("https://jobs.lever.co/example/123")
+    assert result["http_status"]==status
+    assert result["reachable"] is expected
+    assert result["application_form_detected"] is False
+    assert result["live_review"]=="not_verified"
+    assert result["submission"]=="not_attempted"

@@ -31,15 +31,21 @@ async def inspect(url: str)->dict:
                 else:
                     await route.continue_()
             await page.route("**/*",navigation_guard)
-            await page.goto(url,wait_until="domcontentloaded",timeout=25000)
+            response=await page.goto(url,wait_until="domcontentloaded",timeout=25000)
             if blocked_navigations or not allowed_url(page.url):
                 raise ValueError("Navigation left approved ATS HTTPS domains")
+            status=response.status if response is not None else None
+            form_count=await page.locator("form").count()
+            input_count=await page.locator("input").count()
             return {
                 "url_host":urlsplit(page.url).hostname,
-                "reachable":True,
+                "reachable":status is not None and 200 <= status < 400,
+                "http_status":status,
+                "application_form_detected":bool(form_count and input_count),
+                "diagnostic_only":True,
                 "final_scheme":urlsplit(page.url).scheme,
-                "form_count":await page.locator("form").count(),
-                "input_count":await page.locator("input").count(),
+                "form_count":form_count,
+                "input_count":input_count,
                 "button_count":await page.locator("button").count(),
                 "live_review":"not_verified",
                 "submission":"not_attempted",
