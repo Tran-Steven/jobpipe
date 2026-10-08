@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-ats-bounded-suite-shards-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T03:17:45Z",
+  "expires_at_utc": "2026-10-08T04:17:45Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess,os,signal\nrepo=Path('/Users/steventran/jobpipe')\nexpected='227b00fb0142aa92df0c826f27980b65e2a452ad'\ndef git(*a):return subprocess.run(['git',*a],cwd=repo,check=True,text=True,capture_output=True).stdout\nif git('rev-parse','HEAD').strip()!=expected or git('rev-parse','origin/main').strip()!=expected:raise SystemExit('HEAD_CHANGED')\nentries=[i for i in git('status','--porcelain=v1','-z').split('\\0') if i]\nprint('STATUS',repr(entries))\nallow={'adapters/protocol.py','do-again.toml','do-again-policy.json','jobctl.py','tests/test_jobctl.py','tests/test_ats_adapter_contract.py'}\nif any(i[3:] not in allow for i in entries):raise SystemExit('UNEXPECTED_DIRTY')\nfor name,required in [('jobctl.py','getattr(item, \"row\", {})'),('tests/test_jobctl.py','test_apply_csv_explicit_uncertain_status_never_initializes_ats'),('tests/test_ats_adapter_contract.py','page.set_default_timeout(10_000)')]:\n if required not in (repo/name).read_text():raise SystemExit('EXPECTED_PATCH_MISSING '+name)\ndef test(args,timeout):\n p=subprocess.Popen([str(repo/'.venv/bin/python'),'-m','pytest','-q','--maxfail=1']+args,cwd=repo,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)\n try:o,e=p.communicate(timeout=timeout)\n except subprocess.TimeoutExpired:\n  os.killpg(p.pid,signal.SIGTERM)\n  try:o,e=p.communicate(timeout=8)\n  except subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);o,e=p.communicate()\n  print('TEST_TIMEOUT',args,o[-2200:]);raise SystemExit(124)\n print('TEST_RESULT',args,'exit',p.returncode,o[-3400:],e[-450:])\n return p.returncode\n# Split by test-file group, each pytest invocation bounded; collectively exercise every test_*.py\nfiles=sorted(x.relative_to(repo).as_posix() for x in (repo/'tests').rglob('test_*.py') if '__pycache__' not in x.parts)\nif not files:raise SystemExit('NO_TESTS')\ngroups=[[],[],[],[]]\nfor i,name in enumerate(files):groups[i%4].append(name)\nprint('TEST_FILE_COUNT',len(files),'GROUP_SIZES',[len(g) for g in groups])\nfor i,group in enumerate(groups):\n if test(group,840):raise SystemExit('GROUP_FAILED_'+str(i))\nprint('ALL_TEST_GROUPS_PASSED')\nsubprocess.run(['git','add','--','jobctl.py','tests/test_jobctl.py','tests/test_ats_adapter_contract.py'],cwd=repo,check=True)\nsubprocess.run(['git','commit','-m','fix: block uncertain registration override and stabilize ATS test timeout'],cwd=repo,check=True)\nsubprocess.run(['git','push','origin','main'],cwd=repo,check=True,timeout=90)\nprint('VERIFIED_PUSH',git('rev-parse','HEAD').strip())\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 3550
+  }
+}
