@@ -3,7 +3,7 @@
   "control_worktree": "/Users/steventran/.do_again/projects/42ba1b7dcb92/control",
   "host": "Stevens-Mac-mini.local",
   "instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
-  "last_request_id": "jobpipe-review-metrics-adapter-identity-corrected-20261008-02",
+  "last_request_id": "jobpipe-autopilot-continue-blocked-jobs-20261008-01",
   "last_request_state": "succeeded",
   "pid": 56125,
   "remote": "origin",
@@ -11,5 +11,5 @@
   "schema_version": 1,
   "started_at_utc": "2026-10-08T05:41:46.220348+00:00",
   "state": "ready",
-  "updated_at_utc": "2026-10-08T06:05:17.706527+00:00"
+  "updated_at_utc": "2026-10-08T06:11:20.489535+00:00"
 }
