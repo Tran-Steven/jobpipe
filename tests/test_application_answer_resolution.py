@@ -385,3 +385,41 @@ async def test_one_basic_answer_resumes_two_matching_jobs_without_replay(tmp_pat
     replay=await resolve_application_answer(cmd,**common)
     assert replay.status is ApplicationAnswerResolutionStatus.UNCHANGED
     assert len(calls)==2 and len(writer.calls)==1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("key,kind,value", [
+    (CanonicalApplicationAnswerKey.WORK_AUTHORIZATION,
+     HumanAttentionKind.USER_FACT_REQUIRED, True),
+    (CanonicalApplicationAnswerKey.SPONSORSHIP,
+     HumanAttentionKind.USER_FACT_REQUIRED, False),
+])
+async def test_sensitive_answer_never_fans_out_to_other_job_plans(tmp_path,key,kind,value):
+    home=PrivateHome(tmp_path / "private")
+    home.ensure()
+    original=_item(kind=kind,key=key)
+    other=_raw(type(original),item_id="human-attention-item-"+"b"*64,
+       subject_id=SUBJECT,application_plan_id="plan-2",job_id="job-2",
+       audience=HumanAttentionAudience.USER,attention_kind=kind,
+       source_stage=ApplicationPreparationStage.APPLICATION_ANSWERS,
+       canonical_answer_key=key,required_action="Confirm this sensitive answer",
+       source_record_id="answer-set-2")
+    queue=_raw(HumanAttentionQueueResult,status=HumanAttentionQueueStatus.SUCCEEDED,
+               subject_id=SUBJECT,items=(original,other))
+    evidence = ("Yes, I am authorized to work." if value
+                else "No, I do not need visa sponsorship.")
+    parser=_Parser(ApplicationAnswerResolutionProposal(
+        canonical_key=key,resolution_kind=ApplicationAnswerResolutionKind.FACT,
+        value=value,evidence_text=evidence,
+        unambiguous=True))
+    calls=[]
+    result=await resolve_application_answer(
+      ApplicationAnswerResolutionCommand(SUBJECT,original.item_id,
+          evidence,NOW),
+      queue_reader=lambda **kwargs:queue,parser=parser,
+      fact_write_service=_Writer(),
+      attestation_repository=PlanScopedApplicationAttestationRepository(home),
+      preparation_callable=_preparation_callable(ApplicationPreparationStatus.COMPLETED,calls),
+      receipt_repository=ApplicationAnswerResolutionReceiptRepository(home))
+    assert result.status is ApplicationAnswerResolutionStatus.RESOLVED_AND_PREPARATION_COMPLETED
+    assert [x.application_plan_id for x in calls]==["plan-1"]
