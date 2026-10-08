@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "claimed_at_utc": "2026-10-08T06:17:05.570577+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 56125,
+  "request_fingerprint": "d03442e6e4497bf848d257e8dbe807b94b0d8f9e9f9725c9f6005e3aa64a4e88",
+  "request_id": "jobpipe-autopilot-execution-handoff-tests-20261008-01",
+  "schema_version": 1
+}
