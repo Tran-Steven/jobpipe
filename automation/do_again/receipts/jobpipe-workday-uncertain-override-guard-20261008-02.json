@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T02:55:02.406293+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "ce5cc8a63e010baa5784cc403e20cd9f3573a91c34a1c77f488e295c42a790a0",
+  "request_id": "jobpipe-workday-uncertain-override-guard-20261008-02",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "227b00fb0142aa92df0c826f27980b65e2a452ad"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "227b00fb0142aa92df0c826f27980b65e2a452ad"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "ce5cc8a63e010baa5784cc403e20cd9f3573a91c34a1c77f488e295c42a790a0",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-uncertain-override-guard-20261008-02/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 367.829,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 2133,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-uncertain-override-guard-20261008-02/script.py",
+      "script_sha256": "345980a2255fefeba8c160bdac4959116a60d6388d32860d3f62e01bb5ea5dd0",
+      "stderr": "VALIDATION_FAILED\n",
+      "stderr_truncated": false,
+      "stdout": "STATUS  M adapters/protocol.py\n M do-again.toml\n M jobctl.py\n M tests/test_jobctl.py\n?? do-again-policy.json\n\nTEST ['tests/test_jobctl.py'] EXIT 0 ...............                                                          [100%]\n15 passed in 37.44s\n \nTEST [] EXIT 1 ackages/playwright/_impl/_page.py:553: in set_content\n    return await self._main_frame.set_content(**locals_to_params(locals()))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n.venv/lib/python3.13/site-packages/playwright/_impl/_frame.py:509: in set_content\n    await self._channel.send(\n.venv/lib/python3.13/site-packages/playwright/_impl/_connection.py:76: in send\n    return await self._connection.wrap_api_call(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <playwright._impl._connection.Connection object at 0x10d8d7150>\ncb = <function Channel.send.<locals>.<lambda> at 0x10dd77060>\nis_internal = False, title = None\n\n    async def wrap_api_call(\n        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None\n    ) -> Any:\n        if self._api_zone.get():\n            return await cb()\n        task = asyncio.current_task(self._loop)\n        parsed_st = _attach_api_call_information(\n            getattr(task, \"__pw_stack__\", None) or _capture_stack_trace(),\n            is_internal,\n            title,\n        )\n        self._api_zone.set(parsed_st)\n        try:\n            return await cb()\n        except Exception as error:\n>           raise rewrite_error(error, f\"{parsed_st['apiName']}: {error}\") from None\nE           playwright._impl._errors.TimeoutError: Page.set_content: Timeout 2000ms exceeded.\nE           Call log:\nE             - setting frame content, waiting until \"load\"\n\n.venv/lib/python3.13/site-packages/playwright/_impl/_connection.py:632: TimeoutError\n=============================== warnings summary ===============================\n.venv/lib/python3.13/site-packages/fastapi/testclient.py:1\n  /Users/steventran/jobpipe/.venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_ats_adapter_contract.py::test_explicit_confirmation_produces_verified_evidence[ashby-AshbyAdapter-_expected2]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 171 passed, 1 warning in 316.22s (0:05:16)\n \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T02:48:53.698926+00:00",
+  "state": "failed",
+  "traceback": null
+}
