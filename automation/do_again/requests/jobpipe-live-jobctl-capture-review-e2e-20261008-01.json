@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-live-jobctl-capture-review-e2e-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T15:18:40Z",
+  "expires_at_utc": "2026-10-08T16:18:40Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess,os,signal,json,tempfile\nrepo=Path('/Users/steventran/jobpipe');base='9e5a5c9016245a1162597e548060bc5543152316'\ndef git(*a):return subprocess.run(['git',*a],cwd=repo,check=True,capture_output=True,text=True).stdout.strip()\nif git('rev-parse','HEAD')!=base:raise SystemExit('AUTHORITY_CHANGED')\nwith tempfile.TemporaryDirectory(prefix='jobpipe-live-cli-') as tmp:\n folder=Path(tmp);fields=folder/'fields.json';bank=folder/'answers.json'\n from_dummy={\"version\":1,\"answers\":[{\"question\":\"Do you use AI in your role? ✱\",\"answer\":\"SYNTHETIC_NEVER_EXPOSE\",\"scope\":\"employer\",\"employer\":\"Ethena\",\"human_verified\":True}]}\n bank.write_text(json.dumps(from_dummy));bank.chmod(0o600)\n cmd=[str(repo/'.venv/bin/python'),'jobctl.py','ats-capture-review','--url','https://jobs.lever.co/ethena/f85bcfd1-8d2c-4cf5-a6ab-1c8ddab14c65/apply','--output',str(fields),'--bank',str(bank),'--employer','Ethena','--verified-profile-keys','full_name,email,phone']\n p=subprocess.Popen(cmd,cwd=repo,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)\n try:o,e=p.communicate(timeout=85)\n except subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);raise SystemExit('TIMEOUT')\n print('CLI_EXIT',p.returncode,'ERROR',e[-700:],flush=True)\n if p.returncode:raise SystemExit('LIVE_CLI_FAILED')\n assert 'SYNTHETIC_NEVER_EXPOSE' not in o\n d=json.loads(o);captured=json.loads(fields.read_text())\n assert d['input_field_count']==len(captured)>0\n assert d['review_item_count']>0 and d['submission']=='not_attempted'\n assert all(set(x)=={'type','question','label','required','ambiguous'} for x in captured)\n assert fields.stat().st_mode&0o777==0o600\n print('LIVE_JOBCTL_CAPTURE_REVIEW',json.dumps({'fields':len(captured),'review_items':d['review_item_count'],'verified_profile_candidates':len(d['verified_candidates']),'synthetic_verified_answer_matches':d['verified_answer_match_count'],'private_mode':'0600','no_value_leak':True,'submission':'not_attempted'},sort_keys=True),flush=True)\nassert git('rev-parse','HEAD')==base\nprint('VERIFIED_READONLY_CLI_END_TO_END',flush=True)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 145
+  }
+}
