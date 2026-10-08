@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T15:05:18.916229+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "7393f7e8e9dc4a940d4f79dbaf92c747a7a0211f960dfb3bee453026cd5a5bc5",
+  "request_id": "jobpipe-private-ats-field-snapshot-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "aed90183d1a53aafdcee17eabda69fa03fa13312"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "d26d9b205e9b88c40bf1343dd9945ebda271002b"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "7393f7e8e9dc4a940d4f79dbaf92c747a7a0211f960dfb3bee453026cd5a5bc5",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-private-ats-field-snapshot-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 7.394,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 4732,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-private-ats-field-snapshot-20261008-01/script.py",
+      "script_sha256": "9fcf2fa1db557f621fc732cc3756b7ee3b2955d66240ebb7d7a46818453213ab",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   d26d9b2..aed9018  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "TEST_EXIT 0 STDOUT ...........................................                              [100%]\n43 passed in 4.10s\n STDERR \n[main aed9018] feat: private sanitized ATS field snapshot for offline review\n 2 files changed, 65 insertions(+)\n create mode 100644 tests/test_ats_review_snapshot.py\n create mode 100644 tools/ats_review_snapshot.py\nVERIFIED_PUSH aed90183d1a53aafdcee17eabda69fa03fa13312\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T15:05:11.202405+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
