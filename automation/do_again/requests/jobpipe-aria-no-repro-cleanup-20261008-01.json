@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-aria-no-repro-cleanup-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T01:32:20Z",
+  "expires_at_utc": "2026-10-08T02:32:20Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess\nrepo=Path('/Users/steventran/jobpipe')\ntarget=repo/'tests/test_workday_adapter.py'\noriginal=subprocess.run(['git','show','HEAD:tests/test_workday_adapter.py'],cwd=repo,text=True,capture_output=True,check=True).stdout\ncurrent=target.read_text()\nstatus=subprocess.run(['git','status','--short'],cwd=repo,text=True,capture_output=True,check=True).stdout\nprint('STATUS_BEFORE',status)\nif current==original:\n print('ALREADY_CLEAN');raise SystemExit(0)\nmarker='\\n@pytest.mark.asyncio\\nasync def test_registration_respects_aria_disabled_submit_control():'\nif current.count(marker)!=1 or not current.startswith(original) or not current[len(original):].strip().startswith('@pytest.mark.asyncio'):\n raise SystemExit('UNEXPECTED_TEST_MODIFICATIONS_ABORT')\nsuffix=current[len(original):]\nif 'test_registration_respects_aria_disabled_submit_control' not in suffix or 'window.clicked === undefined' not in suffix:\n raise SystemExit('SUFFIX_MISMATCH_ABORT')\ntarget.write_text(original)\nprint('RESTORED_ONLY_OWN_FAILED_REQUEST_TEST')\nprint('STATUS_AFTER',subprocess.run(['git','status','--short'],cwd=repo,text=True,capture_output=True,check=True).stdout)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 80
+  }
+}
