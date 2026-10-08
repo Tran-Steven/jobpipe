@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-reviewed-answer-integration-targeted-test-repair-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T14:50:40Z",
+  "expires_at_utc": "2026-10-08T15:50:40Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess,os,signal,re\nrepo=Path('/Users/steventran/jobpipe');base='ee92da2f176d381696e33626e409f9bb4c50561b'\nsrc=repo/'tools/ats_review_answer_matches.py';test=repo/'tests/test_ats_review_answer_matches.py';bank=repo/'tools/ats_verified_answer_bank.py'\ndef git(*a):return subprocess.run(['git',*a],cwd=repo,check=True,text=True,capture_output=True).stdout.strip()\nif git('rev-parse','HEAD')!=base or git('rev-parse','origin/main')!=base:raise SystemExit('AUTHORITY_CHANGED')\nif not src.is_file() or not test.is_file() or not bank.is_file():raise SystemExit('INTEGRATION_FILES_MISSING')\ns=test.read_text()\nold='AI'+chr(92)*2+'n in your role?'\nnew='AI'+chr(92)+'n in your role?'\nif old in s:s=s.replace(old,new)\nif new not in s:raise SystemExit('NEWLINE_FIX_MISSING')\nold_assert='assert out[\"human_review\"][0][\"verified_answer_available\"]'\nnew_assert='assert any(item[\"question\"]==\"Do you use AI in your role?\" and item[\"verified_answer_available\"] for item in out[\"human_review\"])'\nif old_assert in s:s=s.replace(old_assert,new_assert)\nif new_assert not in s:raise SystemExit('ASSERTION_FIX_MISSING')\ntest.write_text(s)\np=subprocess.Popen([str(repo/'.venv/bin/python'),'-m','pytest','-q','tests/test_ats_review_answer_matches.py','tests/test_ats_verified_answer_bank.py','tests/test_ats_review_batch.py','tests/test_ats_question_triage.py','tests/test_ats_field_labels.py','tests/test_live_ats_inspect.py'],cwd=repo,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)\ntry:o,e=p.communicate(timeout=120)\nexcept subprocess.TimeoutExpired:\n os.killpg(p.pid,signal.SIGKILL);raise SystemExit('TEST_TIMEOUT')\nprint('TEST_EXIT',p.returncode,'STDOUT',o[-3500:],'STDERR',e[-1200:],flush=True)\nif p.returncode:raise SystemExit('TESTS_FAILED_NO_COMMIT')\nif git('rev-parse','HEAD')!=base or git('rev-parse','origin/main')!=base:raise SystemExit('AUTHORITY_CHANGED_AFTER_TEST')\nsubprocess.run(['git','add','--','tools/ats_review_answer_matches.py','tests/test_ats_review_answer_matches.py','tools/ats_verified_answer_bank.py'],cwd=repo,check=True)\nsubprocess.run(['git','commit','-m','feat: annotate reviewed questions with verified scoped answer availability'],cwd=repo,check=True)\nsubprocess.run(['git','push','origin','main'],cwd=repo,check=True)\nprint('VERIFIED_PUSH',git('rev-parse','HEAD'),flush=True)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 210
+  }
+}
