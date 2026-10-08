@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T04:00:44.896694+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "bb6a5a07e8a27d2e202d00b5b13084532b502a599939b41acd850814702e3768",
+  "request_id": "jobpipe-p1-two-job-answer-validation-correction-20261008-02",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "2b57fff8ec673fef7fbeb6fe5ce00110a48a3f34"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "2b57fff8ec673fef7fbeb6fe5ce00110a48a3f34"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "bb6a5a07e8a27d2e202d00b5b13084532b502a599939b41acd850814702e3768",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-two-job-answer-validation-correction-20261008-02/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.333,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 2172,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-two-job-answer-validation-correction-20261008-02/script.py",
+      "script_sha256": "1b2cb1b84b4211220a8c60d2a5bac4abb517ed4fe8ae8dd2139f618b21744695",
+      "stderr": "UNEXPECTED_DIRTY\n",
+      "stderr_truncated": false,
+      "stdout": "DIRTY ['M adapters/protocol.py', ' M do-again.toml', ' M tests/test_application_answers.py', '?? do-again-policy.json']\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T04:00:44.245072+00:00",
+  "state": "failed",
+  "traceback": null
+}
