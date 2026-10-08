@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T03:50:59.085637+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "6788bb1e92f7df80701eb19ce20e82a62712006525c8552227a636b21796ac78",
+  "request_id": "jobpipe-five-commit-workday-milestone-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "2b57fff8ec673fef7fbeb6fe5ce00110a48a3f34"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "2b57fff8ec673fef7fbeb6fe5ce00110a48a3f34"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "6788bb1e92f7df80701eb19ce20e82a62712006525c8552227a636b21796ac78",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-five-commit-workday-milestone-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.814,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1706,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-five-commit-workday-milestone-20261008-01/script.py",
+      "script_sha256": "2fbe0f5aae22329cda9971227a2293d73a0118ad054c02c783a4cdb6681cefb0",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "HEAD 2b57fff8ec673fef7fbeb6fe5ce00110a48a3f34 ORIGIN 2b57fff8ec673fef7fbeb6fe5ce00110a48a3f34\nDIRTY  M adapters/protocol.py\n M do-again.toml\n?? do-again-policy.json\n\nLAST_FIVE 2b57fff fix: exclude uncertain registration from CSV queue even with explicit statuses\n3fb4d24 fix: block uncertain registration override and stabilize ATS test timeout\n227b00f fix: persist uncertain Workday registration as non-replayable queue state\nd094c59 fix: preserve Workday credentials after uncertain registration\n534ef4b fix: do not retry uncertain Workday registration click\n\nCHANGE_SUMMARY  adapters/workday.py                | 27 ++++++++++++++++--\n jobctl.py                          | 13 +++++++++\n tests/test_ats_adapter_contract.py |  4 ++-\n tests/test_csv_apply.py            | 18 ++++++++++++\n tests/test_jobctl.py               | 40 ++++++++++++++++++++++++++\n tests/test_workday_adapter.py      | 57 ++++++++++++++++++++++++++++++++++++++\n utils/csv_apply.py                 |  4 +++\n 7 files changed, 159 insertions(+), 4 deletions(-)\n\nSOURCE_GUARDS\nFILE adapters/workday.py [(1077, 'except WorkdayRegistrationClickUncertain:'), (1085, 'details={\"do_not_retry_register\": True},'), (2188, 'class WorkdayRegistrationClickUncertain(Exception):'), (2216, 'raise WorkdayRegistrationClickUncertain() from exc')]\nFILE jobctl.py [(317, 'status = \"Registration uncertain\"'), (618, '# Registration uncertain. Never start credentials, a browser, or ATS auth.'), (622, '!= \"registration uncertain\"')]\nFILE utils/csv_apply.py [(95, 'if status == \"registration uncertain\":')]\nFILE tests/test_workday_adapter.py [(1487, 'async def test_registration_click_exception_never_retries_potential_account_creation(monkeypatch):'), (1515, 'async def test_uncertain_registration_keeps_generated_credential_and_requests_reconciliation(monkeypatch):')]\nFILE tests/test_csv_apply.py [(127, 'def test_uncertain_registration_cannot_be_loaded_even_with_explicit_status(tmp_path):')]\nPROOF_CLASSIFICATION Local synthetic regressions and receipt test suites passed; no verified post-fix live Alteryx Workday Review checkpoint and no real submissions.\nACCEPTANCE Milestone assessment after five implementation commits: evidence-backed safety and user-facing advancement, remaining live Workday blocker, highest-value next implementation target under GitHub roadmap issue #1. No file edits, browser, credentials or real ATS submission.\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T03:50:57.496063+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
