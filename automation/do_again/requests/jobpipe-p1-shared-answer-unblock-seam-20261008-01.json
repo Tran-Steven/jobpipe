@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-p1-shared-answer-unblock-seam-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T04:05:00Z",
+  "expires_at_utc": "2026-10-08T05:05:00Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess\nrepo=Path('/Users/steventran/jobpipe')\ndef git(*args):return subprocess.run(['git',*args],cwd=repo,capture_output=True,text=True,check=True).stdout.strip()\nhead=git('rev-parse','HEAD');origin=git('rev-parse','origin/main')\nprint('HEAD',head,'ORIGIN',origin)\nif head!='dcf8a09aa5e0c06a2ac09252d214be19b8fbf70c' or origin!=head:raise SystemExit('AUTHORITY_CHANGED')\nprint('DIRTY',git('status','--short'))\nfiles=['core/application_answer_resolution.py','core/application_fact_writer.py','core/human_attention_queue.py','core/application_preparation_orchestrator.py','tests/test_application_answer_resolution.py','tests/test_human_attention_queue.py']\nfor name in files:\n p=repo/name\n if not p.exists():continue\n lines=p.read_text().splitlines()\n print('FILE',name,'LENGTH',len(lines))\n terms=('resolve_application_answer','write_user_confirmed','allowed_scope','preparation_runner','run_application_preparation','prepare_application_answers','attention_item_id','canonical_key','_fact_from_record')\n matches=[i for i,s in enumerate(lines) if any(t in s for t in terms)]\n for i in matches[:25]:\n  print('AT',i+1,' '.join(s.strip() for s in lines[max(0,i-2):min(len(lines),i+4)])[:620])\nprint('ACCEPTANCE','Identify concrete P1 gap: one verified answer resolves one item but leaves other blocked compatible plans unprepared. Determine narrow integration seam to re-run each affected plan exactly once, preserve source scope and per-plan bindings, and avoid auto-applying legal or attestations. Recommend one falsifiable synthetic end-to-end test. No source changes, browser, credentials or real submissions.')\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 100
+  }
+}
