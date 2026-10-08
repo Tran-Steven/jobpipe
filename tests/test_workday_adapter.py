@@ -1504,7 +1504,38 @@ async def test_registration_click_exception_never_retries_potential_account_crea
                 await original_click(self, *args, **kwargs)
                 raise TimeoutError('simulated click response lost after DOM event')
             monkeypatch.setattr(Locator, 'click', click_then_lose_response)
-            assert not await _click_create_account_submit(page)
+            from adapters.workday import WorkdayRegistrationClickUncertain
+            with pytest.raises(WorkdayRegistrationClickUncertain):
+                await _click_create_account_submit(page)
             assert await page.evaluate('window.clickCount') == 1
         finally:
             await browser.close()
+
+@pytest.mark.asyncio
+async def test_uncertain_registration_keeps_generated_credential_and_requests_reconciliation(monkeypatch):
+    from adapters.workday import WorkdayRegistrationClickUncertain
+    page = AsyncMock()
+    context = WorkdayApplicationContext(
+        page=page, job_url=WORKDAY_URL,
+        profile={"personal": {"email": "synthetic@example.test"}},
+        job_id="uncertain-registration", run_id="uncertain-registration-run",
+        navigate=False, request_submit=False,
+    )
+    monkeypatch.setattr("adapters.workday._fill_registration",
+                        AsyncMock(return_value=RegistrationFillResult(fields_ready=True)))
+    monkeypatch.setattr("adapters.workday._click_create_account_submit",
+                        AsyncMock(side_effect=WorkdayRegistrationClickUncertain()))
+    monkeypatch.setattr("adapters.workday._stage_diagnostics",
+                        AsyncMock(return_value={"account_creation_controls": []}))
+    saved = []
+    restored = []
+    monkeypatch.setattr(WorkdayAdapter, "_save_generated_credential",
+                        lambda self, context, password: saved.append(password) or True)
+    monkeypatch.setattr(WorkdayAdapter, "_restore_generated_credential",
+                        lambda self, context, previous: restored.append(previous))
+    outcome, generated = await WorkdayAdapter()._register(context, None)
+    assert saved and generated == saved[-1]
+    assert restored == []
+    assert outcome.status is OutcomeStatus.NEEDS_USER_LOGIN
+    assert outcome.checkpoint == "workday.auth.register"
+    assert outcome.details["do_not_retry_register"] is True

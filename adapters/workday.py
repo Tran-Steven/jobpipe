@@ -1072,7 +1072,21 @@ class WorkdayAdapter(BaseATSAdapter):
                 ),
                 password,
             )
-        if not await _click_create_account_submit(context.page):
+        try:
+            account_clicked = await _click_create_account_submit(context.page)
+        except WorkdayRegistrationClickUncertain:
+            return (
+                _needs_user(
+                    context,
+                    OutcomeStatus.NEEDS_USER_LOGIN,
+                    ReasonCode.LOGIN_REQUIRED,
+                    "Workday account creation may have succeeded; reconcile before retry",
+                    checkpoint="workday.auth.register",
+                    details={"do_not_retry_register": True},
+                ),
+                password,
+            )
+        if not account_clicked:
             self._restore_generated_credential(context, previous_password)
             return (
                 _needs_user(
@@ -2171,6 +2185,10 @@ async def _fill_registration(
     )
 
 
+class WorkdayRegistrationClickUncertain(Exception):
+    """Create Account click may have reached the server; do not retry."""
+
+
 async def _click_create_account_submit(page: Any) -> bool:
     click_attempted = False
     try:
@@ -2193,9 +2211,9 @@ async def _click_create_account_submit(page: Any) -> bool:
             if len(enabled) > 1:
                 return False
             return await _click_named(form, ("Create Account", "Register"))
-    except Exception:
+    except Exception as exc:
         if click_attempted:
-            return False  # Browser may have delivered the account-creation click.
+            raise WorkdayRegistrationClickUncertain() from exc
     try:
         verify = page.locator(
             '[data-automation-id="verifyPassword"]'
