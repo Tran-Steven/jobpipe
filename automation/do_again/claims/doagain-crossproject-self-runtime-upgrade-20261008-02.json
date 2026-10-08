@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "claimed_at_utc": "2026-10-08T13:56:57.332730+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 54526,
+  "request_fingerprint": "8a56e10555bf7043fd5e2f0d5003c5c89847539c9a56fbeb1591229da907b996",
+  "request_id": "doagain-crossproject-self-runtime-upgrade-20261008-02",
+  "schema_version": 1
+}
