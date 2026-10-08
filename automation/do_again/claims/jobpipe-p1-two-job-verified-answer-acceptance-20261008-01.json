@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T03:58:23.127675+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "e45169280fb467f3b49a5267e95be1ede717a25a0af8c52968714defcde9bd60",
+  "request_id": "jobpipe-p1-two-job-verified-answer-acceptance-20261008-01",
+  "schema_version": 1
+}
