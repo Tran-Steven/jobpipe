@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "claimed_at_utc": "2026-10-08T05:58:14.868407+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 56125,
+  "request_fingerprint": "362eb3046dae58147a81588dbfa0be13cc52d9019532a7da23b33a31fd872411",
+  "request_id": "jobpipe-review-metrics-latest-state-20261008-01",
+  "schema_version": 1
+}
