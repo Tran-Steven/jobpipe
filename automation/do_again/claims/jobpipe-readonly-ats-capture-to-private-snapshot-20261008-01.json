@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "claimed_at_utc": "2026-10-08T15:07:42.518416+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 54526,
+  "request_fingerprint": "79b072019c7becab9304cc8a77fa0d40b37890a904a1515db3b1cbb00d7bec34",
+  "request_id": "jobpipe-readonly-ats-capture-to-private-snapshot-20261008-01",
+  "schema_version": 1
+}
