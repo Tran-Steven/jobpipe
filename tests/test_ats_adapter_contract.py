@@ -512,3 +512,74 @@ async def test_browser_navigates_local_http_ats_page_to_review_without_submit(
         server.shutdown()
         server.server_close()
         thread.join(timeout=3)
+
+@pytest.mark.asyncio
+async def test_apply_csv_continues_from_missing_material_to_real_chromium_review(
+    page, resume_file, profile, tmp_path
+):
+    """Browser-backed second row; only local fixture pages; never Submit."""
+    from types import SimpleNamespace
+    from unittest.mock import MagicMock, patch
+    import jobctl
+
+    url="http://127.0.0.1/fixture/greenhouse-review"
+    html=(FIXTURE_DIR/"greenhouse.html").read_text(encoding="utf-8")
+    await page.route(url,lambda route:route.fulfill(
+        status=200,content_type="text/html",body=html))
+    rows=[
+        SimpleNamespace(company="No Materials",row={"status":"Pending","source":"greenhouse"}),
+        SimpleNamespace(company="Local Fixture",row={"status":"Pending","source":"greenhouse"}),
+    ]
+    args=jobctl.build_parser().parse_args([
+        "--home",str(tmp_path),"apply-csv","--csv",str(tmp_path/"jobs.csv"),
+        "--continue-on-user","--approve-gate-a",
+    ])
+    paths=SimpleNamespace(job_queue=tmp_path/"jobs.csv",master_documents=tmp_path)
+    vault=SimpleNamespace(paths=paths,application_profile=lambda:profile,policy={})
+    blocked=SimpleNamespace(
+        status=jobctl.OutcomeStatus.NEEDS_USER,
+        exit_code=jobctl.ExitCode.NEEDS_USER,
+        to_json=lambda:'{"status":"NEEDS_USER"}')
+    job=SimpleNamespace(job_id="fixture-1",company="No Materials",
+        title="Engineer",tier=SimpleNamespace(value="low"))
+    bundle=SimpleNamespace(policy=SimpleNamespace(blockers=[],
+        gate_a_actor=jobctl.ApprovalActor.HUMAN))
+    engine=MagicMock()
+    engine.submission_preflight.return_value=None
+    engine.leases=object()
+    actual=[]
+    async def execute(**kwargs):
+        assert kwargs["request_submit"] is False
+        assert kwargs["page"] is page
+        context=context_for(page,"greenhouse",profile,resume_file,
+            answers={"work_authorization":"Yes"},request_submit=False)
+        from dataclasses import replace
+        outcome=await GreenhouseAdapter().run(
+            replace(context,job_url=url,navigate=True))
+        actual.append(outcome)
+        return outcome
+    engine.execute.side_effect=execute
+    class BrowserLease:
+        async def __aenter__(self):
+            return SimpleNamespace(session=SimpleNamespace(page=page),lease=object())
+        async def __aexit__(self,*args):return False
+    class PlaywrightContext:
+        async def __aenter__(self):return object()
+        async def __aexit__(self,*args):return False
+    def materials(*,application,**kwargs):
+        if application is rows[0]:raise FileNotFoundError("missing fixture material")
+        return bundle,profile
+    with patch.object(jobctl.CandidateVault,"load",return_value=vault), \
+         patch.object(jobctl,"load_csv_queue",return_value=rows), \
+         patch.object(jobctl,"MacOSSecurityCredentialStore",return_value=object()), \
+         patch.object(jobctl.JobApplicationEngine,"from_private_home",return_value=engine), \
+         patch.object(jobctl,"_mailbox_verifier",return_value=None), \
+         patch.object(jobctl,"_build_application_bundle",side_effect=materials), \
+         patch.object(jobctl,"_materials_required_outcome",return_value=(blocked,job)), \
+         patch.object(jobctl,"_project_csv_outcome") as project, \
+         patch.object(jobctl,"lease_browser_session",return_value=BrowserLease()), \
+         patch.object(jobctl,"async_playwright",return_value=PlaywrightContext()):
+        await jobctl.cmd_apply_csv(args)
+    assert len(actual)==1 and actual[0].status is OutcomeStatus.REVIEW_READY
+    assert project.call_count==2
+    assert await page.evaluate("window.fixtureSubmitCount")==0
