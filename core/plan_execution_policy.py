@@ -1012,14 +1012,15 @@ def decide_plan_execution_policy(
                 PlanExecutionPolicyFailureReason.PRIORITY_LEVEL_UNSUPPORTED,
             )
         decision_hash = _digest(policy_decision_to_dict(decision))
-        record_id = (
-            f"plan-execution-policy-{_digest({
-                'input_binding_hash': input_hash,
-                'policy_decision_hash': decision_hash,
-                'record_contract_version':
+        identity_hash = _digest(
+            {
+                "input_binding_hash": input_hash,
+                "policy_decision_hash": decision_hash,
+                "record_contract_version":
                     PLAN_EXECUTION_POLICY_RECORD_CONTRACT_VERSION,
-            })}"
+            }
         )
+        record_id = f"plan-execution-policy-{identity_hash}"
         existing_record = repository.get(
             subject_id=command.subject_id,
             record_id=record_id,

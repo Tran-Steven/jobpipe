@@ -8,6 +8,7 @@ import shlex
 import shutil
 import sys
 from pathlib import Path
+from unittest.mock import AsyncMock
 
 import pytest
 
@@ -212,12 +213,16 @@ async def test_isolated_runner_enforces_host_files_process_and_environment(
 
 
 @pytest.mark.asyncio
-async def test_image_and_output_bounds_fail_closed_without_generation(tmp_path):
+async def test_image_and_output_bounds_fail_closed_without_generation(tmp_path, monkeypatch):
+    # This exercises input validation, not native sandbox availability. Use an
+    # existing executable as the availability fixture and forbid any spawn.
+    spawn = AsyncMock(side_effect=AssertionError("invalid input must never spawn"))
+    monkeypatch.setattr("asyncio.create_subprocess_exec", spawn)
     adapter = _FakeSubscriptionAdapter(
         """printf '%s' '{"answer":"unused"}' > result.json"""
     )
     invalid = await IsolatedSubscriptionCLIRunner(
-        temporary_root=str(tmp_path)
+        temporary_root=str(tmp_path), sandbox_executable=sys.executable
     ).execute(
         _request(images=(_image(b"not-a-real-png"),)),
         backend_adapter=adapter,
@@ -225,7 +230,7 @@ async def test_image_and_output_bounds_fail_closed_without_generation(tmp_path):
     )
     too_many = tuple(_image(order=index) for index in range(5))
     excessive = await IsolatedSubscriptionCLIRunner(
-        temporary_root=str(tmp_path)
+        temporary_root=str(tmp_path), sandbox_executable=sys.executable
     ).execute(
         _request(images=too_many),
         backend_adapter=adapter,
@@ -235,6 +240,20 @@ async def test_image_and_output_bounds_fail_closed_without_generation(tmp_path):
     assert invalid.status is IsolatedStructuredModelStatus.IMAGE_INPUT_INVALID
     assert excessive.status is IsolatedStructuredModelStatus.IMAGE_INPUT_TOO_LARGE
     assert adapter.build_calls == 0
+    spawn.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_unavailable_sandbox_rejects_valid_request_without_spawn(tmp_path, monkeypatch):
+    spawn = AsyncMock(side_effect=AssertionError("missing isolation must never spawn"))
+    monkeypatch.setattr("asyncio.create_subprocess_exec", spawn)
+    adapter = _FakeSubscriptionAdapter("exit 0")
+    result = await IsolatedSubscriptionCLIRunner(
+        temporary_root=str(tmp_path), sandbox_executable=str(tmp_path / "missing-sandbox")
+    ).execute(_request(), backend_adapter=adapter, isolation_profile=_profile())
+    assert result.status is IsolatedStructuredModelStatus.ISOLATION_UNAVAILABLE
+    assert adapter.build_calls == 0
+    spawn.assert_not_awaited()
 
 
 @pytest.mark.skipif(

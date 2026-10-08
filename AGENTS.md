@@ -82,7 +82,7 @@ Before committing, run compile checks, `git diff --check`, the five Skill valida
 
 ## Git publication
 
-- Publish completed repository changes directly to `main`; do not create `codex/*` branches unless the user explicitly requests one.
+- Publish completed changes through isolated worktrees and narrowly scoped pull requests. Required exact-head CI must pass before merging; never bypass main-branch protection.
 - Commits created by Codex must keep the repository-configured user as the author and include `Co-authored-by: Codex <267193182+codex@users.noreply.github.com>`.
 
 ## Compatibility

@@ -1417,6 +1417,7 @@ async def test_registration_create_account_failure_returns_nonsecret_diagnostics
         run_id="registration-diagnostic-run",
         navigate=False,
         request_submit=False,
+        credential_store=InMemoryCredentialStore(),
     )
     monkeypatch.setattr(
         "adapters.workday._fill_registration",
@@ -1520,6 +1521,7 @@ async def test_uncertain_registration_keeps_generated_credential_and_requests_re
         profile={"personal": {"email": "synthetic@example.test"}},
         job_id="uncertain-registration", run_id="uncertain-registration-run",
         navigate=False, request_submit=False,
+        credential_store=InMemoryCredentialStore(),
     )
     monkeypatch.setattr("adapters.workday._fill_registration",
                         AsyncMock(return_value=RegistrationFillResult(fields_ready=True)))
