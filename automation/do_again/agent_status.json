@@ -3,7 +3,7 @@
   "control_worktree": "/Users/steventran/.do_again/projects/42ba1b7dcb92/control",
   "host": "Stevens-Mac-mini.local",
   "instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
-  "last_request_id": "jobpipe-safe-ats-question-triage-regex-fix-20261008-01",
+  "last_request_id": "jobpipe-live-lever-safe-field-triage-20261008-01",
   "last_request_state": "succeeded",
   "pid": 54526,
   "remote": "origin",
@@ -11,5 +11,5 @@
   "schema_version": 1,
   "started_at_utc": "2026-10-08T13:09:10.631749+00:00",
   "state": "ready",
-  "updated_at_utc": "2026-10-08T14:25:04.272586+00:00"
+  "updated_at_utc": "2026-10-08T14:32:04.363596+00:00"
 }
