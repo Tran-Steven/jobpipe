@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-live-lever-apply-form-field-inventory-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T13:57:00Z",
+  "expires_at_utc": "2026-10-08T14:57:00Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess,os,signal,json\nrepo=Path('/Users/steventran/jobpipe')\nbase='b8a787b5b6c9df5bda03db4b5c9f3da67d80317a'\ndef git(*a):return subprocess.run(['git',*a],cwd=repo,check=True,capture_output=True,text=True).stdout.strip()\nif git('rev-parse','HEAD')!=base:raise SystemExit('AUTHORITY_CHANGED')\nscript=r'''\nimport asyncio,json\nfrom urllib.parse import urlsplit\nfrom playwright.async_api import async_playwright\nfrom tools.live_ats_inspect import allowed_url\nurl=\"https://jobs.lever.co/ethena/f85bcfd1-8d2c-4cf5-a6ab-1c8ddab14c65/apply\"\nasync def main():\n async with async_playwright() as pw:\n  browser=await pw.chromium.launch(headless=True)\n  try:\n   page=await browser.new_page(accept_downloads=False)\n   async def guard(route):\n    if route.request.is_navigation_request() and not allowed_url(route.request.url):\n     await route.abort()\n    else:await route.continue_()\n   await page.route(\"**/*\",guard)\n   response=await page.goto(url,wait_until=\"domcontentloaded\",timeout=25000)\n   await page.wait_for_timeout(2500)\n   fields=await page.locator(\"input,select,textarea\").evaluate_all(\"\"\"els=>els.map(e=>({tag:e.tagName.toLowerCase(),type:(e.getAttribute('type')||'').toLowerCase(),required:e.required||e.getAttribute('aria-required')==='true',label:(e.labels&&e.labels[0]&&e.labels[0].innerText||e.getAttribute('aria-label')||'').trim().slice(0,90)}))\"\"\")\n   # Only structural metadata: no entered values, DOM snapshots, cookies, or candidate data.\n   filtered=[f for f in fields if f[\"type\"] not in (\"hidden\",\"password\")]\n   print(json.dumps({\"status\":response.status if response else None,\"host\":urlsplit(page.url).hostname,\"field_count\":len(fields),\"visible_field_type_counts\":{kind:sum(f[\"type\"]==kind for f in filtered) for kind in sorted({f[\"type\"] for f in filtered})},\"required_field_count\":sum(f[\"required\"] for f in filtered),\"required_field_labels\":[f[\"label\"] for f in filtered if f[\"required\"] and f[\"label\"]][:30],\"auth\":\"not_attempted\",\"form_filling\":\"not_attempted\",\"submission\":\"not_attempted\",\"review\":\"not_verified\"},sort_keys=True))\n  finally:await browser.close()\nasyncio.run(main())\n'''\np=subprocess.Popen([str(repo/'.venv/bin/python'),'-c',script],cwd=repo,text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)\ntry:o,e=p.communicate(timeout=65)\nexcept subprocess.TimeoutExpired:\n os.killpg(p.pid,signal.SIGKILL)\n raise SystemExit('TIMEOUT')\nprint('EXIT',p.returncode,'OUTPUT',o[-6500:],'ERROR',e[-900:],flush=True)\nif p.returncode:raise SystemExit('READONLY_DIAGNOSTIC_FAILED')\nr=json.loads(o)\nassert r['host']=='jobs.lever.co' and r['status']==200 and r['field_count']>=1\nassert r['auth']=='not_attempted' and r['form_filling']=='not_attempted' and r['submission']=='not_attempted'\nassert git('rev-parse','HEAD')==base\nprint('READONLY_FORM_STRUCTURE_VERIFIED',flush=True)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 140
+  }
+}
