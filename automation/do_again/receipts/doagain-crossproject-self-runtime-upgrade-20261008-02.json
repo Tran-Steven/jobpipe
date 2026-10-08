@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T13:57:01.655762+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "8a56e10555bf7043fd5e2f0d5003c5c89847539c9a56fbeb1591229da907b996",
+  "request_id": "doagain-crossproject-self-runtime-upgrade-20261008-02",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "b8a787b5b6c9df5bda03db4b5c9f3da67d80317a"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "b8a787b5b6c9df5bda03db4b5c9f3da67d80317a"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "8a56e10555bf7043fd5e2f0d5003c5c89847539c9a56fbeb1591229da907b996",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/doagain-crossproject-self-runtime-upgrade-20261008-02/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 2.425,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 1764,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/doagain-crossproject-self-runtime-upgrade-20261008-02/script.py",
+      "script_sha256": "f21819d566632d33e7c6032d9190c1812ecbe358cfd8fd46f0150ce3f2616c6e",
+      "stderr": "guarded upgrade command failed\n",
+      "stderr_truncated": false,
+      "stdout": "=== preflight ===\n{\n  \"applied\": false,\n  \"deferred\": false,\n  \"effective_blockers\": [],\n  \"offline\": false,\n  \"preflight\": {\n    \"blockers\": [],\n    \"features\": {\n      \"liveness\": true,\n      \"rollout\": true\n    },\n    \"ignored_shared_browser_children\": [],\n    \"outbox_pending\": [],\n    \"pending_requests\": [],\n    \"repo\": \"/Users/steventran/do-again\",\n    \"runtime_hash\": \"70e28a0c60720b27f80f468fd5426d63cc3166aeea088252b6a960febf610757\",\n    \"safe\": true,\n    \"service\": {\n      \"control_worktree\": \"/Users/steventran/.do_again/projects/41857a676462/control\",\n      \"installed\": true,\n      \"label\": \"io.github.tran-steven.do-again.41857a676462\",\n      \"pid\": 49258,\n      \"platform\": \"macos\",\n      \"repo\": \"/Users/steventran/do-again\",\n      \"running\": true,\n      \"runtime_dir\": \"/Users/steventran/.do_again/projects/41857a676462\",\n      \"service_manager\": \"launchd\"\n    },\n    \"started_requests\": []\n  }\n}\n\n\n=== apply ===\n{\n  \"applied\": false,\n  \"deferred\": true,\n  \"effective_blockers\": [\n    {\n      \"kind\": \"executor_children\",\n      \"processes\": [\n        {\n          \"command\": \"(git)\",\n          \"pid\": 30379,\n          \"ppid\": 49258\n        }\n      ]\n    }\n  ],\n  \"offline\": false,\n  \"preflight\": {\n    \"blockers\": [\n      {\n        \"kind\": \"executor_children\",\n        \"processes\": [\n          {\n            \"command\": \"(git)\",\n            \"pid\": 30379,\n            \"ppid\": 49258\n          }\n        ]\n      }\n    ],\n    \"features\": {\n      \"liveness\": true,\n      \"rollout\": true\n    },\n    \"ignored_shared_browser_children\": [],\n    \"outbox_pending\": [],\n    \"pending_requests\": [],\n    \"repo\": \"/Users/steventran/do-again\",\n    \"runtime_hash\": \"70e28a0c60720b27f80f468fd5426d63cc3166aeea088252b6a960febf610757\",\n    \"safe\": false,\n    \"service\": {\n      \"control_worktree\": \"/Users/steventran/.do_again/projects/41857a676462/control\",\n      \"installed\": true,\n      \"label\": \"io.github.tran-steven.do-again.41857a676462\",\n      \"pid\": 49258,\n      \"platform\": \"macos\",\n      \"repo\": \"/Users/steventran/do-again\",\n      \"running\": true,\n      \"runtime_dir\": \"/Users/steventran/.do_again/projects/41857a676462\",\n      \"service_manager\": \"launchd\"\n    },\n    \"started_requests\": []\n  }\n}\n\n\napply_rc=2\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T13:56:58.860667+00:00",
+  "state": "failed",
+  "traceback": null
+}
