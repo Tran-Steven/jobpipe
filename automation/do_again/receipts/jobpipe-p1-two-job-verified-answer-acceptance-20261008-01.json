@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T03:58:40.604031+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "e45169280fb467f3b49a5267e95be1ede717a25a0af8c52968714defcde9bd60",
+  "request_id": "jobpipe-p1-two-job-verified-answer-acceptance-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "2b57fff8ec673fef7fbeb6fe5ce00110a48a3f34"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "2b57fff8ec673fef7fbeb6fe5ce00110a48a3f34"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "e45169280fb467f3b49a5267e95be1ede717a25a0af8c52968714defcde9bd60",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-two-job-verified-answer-acceptance-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 14.114,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 3999,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-two-job-verified-answer-acceptance-20261008-01/script.py",
+      "script_sha256": "d527d5850c9522c482447a44a28f1db949e86fd39f312eb9f919a2de399bb6ae",
+      "stderr": "REGRESSION_FAILED_NO_COMMIT\n",
+      "stderr_truncated": false,
+      "stdout": "TEST ['tests/test_application_answers.py', '-k', 'verified_global_answer_reused_across_distinct_job_plans'] EXIT 0 .                                                                        [100%]\n1 passed, 21 deselected in 3.27s\n \nTEST ['tests/test_application_answers.py', 'tests/test_application_answer_resolution.py', 'tests/test_application_fact_writer.py'] EXIT 4 \nno tests ran in 0.01s\n ERROR: file or directory not found: tests/test_application_fact_writer.py\n\n\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T03:58:25.379708+00:00",
+  "state": "failed",
+  "traceback": null
+}
