@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T03:45:49.175043+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "8316d3453c128580af126396381bf9966c3159be8e7591e19b0665a3acc3a7c7",
+  "request_id": "jobpipe-csv-replay-admission-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "3fb4d24d11ee6f7f407c54e9265dcb490ee9024e"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "3fb4d24d11ee6f7f407c54e9265dcb490ee9024e"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "8316d3453c128580af126396381bf9966c3159be8e7591e19b0665a3acc3a7c7",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-csv-replay-admission-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 25.695,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 3236,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-csv-replay-admission-20261008-01/script.py",
+      "script_sha256": "c59f3ed673400c8ec3d565cc10d40188ff1d50f6c1a774dd53c076a86fe7bdd8",
+      "stderr": "VALIDATION_FAILED\n",
+      "stderr_truncated": false,
+      "stdout": "TEST ['tests/test_csv_apply.py', '-k', 'uncertain_registration_cannot_be_loaded'] EXIT 1 F\n=================================== FAILURES ===================================\n____ test_uncertain_registration_cannot_be_loaded_even_with_explicit_status ____\n\ntmp_path = PosixPath('/private/var/folders/hz/0lpwv9355wl9kvss20pbt19c0000gn/T/pytest-of-steventran/pytest-58/test_uncertain_registration_ca0')\n\n    def test_uncertain_registration_cannot_be_loaded_even_with_explicit_status(tmp_path):\n        csv_path = tmp_path / \"jobs.csv\"\n        resumes = tmp_path / \"resumes\"\n        resumes.mkdir()\n        _write_csv(csv_path, [\n            _row(\"Uncertain\", \"High\", \"Registration uncertain\"),\n            _row(\"Safe\", \"High\", \"Pending\"),\n        ])\n        selected = load_csv_queue(\n            csv_path, resumes, priorities=\"High\",\n            statuses=\"Registration uncertain,Pending\",\n        )\n>       assert [item.company for item in selected] == [\"Safe\"]\nE       AssertionError: assert ['Uncertain', 'Safe'] == ['Safe']\nE         \nE         At index 0 diff: 'Uncertain' != 'Safe'\nE         Left contains one more item: 'Safe'\nE         Use -v to get more diff\n\ntests/test_csv_apply.py:139: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_csv_apply.py::test_uncertain_registration_cannot_be_loaded_even_with_explicit_status\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 5 deselected in 10.27s\n \nTEST ['tests/test_csv_apply.py', 'tests/test_jobctl.py'] EXIT 0 .....................                                                    [100%]\n21 passed in 11.75s\n \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T03:45:22.930524+00:00",
+  "state": "failed",
+  "traceback": null
+}
