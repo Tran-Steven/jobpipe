@@ -423,3 +423,51 @@ async def test_sensitive_answer_never_fans_out_to_other_job_plans(tmp_path,key,k
       receipt_repository=ApplicationAnswerResolutionReceiptRepository(home))
     assert result.status is ApplicationAnswerResolutionStatus.RESOLVED_AND_PREPARATION_COMPLETED
     assert [x.application_plan_id for x in calls]==["plan-1"]
+
+
+@pytest.mark.asyncio
+async def test_shared_basic_answer_isolates_failed_job_and_continues_later_jobs(tmp_path):
+    home=PrivateHome(tmp_path/"private")
+    home.ensure()
+    original=_item(key=CanonicalApplicationAnswerKey.EMAIL)
+    def other_item(number, key=CanonicalApplicationAnswerKey.EMAIL,plan=None):
+        item=_raw(type(original),
+            item_id="human-attention-item-"+str(number)*64,
+            subject_id=SUBJECT,application_plan_id=plan or f"plan-{number}",
+            job_id=f"job-{number}",audience=HumanAttentionAudience.USER,
+            attention_kind=HumanAttentionKind.USER_FACT_REQUIRED,
+            source_stage=ApplicationPreparationStage.APPLICATION_ANSWERS,
+            canonical_answer_key=key,required_action="Provide email",
+            source_record_id=f"answer-set-{number}")
+        return item
+    items=(original,other_item(2),other_item(3),
+           other_item(4,key=CanonicalApplicationAnswerKey.PHONE),
+           other_item(5,plan="plan-3"))
+    queue=_raw(HumanAttentionQueueResult,status=HumanAttentionQueueStatus.SUCCEEDED,
+               subject_id=SUBJECT,items=items)
+    parser=_Parser(ApplicationAnswerResolutionProposal(
+        canonical_key=CanonicalApplicationAnswerKey.EMAIL,
+        resolution_kind=ApplicationAnswerResolutionKind.FACT,
+        value="shared@example.test",evidence_text="shared@example.test",
+        unambiguous=True))
+    calls=[]
+    async def prepare(command):
+        calls.append(command.application_plan_id)
+        if command.application_plan_id=="plan-2":
+            raise RuntimeError("synthetic isolated preparation failure")
+        return _preparation(ApplicationPreparationStatus.COMPLETED)
+    writer=_Writer()
+    common=dict(queue_reader=lambda **_:queue,parser=parser,
+        fact_write_service=writer,
+        attestation_repository=PlanScopedApplicationAttestationRepository(home),
+        preparation_callable=prepare,
+        receipt_repository=ApplicationAnswerResolutionReceiptRepository(home))
+    command=ApplicationAnswerResolutionCommand(
+       SUBJECT,original.item_id,"My email is shared@example.test",NOW)
+    resolved=await resolve_application_answer(command,**common)
+    assert resolved.status is ApplicationAnswerResolutionStatus.RESOLVED_AND_PREPARATION_COMPLETED
+    assert calls==["plan-1","plan-2","plan-3"]
+    assert len(writer.calls)==1
+    replay=await resolve_application_answer(command,**common)
+    assert replay.status is ApplicationAnswerResolutionStatus.UNCHANGED
+    assert calls==["plan-1","plan-2","plan-3"]
