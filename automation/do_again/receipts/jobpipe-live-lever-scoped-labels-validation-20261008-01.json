@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T14:20:52.376935+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "6bce0d30f722e61ac5cfdb2d15a95b4b337a44fecef5a32d23753431c060a27d",
+  "request_id": "jobpipe-live-lever-scoped-labels-validation-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "a97223391016df4285c38f5a46654e53ff61fe21"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "a97223391016df4285c38f5a46654e53ff61fe21"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "6bce0d30f722e61ac5cfdb2d15a95b4b337a44fecef5a32d23753431c060a27d",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-live-lever-scoped-labels-validation-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 6.652,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 2637,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-live-lever-scoped-labels-validation-20261008-01/script.py",
+      "script_sha256": "7c10dfff26d4bfd744f8e8a067043c6b97c66e3eb8f7240601adfbd8b5e3fd5b",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "EXIT 0 OUTPUT {\"ambiguous\": [], \"ambiguous_count\": 0, \"auth\": \"not_attempted\", \"baseline\": {\"ambiguous_count\": 11, \"field_count\": 34, \"grouped_count\": 0}, \"field_count\": 34, \"fill\": \"not_attempted\", \"grouped\": [{\"label\": \"Resume/CV\\n\\u2731\\nATTACH RESUME/CV\", \"question\": \"Resume/CV\\n\\u2731\", \"type\": \"file\"}, {\"label\": \"Full name\\n\\u2731\", \"question\": \"Full name\\n\\u2731\", \"type\": \"text\"}, {\"label\": \"He/him\", \"question\": \"Pronouns\", \"type\": \"checkbox\"}, {\"label\": \"She/her\", \"question\": \"Pronouns\", \"type\": \"checkbox\"}, {\"label\": \"They/them\", \"question\": \"Pronouns\", \"type\": \"checkbox\"}, {\"label\": \"Xe/xem\", \"question\": \"Pronouns\", \"type\": \"checkbox\"}, {\"label\": \"Ze/hir\", \"question\": \"Pronouns\", \"type\": \"checkbox\"}, {\"label\": \"Ey/em\", \"question\": \"Pronouns\", \"type\": \"checkbox\"}, {\"label\": \"Hir/hir\", \"question\": \"Pronouns\", \"type\": \"checkbox\"}, {\"label\": \"Fae/faer\", \"question\": \"Pronouns\", \"type\": \"checkbox\"}, {\"label\": \"Hu/hu\", \"question\": \"Pronouns\", \"type\": \"checkbox\"}, {\"label\": \"Use name only\", \"question\": \"Pronouns\", \"type\": \"checkbox\"}, {\"label\": \"Custom\", \"question\": \"Pronouns\", \"type\": \"checkbox\"}, {\"label\": \"\", \"question\": \"Pronouns\", \"type\": \"text\"}, {\"label\": \"Email\\n\\u2731\", \"question\": \"Email\\n\\u2731\", \"type\": \"email\"}, {\"label\": \"Phone\\n\\u2731\", \"question\": \"Phone\\n\\u2731\", \"type\": \"text\"}, {\"label\": \"Current location\", \"question\": \"Current location\", \"type\": \"text\"}, {\"label\": \"Current company\", \"question\": \"Current company\", \"type\": \"text\"}, {\"label\": \"LinkedIn URL\", \"question\": \"LinkedIn URL\", \"type\": \"text\"}, {\"label\": \"Twitter URL\", \"question\": \"Twitter URL\", \"type\": \"text\"}, {\"label\": \"GitHub URL\", \"question\": \"GitHub URL\", \"type\": \"text\"}, {\"label\": \"Portfolio URL\", \"question\": \"Portfolio URL\", \"type\": \"text\"}, {\"label\": \"Other website\", \"question\": \"Other website\", \"type\": \"text\"}, {\"label\": \"I acknowledge that I have read and understand Ethena\\u2019s AI policy for interviews.\", \"question\": \"Ethena does not allow the use of AI tools during interviews, including note takers, transcription tools, or recordings. Candidates must disclose any AI use during the interview process. Failure to comply may result in removal from the recru\", \"type\": \"checkbox\"}, {\"label\": \"\", \"question\": \"Why are you interested in joining Ethena?\\n\\u2731\", \"type\": \"textarea\"}], \"grouped_count\": 34, \"required_grouped_count\": 12, \"review\": \"not_verified\", \"status\": 200, \"submission\": \"not_attempted\"}\n ERROR \nLIVE_LEVER_QUESTION_RECOVERY_IMPROVED\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T14:20:45.336334+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
