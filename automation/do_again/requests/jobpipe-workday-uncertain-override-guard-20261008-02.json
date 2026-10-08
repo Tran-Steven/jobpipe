@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-workday-uncertain-override-guard-20261008-02",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T02:48:10Z",
+  "expires_at_utc": "2026-10-08T03:48:10Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess,os,signal\nrepo=Path('/Users/steventran/jobpipe');src=repo/'jobctl.py';test=repo/'tests/test_jobctl.py'\nexpected='227b00fb0142aa92df0c826f27980b65e2a452ad'\nh=subprocess.run(['git','rev-parse','HEAD'],cwd=repo,text=True,capture_output=True,check=True).stdout.strip()\nif h!=expected:raise SystemExit('HEAD_CHANGED')\nstatus=subprocess.run(['git','status','--short'],cwd=repo,text=True,capture_output=True,check=True).stdout\nprint('STATUS',status)\nallowed={'adapters/protocol.py','do-again.toml','do-again-policy.json','jobctl.py','tests/test_jobctl.py'}\nif any(line[3:] not in allowed for line in status.splitlines()):raise SystemExit('UNEXPECTED_DIRTY')\ns=src.read_text();t=test.read_text()\nold='''        if item.row.get(\"status\", \"\").strip().casefold() != \"registration uncertain\"'''\nnew='''        if getattr(item, \"row\", {}).get(\"status\", \"\").strip().casefold()\n        != \"registration uncertain\"'''\nif s.count(old)!=1 or t.count('def test_apply_csv_explicit_uncertain_status_never_initializes_ats(')!=1:raise SystemExit('PREVIOUS_WORK_NOT_FOUND')\nsrc.write_text(s.replace(old,new,1))\ndef check(args,sec):\n p=subprocess.Popen([str(repo/'.venv/bin/python'),'-m','pytest','-q','--maxfail=1']+args,cwd=repo,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)\n try:o,e=p.communicate(timeout=sec)\n except subprocess.TimeoutExpired:\n  os.killpg(p.pid,signal.SIGTERM)\n  try:o,e=p.communicate(timeout=8)\n  except subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);o,e=p.communicate()\n  print('TIMEOUT',args,o[-1200:]);raise SystemExit(124)\n print('TEST',args,'EXIT',p.returncode,o[-2400:],e[-300:])\n return p.returncode\nfor args,sec in [(['tests/test_jobctl.py'],85),([],585)]:\n if check(args,sec):raise SystemExit('VALIDATION_FAILED')\nsubprocess.run(['git','add','--','jobctl.py','tests/test_jobctl.py'],cwd=repo,check=True)\nsubprocess.run(['git','commit','-m','fix: block uncertain Workday registration under explicit status overrides'],cwd=repo,check=True)\nsubprocess.run(['git','push','origin','main'],cwd=repo,check=True,timeout=90)\nprint('VERIFIED_PUSH')\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 840
+  }
+}
