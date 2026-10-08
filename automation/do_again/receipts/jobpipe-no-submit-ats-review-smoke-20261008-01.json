@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:70110:1791434979:7696abc569f9",
+  "error": null,
+  "finished_at_utc": "2026-10-08T05:05:06.875000+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "7f4ae10a1e27dcbd36f2a7a9e08d5f2d992515c12c48e70df0d5c961a64037ef",
+  "request_id": "jobpipe-no-submit-ats-review-smoke-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "48c1c8dc12abae84a349548f50f64bd48f7691ed"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "48c1c8dc12abae84a349548f50f64bd48f7691ed"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "7f4ae10a1e27dcbd36f2a7a9e08d5f2d992515c12c48e70df0d5c961a64037ef",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-no-submit-ats-review-smoke-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.293,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 3034,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-no-submit-ats-review-smoke-20261008-01/script.py",
+      "script_sha256": "38c1ce8c99f2e91f518b45a41c25d58ed09bafda92d33252d82597fcad36ac4f",
+      "stderr": "Traceback (most recent call last):\n  File \"/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-no-submit-ats-review-smoke-20261008-01/script.py\", line 10, in <module>\n    target.write_text('''\"\"\"Local no-submit ATS fixture gate; not proof of live ATS readiness.\"\"\"\n    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    from __future__ import annotations\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<33 lines>...\n        raise SystemExit(main())\n        ^^^^^^^^^^^^^^^^^^^^^^^^\n    ''')\n    ^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py\", line 555, in write_text\n    return PathBase.write_text(self, data, encoding, errors, newline)\n           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py\", line 651, in write_text\n    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:\n         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py\", line 537, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/Users/steventran/jobpipe/tools/ats_review_smoke.py'\n",
+      "stderr_truncated": false,
+      "stdout": "",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T05:05:06.275004+00:00",
+  "state": "failed",
+  "traceback": null
+}
