@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T01:32:23.511584+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "898ad5f2c0c7711930bd436a47250748faa7f659babd607a6aab7db498d8da38",
+  "request_id": "jobpipe-workday-aria-disabled-guard-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "66d63886d9851360bf7d548c3bfa2ee78a758fbd"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "66d63886d9851360bf7d548c3bfa2ee78a758fbd"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "898ad5f2c0c7711930bd436a47250748faa7f659babd607a6aab7db498d8da38",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-aria-disabled-guard-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 35.226,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 3632,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-aria-disabled-guard-20261008-01/script.py",
+      "script_sha256": "c2c925adfd1f8382b06ec2c1c4216f2d952e106b417bee978aa6fa216a488000",
+      "stderr": "NO_REPRODUCTION; DO_NOT_COMMIT\n",
+      "stderr_truncated": false,
+      "stdout": "CHECK ['tests/test_workday_adapter.py', '-k', 'registration_respects_aria_disabled_submit_control'] EXIT 0 .                                                                        [100%]\n1 passed, 75 deselected in 34.10s\n \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T01:31:47.928984+00:00",
+  "state": "failed",
+  "traceback": null
+}
