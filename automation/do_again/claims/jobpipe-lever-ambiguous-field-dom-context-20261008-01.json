@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "claimed_at_utc": "2026-10-08T14:15:51.627099+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 54526,
+  "request_fingerprint": "c0c9d67acbc63d8ba0e90c6f7456d9c52a4f275b06ac5eceb65501ec48cff225",
+  "request_id": "jobpipe-lever-ambiguous-field-dom-context-20261008-01",
+  "schema_version": 1
+}
