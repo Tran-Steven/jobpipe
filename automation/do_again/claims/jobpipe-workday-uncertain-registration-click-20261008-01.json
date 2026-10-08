@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T02:04:13.207660+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "e92889e1361fd7e7ddb1653340163234dc3f2576c5162ef47ca7b18f2b296ca2",
+  "request_id": "jobpipe-workday-uncertain-registration-click-20261008-01",
+  "schema_version": 1
+}
