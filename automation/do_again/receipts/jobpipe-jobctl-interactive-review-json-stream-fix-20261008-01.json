@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T15:31:34.931634+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "136d6af720faa2880fdd079b615f346c6fe23ea620052c3834abe1810445f20d",
+  "request_id": "jobpipe-jobctl-interactive-review-json-stream-fix-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "10c68b26ad4ad42876c9a05d7986279da87b32c7"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "10c68b26ad4ad42876c9a05d7986279da87b32c7"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "136d6af720faa2880fdd079b615f346c6fe23ea620052c3834abe1810445f20d",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-jobctl-interactive-review-json-stream-fix-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.239,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 2512,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-jobctl-interactive-review-json-stream-fix-20261008-01/script.py",
+      "script_sha256": "81e274569e689f4a2a0fb520042bfc13894f81de62ea1d2b56da9aab98afedbb",
+      "stderr": "MISSING_SYS_IMPORT\n",
+      "stderr_truncated": false,
+      "stdout": "",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T15:31:34.334738+00:00",
+  "state": "failed",
+  "traceback": null
+}
