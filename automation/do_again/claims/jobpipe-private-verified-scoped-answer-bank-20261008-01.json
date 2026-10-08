@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "claimed_at_utc": "2026-10-08T14:40:10.365164+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 54526,
+  "request_fingerprint": "af388d27479e3692f999bba1a7a6e23737f5ce155d9f00a5a8d73727222f319c",
+  "request_id": "jobpipe-private-verified-scoped-answer-bank-20261008-01",
+  "schema_version": 1
+}
