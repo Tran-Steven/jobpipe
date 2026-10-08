@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T03:17:13.203986+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "35cc489b6639af7523191ba93a2998604901d152a5d710f7439f64bb19149040",
+  "request_id": "jobpipe-ats-shared-fixture-timeout-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "227b00fb0142aa92df0c826f27980b65e2a452ad"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "227b00fb0142aa92df0c826f27980b65e2a452ad"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "35cc489b6639af7523191ba93a2998604901d152a5d710f7439f64bb19149040",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-ats-shared-fixture-timeout-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 763.94,
+      "language": "python",
+      "returncode": 124,
+      "script_bytes": 2577,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-ats-shared-fixture-timeout-20261008-01/script.py",
+      "script_sha256": "f807f3b3b0f783a63bae1118d50ae04f886f44835c093179ee21524fe6df6a79",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "DIRTY [' M adapters/protocol.py', ' M do-again.toml', ' M jobctl.py', ' M tests/test_jobctl.py', '?? do-again-policy.json']\nTEST ['tests/test_ats_adapter_contract.py', '-k', 'explicit_confirmation_produces_verified_evidence'] EXIT 0 ....                                                                     [100%]\n4 passed, 32 deselected in 110.68s (0:01:50)\n \nTEST ['tests/test_jobctl.py'] EXIT 0 ...............                                                          [100%]\n15 passed in 7.53s\n \nTIMEOUT [] ........................................................................ [  3%]\n........................................................................ [  7%]\n........................................................................ [ 11%]\n........................................................................ [ 15%]\n........................................................................ [ 18%]\n...........................\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T03:04:28.723446+00:00",
+  "state": "failed",
+  "traceback": null
+}
