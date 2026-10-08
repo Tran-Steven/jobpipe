@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-workday-uncertain-override-audit-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T02:45:25Z",
+  "expires_at_utc": "2026-10-08T03:45:25Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess\nrepo=Path('/Users/steventran/jobpipe')\nhead=subprocess.run(['git','rev-parse','HEAD'],cwd=repo,text=True,capture_output=True,check=True).stdout.strip()\nremote=subprocess.run(['git','rev-parse','origin/main'],cwd=repo,text=True,capture_output=True,check=True).stdout.strip()\nprint('AUTHORITY',head,remote)\nif head!='227b00fb0142aa92df0c826f27980b65e2a452ad' or remote!=head:raise SystemExit('HEAD_CHANGED')\nprint('STATUS',subprocess.run(['git','status','--short'],cwd=repo,text=True,capture_output=True,check=True).stdout)\nfor path,keys in [('jobctl.py',('DEFAULT_STATUSES','_project_csv_outcome','load_csv_queue','cmd_apply_csv')),('utils/csv_apply.py',('load_csv_queue','statuses','status')),('core/application_engine.py',('submission_preflight','execute'))]:\n lines=(repo/path).read_text().splitlines()\n print('FILE',path)\n matches=[i for i,s in enumerate(lines) if any(k in s for k in keys)]\n for i in matches[:19]:\n  print('MATCH',i+1,' '.join(s.strip() for s in lines[max(0,i-2):min(len(lines),i+5)])[:800])\nprint('ACCEPTANCE','Determine whether explicit --statuses Registration uncertain or another override can reach Workday _register despite durable uncertainty. Require a specific testable repro before implementing another guard. Do not access real queue, browser, credentials or submit applications.')\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 95
+  }
+}
