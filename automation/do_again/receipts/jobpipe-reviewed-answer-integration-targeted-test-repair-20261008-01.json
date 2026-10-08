@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T14:51:22.389071+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "9ad432a8d5ca0b5020ae0fefe5a485e3fb7bfe8c29e8545efb6ea28708f257b1",
+  "request_id": "jobpipe-reviewed-answer-integration-targeted-test-repair-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "3c214d988f7ea7a62e32b833b952a7043df41246"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "ee92da2f176d381696e33626e409f9bb4c50561b"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "9ad432a8d5ca0b5020ae0fefe5a485e3fb7bfe8c29e8545efb6ea28708f257b1",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-reviewed-answer-integration-targeted-test-repair-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 7.323,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 2356,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-reviewed-answer-integration-targeted-test-repair-20261008-01/script.py",
+      "script_sha256": "7c55bea495be06829d366595710cd108157556611a7589ecff29c32622bff23e",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   ee92da2..3c214d9  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "TEST_EXIT 0 STDOUT ....................................                                     [100%]\n36 passed in 4.43s\n STDERR \n[main 3c214d9] feat: annotate reviewed questions with verified scoped answer availability\n 3 files changed, 47 insertions(+), 1 deletion(-)\n create mode 100644 tests/test_ats_review_answer_matches.py\n create mode 100644 tools/ats_review_answer_matches.py\nVERIFIED_PUSH 3c214d988f7ea7a62e32b833b952a7043df41246\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T14:51:14.696552+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
