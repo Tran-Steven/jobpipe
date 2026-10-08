@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "claimed_at_utc": "2026-10-08T13:13:30.905126+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 54526,
+  "request_fingerprint": "92353e08313fcef1398dbdda80958fb04c8efb1e0282a45c3ae1cb635edc8e91",
+  "request_id": "jobpipe-live-lever-public-page-readonly-proof-20261008-01",
+  "schema_version": 1
+}
