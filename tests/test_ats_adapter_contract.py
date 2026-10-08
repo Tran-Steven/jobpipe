@@ -475,3 +475,40 @@ async def test_legacy_greenhouse_wrapper_is_dry_run_compatible(
 
     assert result is True
     assert await page.evaluate("window.fixtureSubmitCount") == 0
+
+
+@pytest.mark.parametrize("name,adapter_cls,expected", ADAPTERS)
+async def test_browser_navigates_local_http_ats_page_to_review_without_submit(
+    page, resume_file, profile, name, adapter_cls, expected
+):
+    """Unlike set_content fixtures, exercise real navigation on loopback HTTP."""
+    from functools import partial
+    from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+    from threading import Thread
+    from dataclasses import replace
+
+    class QuietHandler(SimpleHTTPRequestHandler):
+        def log_message(self, *args):
+            pass
+
+    server = ThreadingHTTPServer(
+        ("127.0.0.1", 0),
+        partial(QuietHandler, directory=str(FIXTURE_DIR)),
+    )
+    thread = Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        url = f"http://127.0.0.1:{server.server_port}/{name}.html"
+        context = replace(context_for(
+            page, name, profile, resume_file,
+            answers={"work_authorization": "Yes"}, request_submit=False
+        ), job_url=url, navigate=True)
+        outcome = await adapter_cls().run(context)
+        assert outcome.status is OutcomeStatus.REVIEW_READY, outcome
+        assert expected <= set(outcome.details["review"]["filled_fields"])
+        assert outcome.details["review"]["uploaded_files"] == ["resume"]
+        assert await page.evaluate("window.fixtureSubmitCount") == 0
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=3)
