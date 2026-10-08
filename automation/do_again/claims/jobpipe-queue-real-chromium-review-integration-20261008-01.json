@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "claimed_at_utc": "2026-10-08T06:43:35.911266+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 56125,
+  "request_fingerprint": "d9048fb6601995385bf9939c8badc62f97e30e67eafc4d7c53b41954b573dce8",
+  "request_id": "jobpipe-queue-real-chromium-review-integration-20261008-01",
+  "schema_version": 1
+}
