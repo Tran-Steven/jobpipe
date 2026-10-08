@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T02:48:51.570838+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "ce5cc8a63e010baa5784cc403e20cd9f3573a91c34a1c77f488e295c42a790a0",
+  "request_id": "jobpipe-workday-uncertain-override-guard-20261008-02",
+  "schema_version": 1
+}
