@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T03:02:06.882614+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "2935148d9511a65eb938c83ee7bc26c3741e4c0167f160bd83f753620ed6eec5",
+  "request_id": "jobpipe-ats-browser-instability-diagnosis-20261008-01",
+  "schema_version": 1
+}
