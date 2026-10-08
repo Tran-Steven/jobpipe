@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-ats-browser-instability-diagnosis-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T03:01:00Z",
+  "expires_at_utc": "2026-10-08T04:01:00Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess\nrepo=Path('/Users/steventran/jobpipe')\ndef command(args,timeout=12):\n try:\n  p=subprocess.run(args,cwd=repo,text=True,capture_output=True,timeout=timeout)\n  print('COMMAND',args,'EXIT',p.returncode,'STDOUT',p.stdout[-4200:],'STDERR',p.stderr[-500:])\n except Exception as e:print('COMMAND_ERROR',args,type(e).__name__,str(e)[:300])\ncommand(['git','rev-parse','HEAD'])\ncommand(['git','status','--short'])\ncommand(['ps','-axo','pid,ppid,stat,%cpu,%mem,etime,command'])\nfor filename in ['tests/conftest.py','tests/test_ats_adapter_contract.py','tests/support/ats_fixtures.py','pytest.ini','pyproject.toml']:\n path=repo/filename\n if not path.exists():continue\n lines=path.read_text().splitlines()\n print('SOURCE',filename,'LENGTH',len(lines))\n for i,line in enumerate(lines):\n  if any(k in line for k in ['set_default_timeout','set_content','async_playwright','browser.new_page','@pytest.fixture','def load_fixture','def page(','pytest_plugins','timeout=2000']):\n   print('HIT',i+1,' '.join(s.strip() for s in lines[max(0,i-4):min(len(lines),i+8)])[:720])\nprint('ACCEPTANCE','Identify shared browser fixture timeout, resource contention, leaked Chromium processes or adapter-specific failure evidence behind Ashby and Lever tests. Report concrete root-cause candidate and minimal fix with evidence. No tests, no browser launch, no file edits, no credentials, no submission.')\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 100
+  }
+}
