@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-live-lever-review-batch-validation-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T14:37:00Z",
+  "expires_at_utc": "2026-10-08T15:37:00Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess,os,signal,json\nrepo=Path('/Users/steventran/jobpipe');base='e0ba9a4fff99f926093f844f387ba0067a580cbe'\ndef git(*a):return subprocess.run(['git',*a],cwd=repo,check=True,capture_output=True,text=True).stdout.strip()\nif git('rev-parse','HEAD')!=base:raise SystemExit('AUTHORITY_CHANGED')\ncode=r'''\nimport asyncio,json\nfrom playwright.async_api import async_playwright\nfrom tools.live_ats_inspect import allowed_url\nfrom tools.ats_field_labels import extract_field_labels\nfrom tools.ats_review_batch import build_review_batch\nurl=\"https://jobs.lever.co/ethena/f85bcfd1-8d2c-4cf5-a6ab-1c8ddab14c65/apply\"\nasync def main():\n async with async_playwright() as pw:\n  b=await pw.chromium.launch(headless=True)\n  try:\n   page=await b.new_page(accept_downloads=False)\n   async def guard(route):\n    if route.request.is_navigation_request() and not allowed_url(route.request.url):await route.abort()\n    else:await route.continue_()\n   await page.route(\"**/*\",guard)\n   response=await page.goto(url,wait_until=\"domcontentloaded\",timeout=25000)\n   await page.wait_for_timeout(2500)\n   if not allowed_url(page.url):raise RuntimeError('UNAPPROVED_REDIRECT')\n   fields=await extract_field_labels(page)\n   result=build_review_batch(fields,{\"full_name\",\"email\",\"phone\"})\n   review=result[\"human_review\"]\n   print(json.dumps({\"http_status\":response.status if response else None,\"input_field_count\":result[\"input_field_count\"],\"verified_candidate_count\":len(result[\"verified_candidates\"]),\"review_item_count\":result[\"review_item_count\"],\"required_review_items\":sum(x[\"required\"] for x in review),\"optional_review_items\":sum(not x[\"required\"] for x in review),\"grouped_multi_control_questions\":sum(x[\"control_count\"]>1 for x in review),\"review_reasons\":{k:sum(x[\"reason\"]==k for x in review) for k in sorted({x[\"reason\"] for x in review})},\"no_submission\":result[\"submission\"],\"auth\":\"not_attempted\",\"fill\":\"not_attempted\",\"review\":\"not_verified\"},sort_keys=True))\n  finally:await b.close()\nasyncio.run(main())\n'''\np=subprocess.Popen([str(repo/'.venv/bin/python'),'-c',code],cwd=repo,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)\ntry:o,e=p.communicate(timeout=75)\nexcept subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);raise SystemExit('TIMEOUT')\nprint('EXIT',p.returncode,'OUTPUT',o[-5500:],'ERROR',e[-650:],flush=True)\nif p.returncode:raise SystemExit('LIVE_BATCH_VALIDATION_FAILED')\nr=json.loads(o)\nassert r['http_status']==200 and r['input_field_count']>0\nassert r['review_item_count']+r['verified_candidate_count']<=r['input_field_count']\nassert r['no_submission']=='not_attempted' and r['auth']=='not_attempted' and r['fill']=='not_attempted'\nassert git('rev-parse','HEAD')==base\nprint('LIVE_READONLY_REVIEW_BATCH_VERIFIED',flush=True)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 140
+  }
+}
