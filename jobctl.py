@@ -1064,6 +1064,13 @@ def build_parser() -> argparse.ArgumentParser:
 
     subparsers.add_parser("readiness", help="Check whether ATS execution prerequisites are satisfied")
     subparsers.add_parser("ats-fixture-check", help="Run browser ATS fixture proof; never claims live readiness")
+    capture_review = subparsers.add_parser("ats-capture-review", help="Read-only ATS field capture and deduplicated private human review")
+    capture_review.add_argument("--url", required=True)
+    capture_review.add_argument("--output", required=True)
+    capture_review.add_argument("--bank", required=True)
+    capture_review.add_argument("--employer", required=True)
+    capture_review.add_argument("--verified-profile-keys", default="")
+
     review_parser = subparsers.add_parser("ats-review-queue", help="Inspect sanitized ATS questions and verified answer availability offline; no approval or submission")
     review_parser.add_argument("--fields", required=True)
     review_parser.add_argument("--bank", required=True)
@@ -1146,6 +1153,21 @@ def main() -> int:
                 args.resolve_limit,
                 args.csv,
             )))
+            return 0
+        if args.command == "ats-capture-review":
+            from tools.ats_capture_snapshot import capture
+            from tools.ats_verified_answer_bank import load_bank
+            from tools.ats_review_answer_matches import build_review_with_verified_matches
+            from tools.live_ats_inspect import allowed_url
+            if not allowed_url(args.url):
+                raise ValueError("ATS URL must be an approved public HTTPS host")
+            # Validate bank before network activity. Only sanitized snapshot fields are loaded.
+            bank = load_bank(Path(args.bank))
+            asyncio.run(capture(args.url, Path(args.output)))
+            fields = json.loads(Path(args.output).read_text(encoding="utf-8"))
+            keys = {key.strip() for key in args.verified_profile_keys.split(",") if key.strip()}
+            result = build_review_with_verified_matches(fields, keys, bank, args.employer)
+            _json_print(result)
             return 0
         if args.command == "ats-review-queue":
             from tools.ats_review_cli import main as ats_review_main
