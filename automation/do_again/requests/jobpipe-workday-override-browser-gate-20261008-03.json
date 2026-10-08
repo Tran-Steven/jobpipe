@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-workday-override-browser-gate-20261008-03",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T02:55:30Z",
+  "expires_at_utc": "2026-10-08T03:55:30Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess,os,signal\nrepo=Path('/Users/steventran/jobpipe')\nexpect='227b00fb0142aa92df0c826f27980b65e2a452ad'\ndef git(*args):\n return subprocess.run(['git',*args],cwd=repo,text=True,capture_output=True,check=True).stdout.strip()\nif git('rev-parse','HEAD')!=expect or git('rev-parse','origin/main')!=expect:raise SystemExit('HEAD_CHANGED')\nstatus=git('status','--short');print('STATUS',status)\nallowed={'adapters/protocol.py','do-again.toml','do-again-policy.json','jobctl.py','tests/test_jobctl.py'}\nif any(line[3:] not in allowed for line in status.splitlines()):raise SystemExit('UNEXPECTED_DIRTY')\nif 'Registration uncertain' not in (repo/'jobctl.py').read_text():raise SystemExit('GUARD_MISSING')\nif 'test_apply_csv_explicit_uncertain_status_never_initializes_ats' not in (repo/'tests/test_jobctl.py').read_text():raise SystemExit('REGRESSION_MISSING')\ndef check(args,sec):\n p=subprocess.Popen([str(repo/'.venv/bin/python'),'-m','pytest','-q','--maxfail=1']+args,cwd=repo,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)\n try:o,e=p.communicate(timeout=sec)\n except subprocess.TimeoutExpired:\n  os.killpg(p.pid,signal.SIGTERM)\n  try:o,e=p.communicate(timeout=8)\n  except subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);o,e=p.communicate()\n  print('TIMEOUT',args,o[-1100:]);raise SystemExit(124)\n print('TEST',args,'EXIT',p.returncode,o[-1900:],e[-250:])\n return p.returncode\nif check(['tests/test_ats_adapter_contract.py','-k','explicit_confirmation_produces_verified_evidence'],200):raise SystemExit('ASHBY_REPRODUCED_OR_INFRA')\nif check(['tests/test_jobctl.py'],100):raise SystemExit('JOBCTL_FAILED')\nif check([],640):raise SystemExit('FULL_SUITE_FAILED')\nsubprocess.run(['git','add','--','jobctl.py','tests/test_jobctl.py'],cwd=repo,check=True)\nsubprocess.run(['git','commit','-m','fix: block uncertain Workday registration under status override'],cwd=repo,check=True)\nsubprocess.run(['git','push','origin','main'],cwd=repo,check=True,timeout=90)\nprint('VERIFIED_PUSH',git('rev-parse','HEAD'))\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 1140
+  }
+}
