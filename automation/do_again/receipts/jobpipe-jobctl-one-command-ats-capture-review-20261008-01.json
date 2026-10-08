@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T15:17:24.851380+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "b1eb05cb344a1a1800c7c7b4fa6f1e12a9191d21332b2a5fa64d107e44b18757",
+  "request_id": "jobpipe-jobctl-one-command-ats-capture-review-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "9e5a5c9016245a1162597e548060bc5543152316"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "f9a68e8839d8c942566788f0a942b2813142a8d8"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "b1eb05cb344a1a1800c7c7b4fa6f1e12a9191d21332b2a5fa64d107e44b18757",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-jobctl-one-command-ats-capture-review-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 10.512,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 5352,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-jobctl-one-command-ats-capture-review-20261008-01/script.py",
+      "script_sha256": "9de91a03e464545f2a4e3cffb191cd51ea646b76225426509186078a37e70a6b",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   f9a68e8..9e5a5c9  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "TEST_EXIT 0 OUTPUT ...............................................                          [100%]\n47 passed in 6.06s\n ERROR \n[main 9e5a5c9] feat: one-command read-only ATS capture and human review\n 2 files changed, 49 insertions(+)\n create mode 100644 tests/test_ats_capture_review_jobctl.py\nVERIFIED_PUSH 9e5a5c9016245a1162597e548060bc5543152316\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T15:17:13.978284+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
