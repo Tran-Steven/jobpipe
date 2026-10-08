@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T14:55:54.359158+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "a51f98b55ccf7067e71b4ad294740b085d44a171dd16eaca411857a965571e25",
+  "request_id": "jobpipe-offline-ats-review-queue-cli-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "a7eb3c5c91dbe9320dc4b4016cf2e72596bebaed"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "3c214d988f7ea7a62e32b833b952a7043df41246"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "a51f98b55ccf7067e71b4ad294740b085d44a171dd16eaca411857a965571e25",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-offline-ats-review-queue-cli-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 9.077,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 4731,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-offline-ats-review-queue-cli-20261008-01/script.py",
+      "script_sha256": "14fdc177de0710efc41560126a88fde054f0a27365a5569dbec1ae2af56887eb",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   3c214d9..a7eb3c5  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "TEST_EXIT 0 STDOUT ......................................                                   [100%]\n38 passed in 4.97s\n STDERR \n[main a7eb3c5] feat: inspect verified ATS review queue with offline CLI\n 2 files changed, 56 insertions(+)\n create mode 100644 tests/test_ats_review_cli.py\n create mode 100644 tools/ats_review_cli.py\nVERIFIED_PUSH a7eb3c5c91dbe9320dc4b4016cf2e72596bebaed\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T14:55:44.778430+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
