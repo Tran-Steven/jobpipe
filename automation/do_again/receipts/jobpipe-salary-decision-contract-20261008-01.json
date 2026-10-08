@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T01:43:44.325950+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "01ae33cbb1d6b9e51757369cd400e2ced6477cae61e59bcc9206197f1b7dcbde",
+  "request_id": "jobpipe-salary-decision-contract-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "2bd2ecabf55e287e19a52e7cb63211dda06635f1"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "66d63886d9851360bf7d548c3bfa2ee78a758fbd"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "01ae33cbb1d6b9e51757369cd400e2ced6477cae61e59bcc9206197f1b7dcbde",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-salary-decision-contract-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 360.082,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 5316,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-salary-decision-contract-20261008-01/script.py",
+      "script_sha256": "4cc32ec1278361b56de1fae3da9d16e41fb3c1597b502954df503c64f07c2326",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   66d6388..2bd2eca  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "[main 2bd2eca] feat: formalize provenance-aware base salary eligibility decisions\n 2 files changed, 75 insertions(+)\n create mode 100644 core/job_salary_eligibility.py\n create mode 100644 tests/test_job_salary_eligibility.py\nEXISTING_DIRTY  M adapters/protocol.py\n M do-again.toml\n?? do-again-policy.json\n\nTEST ['tests/test_job_salary_eligibility.py'] EXIT 2 \n==================================== ERRORS ====================================\n____________ ERROR collecting tests/test_job_salary_eligibility.py _____________\nImportError while importing test module '/Users/steventran/jobpipe/tests/test_job_salary_eligibility.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py:88: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntests/test_job_salary_eligibility.py:1: in <module>\n    from core.job_salary_eligibility import SalaryEvidence, SalaryDecision, decide_salary\nE   ModuleNotFoundError: No module named 'core.job_salary_eligibility'\n=========================== short test summary info ============================\nERROR tests/test_job_salary_eligibility.py\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 0.41s\n \nTEST ['tests/test_job_salary_eligibility.py'] EXIT 0 ......                                                                   [100%]\n6 passed in 0.07s\n \nTEST [] EXIT 0 ................................. [ 30%]\n........................................................................ [ 34%]\n.........................................................s.............. [ 38%]\n........................................................................ [ 41%]\n........................................................................ [ 45%]\n........................................................................ [ 49%]\n........................................................................ [ 53%]\n........................................................................ [ 57%]\n............s........................................................... [ 61%]\n.....................................................................sss [ 64%]\nssssssss....................................................s........... [ 68%]\n........................................................................ [ 72%]\n........................................................................ [ 76%]\n........................................................................ [ 80%]\n........................................................................ [ 83%]\n........................................................................ [ 87%]\n........................................................................ [ 91%]\n........................................................................ [ 95%]\n........................................................................ [ 99%]\n...............                                                          [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.13/site-packages/fastapi/testclient.py:1\n  /Users/steventran/jobpipe/.venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n1873 passed, 14 skipped, 1 warning in 354.28s (0:05:54)\n \nVERIFIED_PUSH; NOTE salary decision contract is not wired to intake or queue\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T01:37:43.887396+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
