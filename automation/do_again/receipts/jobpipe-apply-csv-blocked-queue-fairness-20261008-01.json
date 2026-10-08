@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "error": null,
+  "finished_at_utc": "2026-10-08T06:23:18.141318+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "da1cba53e83a2ee01c967d5ccdbbba8cfbcc41055f4df51c1bc017ed4afd119e",
+  "request_id": "jobpipe-apply-csv-blocked-queue-fairness-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "ae43b0efde38e303b2c9b39562c741bc5a9342a2"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "ae43b0efde38e303b2c9b39562c741bc5a9342a2"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "da1cba53e83a2ee01c967d5ccdbbba8cfbcc41055f4df51c1bc017ed4afd119e",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-apply-csv-blocked-queue-fairness-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 2.606,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 3764,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-apply-csv-blocked-queue-fairness-20261008-01/script.py",
+      "script_sha256": "46e92da9dda22eaeec609d801a87ff967ce81c8c8db23f11f4d3b228ba922837",
+      "stderr": "ACCEPTANCE_FAILED_NO_COMMIT\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT 1 FF.......                                                                [100%]\n=================================== FAILURES ===================================\n_________ test_apply_csv_material_block_does_not_starve_queue[True-2] __________\ntests/test_apply_csv_queue_fairness.py:17: in test_apply_csv_material_block_does_not_starve_queue\n    args=jobctl.build_parser().parse_args(\n/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/argparse.py:1930: in parse_args\n    self.error(msg)\n/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/argparse.py:2686: in error\n    self.exit(2, _('%(prog)s: error: %(message)s\\n') % args)\n/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/argparse.py:2673: in exit\n    _sys.exit(status)\nE   SystemExit: 2\n----------------------------- Captured stderr call -----------------------------\nusage: __main__.py [-h] [--home HOME]\n                   {init,migrate,mailbox,queue,apply-csv,submit-reviewed,invalidate-review,scout,triage,resolve,run,readiness,ats-fixture-check,autopilot,enqueue,jobs,policy,status} ...\n__main__.py: error: unrecognized arguments: --home /private/var/folders/hz/0lpwv9355wl9kvss20pbt19c0000gn/T/pytest-of-steventran/pytest-91/test_apply_csv_material_block_0\n_________ test_apply_csv_material_block_does_not_starve_queue[False-1] _________\ntests/test_apply_csv_queue_fairness.py:17: in test_apply_csv_material_block_does_not_starve_queue\n    args=jobctl.build_parser().parse_args(\n/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/argparse.py:1930: in parse_args\n    self.error(msg)\n/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/argparse.py:2686: in error\n    self.exit(2, _('%(prog)s: error: %(message)s\\n') % args)\n/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/argparse.py:2673: in exit\n    _sys.exit(status)\nE   SystemExit: 2\n----------------------------- Captured stderr call -----------------------------\nusage: __main__.py [-h] [--home HOME]\n                   {init,migrate,mailbox,queue,apply-csv,submit-reviewed,invalidate-review,scout,triage,resolve,run,readiness,ats-fixture-check,autopilot,enqueue,jobs,policy,status} ...\n__main__.py: error: unrecognized arguments: --home /private/var/folders/hz/0lpwv9355wl9kvss20pbt19c0000gn/T/pytest-of-steventran/pytest-91/test_apply_csv_material_block_1\n=========================== short test summary info ============================\nFAILED tests/test_apply_csv_queue_fairness.py::test_apply_csv_material_block_does_not_starve_queue[True-2]\nFAILED tests/test_apply_csv_queue_fairness.py::test_apply_csv_material_block_does_not_starve_queue[False-1]\n2 failed, 7 passed in 1.23s\n \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T06:23:15.156256+00:00",
+  "state": "failed",
+  "traceback": null
+}
