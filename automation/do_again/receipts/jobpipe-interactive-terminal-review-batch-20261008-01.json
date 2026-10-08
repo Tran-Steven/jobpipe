@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T15:26:25.352781+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "292cb195834ffc2854a6759cba2e86fac8c1921df22e37c2e03bc676d95f8a30",
+  "request_id": "jobpipe-interactive-terminal-review-batch-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "10c68b26ad4ad42876c9a05d7986279da87b32c7"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "f6ec09d30e1e4865e426b829fd4608c46f6b01a5"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "292cb195834ffc2854a6759cba2e86fac8c1921df22e37c2e03bc676d95f8a30",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-interactive-terminal-review-batch-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 6.161,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 5242,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-interactive-terminal-review-batch-20261008-01/script.py",
+      "script_sha256": "fe7834e7ed8c77af31db2025a260cb21c5ffc8800c1639ee7716bb155ff14e57",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   f6ec09d..10c68b2  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "TEST_EXIT 0 OUTPUT ........................................................                 [100%]\n56 passed in 3.37s\n ERROR \n[main 10c68b2] feat: interactive terminal batch review with per-answer verification\n 2 files changed, 62 insertions(+)\n create mode 100644 tests/test_ats_review_interactive.py\n create mode 100644 tools/ats_review_interactive.py\nVERIFIED_PUSH 10c68b26ad4ad42876c9a05d7986279da87b32c7\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T15:26:18.798791+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
