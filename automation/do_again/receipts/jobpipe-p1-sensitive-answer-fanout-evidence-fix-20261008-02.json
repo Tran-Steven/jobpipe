@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T04:14:39.837759+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "8ea80f12e625acecbb3b4cf2dc47fe77a5b77fb3445156188476e2688b021c93",
+  "request_id": "jobpipe-p1-sensitive-answer-fanout-evidence-fix-20261008-02",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "a318d2904f638d00a30f9550e63e579251b175c2"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "97cc0982f4a1f656ebd053872e61f26eb9f0142b"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "8ea80f12e625acecbb3b4cf2dc47fe77a5b77fb3445156188476e2688b021c93",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-sensitive-answer-fanout-evidence-fix-20261008-02/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 19.389,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 2938,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-sensitive-answer-fanout-evidence-fix-20261008-02/script.py",
+      "script_sha256": "0255c69f55e8c2e29eafb8d42f1628d1848ff45bf5a37cca1d1f7552e64752e4",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   97cc098..a318d29  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "TEST ['tests/test_application_answer_resolution.py'] EXIT 0 ......                                                                   [100%]\n6 passed in 1.96s\n \nTEST ['tests/test_application_answers.py', 'tests/test_human_attention_queue.py'] EXIT 0 ......................................                                   [100%]\n38 passed in 11.30s\n \n[main a318d29] test: guard sensitive answer resolution against cross-job fanout\n 1 file changed, 38 insertions(+)\nVERIFIED_PUSH a318d2904f638d00a30f9550e63e579251b175c2\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T04:14:19.956897+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
