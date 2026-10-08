@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "claimed_at_utc": "2026-10-08T06:24:08.834357+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 56125,
+  "request_fingerprint": "3ea784ffc9bda36d3bb087323a1244ba8c5fee81be29f09e3ed8b1ad107d469e",
+  "request_id": "jobpipe-apply-csv-queue-fairness-argparse-fix-20261008-02",
+  "schema_version": 1
+}
