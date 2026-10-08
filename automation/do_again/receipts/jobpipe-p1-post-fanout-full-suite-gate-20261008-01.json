@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:70110:1791434979:7696abc569f9",
+  "error": null,
+  "finished_at_utc": "2026-10-08T04:59:18.057138+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "5c235215973a45d7b4a776148b56f97d0cd09c512aff0897e3a53d554faf5556",
+  "request_id": "jobpipe-p1-post-fanout-full-suite-gate-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "48c1c8dc12abae84a349548f50f64bd48f7691ed"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "48c1c8dc12abae84a349548f50f64bd48f7691ed"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "5c235215973a45d7b4a776148b56f97d0cd09c512aff0897e3a53d554faf5556",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-post-fanout-full-suite-gate-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 323.962,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1569,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-post-fanout-full-suite-gate-20261008-01/script.py",
+      "script_sha256": "85bdd00c9d0a01be2ffa9d5d2a27a2073cdef400cb705c633fe7b48c8cef877b",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "HEAD 48c1c8dc12abae84a349548f50f64bd48f7691ed ORIGIN 48c1c8dc12abae84a349548f50f64bd48f7691ed\nDIRTY 'M adapters/protocol.py\\n M do-again.toml\\n?? do-again-policy.json'\nTEST_FILE_COUNT 147\nSHARD 1 FILES 37 EXIT 0 TAIL ........................................................................ [ 14%]\n........................................................................ [ 29%]\n........................................................................ [ 43%]\n........................................................................ [ 58%]\n..............................sssssssssss...........................s... [ 72%]\n........................................................................ [ 87%]\n................................................................         [100%]\n484 passed, 12 skipped in 58.23s\n STDERR \nSHARD 2 FILES 37 EXIT 0 TAIL ........................................................................ [ 17%]\n........................................................................ [ 35%]\n.................................................s...................... [ 53%]\n......................................................................s. [ 71%]\n........................................................................ [ 88%]\n.............................................                            [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.13/site-packages/fastapi/testclient.py:1\n  /Users/steventran/jobpipe/.venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n403 passed, 2 skipped, 1 warning in 90.44s (0:01:30)\n STDERR \nSHARD 3 FILES 37 EXIT 0 TAIL ........................................................................ [ 12%]\n........................................................................ [ 25%]\n........................................................................ [ 37%]\n........................................................................ [ 50%]\n........................................................................ [ 62%]\n........................................................................ [ 75%]\n........................................................................ [ 88%]\n....................................................................     [100%]\n572 passed in 120.62s (0:02:00)\n STDERR \nSHARD 4 FILES 36 EXIT 0 TAIL ........................................................................ [ 16%]\n........................................................................ [ 33%]\n........................................................................ [ 50%]\n........................................................................ [ 66%]\n........................................................................ [ 83%]\n......................................................................   [100%]\n430 passed in 47.03s\n STDERR \nFULL_SUITE_VERIFIED_AT 48c1c8dc12abae84a349548f50f64bd48f7691ed\nNO_CODE_CHANGES_NO_PUSH\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T04:53:53.675889+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
