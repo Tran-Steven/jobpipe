@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T02:47:14.009846+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "de144d69ffb1c416d51f176e65eed28d88cd7eb372222c24a27322799ddabb31",
+  "request_id": "jobpipe-workday-uncertain-override-guard-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "227b00fb0142aa92df0c826f27980b65e2a452ad"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "227b00fb0142aa92df0c826f27980b65e2a452ad"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "de144d69ffb1c416d51f176e65eed28d88cd7eb372222c24a27322799ddabb31",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-uncertain-override-guard-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 5.906,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 3429,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-uncertain-override-guard-20261008-01/script.py",
+      "script_sha256": "0f01cfaf76f654e9c72f093cf29a67df4f6ba6287b20be9efb641b1101737662",
+      "stderr": "VALIDATION_FAILED\n",
+      "stderr_truncated": false,
+      "stdout": "TEST ['tests/test_jobctl.py', '-k', 'explicit_uncertain_status_never_initializes_ats'] EXIT 1  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:196: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:119: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:726: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = Namespace(home='/private/var/folders/hz/0lpwv9355wl9kvss20pbt19c0000gn/T/pytest-of-steventran/pytest-46/test_apply_csv...e, submit=False, approve_gate_a=False, continue_on_user=False, semantic_mapper=False, headless=False, lease_ttl=1800.0)\n\n    async def cmd_apply_csv(args: argparse.Namespace) -> int:\n        home = PrivateHome(Path(args.home).expanduser().resolve()) if args.home else PrivateHome.discover()\n        vault = CandidateVault.load(home)\n        csv_path = Path(args.csv).expanduser().resolve() if args.csv else vault.paths.job_queue\n        resume_dir = (\n            Path(args.resume_dir).expanduser().resolve()\n            if args.resume_dir\n            else vault.paths.master_documents\n        )\n        queue = load_csv_queue(\n            csv_path,\n            resume_dir,\n            priorities=args.priorities,\n            statuses=args.statuses,\n            limit=args.limit,\n        )\n        if args.preview:\n            args.list = True\n            return cmd_queue(args)\n        if not queue:\n            _json_print({\"queue\": str(csv_path), \"selected\": 0})\n            return 0\n    \n        store = MacOSSecurityCredentialStore()\n        engine = JobApplicationEngine.from_private_home(\n            home=home,\n            credential_store=store,\n        )\n        mailbox_verifier = _mailbox_verifier(vault, store)\n>       profile_base = vault.application_profile()\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^\nE       AttributeError: 'types.SimpleNamespace' object has no attribute 'application_profile'\n\njobctl.py:627: AttributeError\n=========================== short test summary info ============================\nFAILED tests/test_jobctl.py::test_apply_csv_explicit_uncertain_status_never_initializes_ats\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 14 deselected in 1.76s\n \nTEST ['tests/test_jobctl.py'] EXIT 1 , match=\"not approved\"):\n>           asyncio.run(jobctl.cmd_apply_csv(args))\n\ntests/test_jobctl.py:205: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:196: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py:119: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py:726: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = Namespace(home='/private/var/folders/hz/0lpwv9355wl9kvss20pbt19c0000gn/T/pytest-of-steventran/pytest-47/test_unsafe_se...se, submit=False, approve_gate_a=False, continue_on_user=False, semantic_mapper=True, headless=False, lease_ttl=1800.0)\n\n    async def cmd_apply_csv(args: argparse.Namespace) -> int:\n        home = PrivateHome(Path(args.home).expanduser().resolve()) if args.home else PrivateHome.discover()\n        vault = CandidateVault.load(home)\n        csv_path = Path(args.csv).expanduser().resolve() if args.csv else vault.paths.job_queue\n        resume_dir = (\n            Path(args.resume_dir).expanduser().resolve()\n            if args.resume_dir\n            else vault.paths.master_documents\n        )\n        queue = load_csv_queue(\n            csv_path,\n            resume_dir,\n            priorities=args.priorities,\n            statuses=args.statuses,\n            limit=args.limit,\n        )\n        if args.preview:\n            args.list = True\n            return cmd_queue(args)\n        # Human reconciliation is mandatory even if --statuses explicitly includes\n        # Registration uncertain. Never start credentials, a browser, or ATS auth.\n        queue = [\n            item for item in queue\n>           if item.row.get(\"status\", \"\").strip().casefold() != \"registration uncertain\"\n               ^^^^^^^^\n        ]\nE       AttributeError: 'object' object has no attribute 'row'\n\njobctl.py:621: AttributeError\n=========================== short test summary info ============================\nFAILED tests/test_jobctl.py::test_unsafe_semantic_backend_fails_before_browser_start\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed in 0.95s\n \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T02:47:07.676079+00:00",
+  "state": "failed",
+  "traceback": null
+}
