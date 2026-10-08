@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T02:35:16.003040+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "ab87d8cd0a1840801aae026963eb7ca61dbe10a9967c7a8f36ca761e28834b86",
+  "request_id": "jobpipe-workday-register-restart-replay-audit-20261008-01",
+  "schema_version": 1
+}
