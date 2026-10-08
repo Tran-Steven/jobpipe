@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "claimed_at_utc": "2026-10-08T05:51:51.446452+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 56125,
+  "request_fingerprint": "5fb176c6a0a8c043d8fe56830062053017b026980db4ccc5d6361d1937ef8a69",
+  "request_id": "jobpipe-cli-ats-fixture-check-20261008-01",
+  "schema_version": 1
+}
