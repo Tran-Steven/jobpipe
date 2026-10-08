@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T01:32:51.234561+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "76da2f41d99720fc0e835fc357ae09b10103ce536467e3eaf4fe562c21544686",
+  "request_id": "jobpipe-aria-no-repro-cleanup-20261008-01",
+  "schema_version": 1
+}
