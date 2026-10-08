@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T01:30:11.352126+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "a547c2cb157ce9b9140ff4da920c0af2bf75597ffd670f2254a1958b31d41820",
+  "request_id": "jobpipe-workday-registration-evidence-gate-20261008-01",
+  "schema_version": 1
+}
