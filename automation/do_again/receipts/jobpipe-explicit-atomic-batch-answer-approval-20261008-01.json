@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T15:24:07.782782+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "7edbe2ddd007172e3eacdb73f2547a92eba981ae48bd7b74c9f4eb3b7476b00a",
+  "request_id": "jobpipe-explicit-atomic-batch-answer-approval-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "f6ec09d30e1e4865e426b829fd4608c46f6b01a5"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "6d934eca78e7aa5d1407243e98122c8d96088580"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "7edbe2ddd007172e3eacdb73f2547a92eba981ae48bd7b74c9f4eb3b7476b00a",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-explicit-atomic-batch-answer-approval-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 7.627,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 6102,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-explicit-atomic-batch-answer-approval-20261008-01/script.py",
+      "script_sha256": "22f8dff9c7341aaf370a1acb142b647044c499174ef16d2af6b2ea21196c49b5",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   6d934ec..f6ec09d  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "TEST_EXIT 0 OUTPUT .....................................................                    [100%]\n53 passed in 4.08s\n ERROR \n[main f6ec09d] feat: atomically save explicitly confirmed human review answer batches\n 2 files changed, 67 insertions(+)\n create mode 100644 tests/test_ats_review_batch_approval.py\n create mode 100644 tools/ats_review_batch_approval.py\nVERIFIED_PUSH f6ec09d30e1e4865e426b829fd4608c46f6b01a5\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T15:23:59.837392+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
