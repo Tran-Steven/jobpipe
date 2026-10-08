@@ -22,7 +22,18 @@ async def inspect(url: str)->dict:
         try:
             page=await browser.new_page(accept_downloads=False)
             page.set_default_timeout(12000)
+            blocked_navigations=[]
+            async def navigation_guard(route):
+                request=route.request
+                if request.is_navigation_request() and not allowed_url(request.url):
+                    blocked_navigations.append(urlsplit(request.url).hostname or "invalid")
+                    await route.abort()
+                else:
+                    await route.continue_()
+            await page.route("**/*",navigation_guard)
             await page.goto(url,wait_until="domcontentloaded",timeout=25000)
+            if blocked_navigations or not allowed_url(page.url):
+                raise ValueError("Navigation left approved ATS HTTPS domains")
             return {
                 "url_host":urlsplit(page.url).hostname,
                 "reachable":True,
