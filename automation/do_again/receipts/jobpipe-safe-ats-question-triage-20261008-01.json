@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T14:23:35.689729+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "9ca3f3f38557ee8c4ee829f46fdeaf461cfb4ad02db22ff457fac5fa093ea839",
+  "request_id": "jobpipe-safe-ats-question-triage-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "a97223391016df4285c38f5a46654e53ff61fe21"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "a97223391016df4285c38f5a46654e53ff61fe21"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "9ca3f3f38557ee8c4ee829f46fdeaf461cfb4ad02db22ff457fac5fa093ea839",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-safe-ats-question-triage-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 4.906,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 5141,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-safe-ats-question-triage-20261008-01/script.py",
+      "script_sha256": "5f83c7f7bc5dc45278688fb4aed3c6e9c57a850964992a98ccc04ea6d17e66fc",
+      "stderr": "TEST_FAILED_NO_PUSH\n",
+      "stderr_truncated": false,
+      "stdout": "TEST_EXIT 1 TEST_OUTPUT ........F..................                                              [100%]\n=================================== FAILURES ===================================\n_____________ test_only_exact_verified_contact_field_is_candidate ______________\n\n    def test_only_exact_verified_contact_field_is_candidate():\n        fields=[{\"question\":\"Full name ✱\",\"label\":\"Full name ✱\",\"type\":\"text\",\"ambiguous\":False},\n                {\"question\":\"Email ✱\",\"label\":\"Email ✱\",\"type\":\"email\",\"ambiguous\":False},\n                {\"question\":\"Email ✱\",\"label\":\"Email ✱\",\"type\":\"email\",\"ambiguous\":True},\n                {\"question\":\"Phone ✱\",\"label\":\"Phone ✱\",\"type\":\"text\",\"ambiguous\":False}]\n        out=triage_fields(fields,{\"full_name\",\"email\"})\n>       assert [x[\"status\"] for x in out]==[\"verified_candidate\",\"verified_candidate\",\"human_review\",\"human_review\"]\nE       AssertionError: assert ['human_revie...human_review'] == ['verified_ca...human_review']\nE         \nE         At index 0 diff: 'human_review' != 'verified_candidate'\nE         Use -v to get more diff\n\ntests/test_ats_question_triage.py:24: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_ats_question_triage.py::test_only_exact_verified_contact_field_is_candidate\n1 failed, 26 passed in 3.92s\n TEST_STDERR \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T14:23:30.448948+00:00",
+  "state": "failed",
+  "traceback": null
+}
