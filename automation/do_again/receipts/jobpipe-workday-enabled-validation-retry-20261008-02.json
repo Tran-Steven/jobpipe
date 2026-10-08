@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:93987:1791414800:9e48d0bdac84",
+  "error": null,
+  "finished_at_utc": "2026-10-08T01:12:49.030009+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "109eb0cc54c470ef209eed72f06da289add0b7faf2f58c09a2d863bb27591f19",
+  "request_id": "jobpipe-workday-enabled-validation-retry-20261008-02",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "fcec90b66dc3acc1609ff6a0fe00f851e6c7219d"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "cf84a220a60b9c34a054b04a697c37e857a1713c"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "109eb0cc54c470ef209eed72f06da289add0b7faf2f58c09a2d863bb27591f19",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-enabled-validation-retry-20261008-02/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 591.836,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1848,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-enabled-validation-retry-20261008-02/script.py",
+      "script_sha256": "2a66f0a63318e8014013df3951a721b9d7bfb9aefdef9b466333420cf848a8cb",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   cf84a22..fcec90b  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "[main fcec90b] fix: require unique enabled Workday registration button\n 2 files changed, 35 insertions(+), 5 deletions(-)\nSTATUS  M adapters/protocol.py\n M adapters/workday.py\n M do-again.toml\n M tests/test_workday_adapter.py\n?? do-again-policy.json\n\nRESULT ['tests/test_workday_adapter.py', '-k', 'registration_uses_only_enabled_create_account_control'] EXIT 0 OUT .                                                                        [100%]\n1 passed, 73 deselected in 3.43s\n ERR \nRESULT ['tests/test_workday_adapter.py'] EXIT 0 OUT ........................................................................ [ 97%]\n..                                                                       [100%]\n74 passed in 62.84s (0:01:02)\n ERR \nRESULT ['tests/test_ats_adapter_contract.py'] EXIT 0 OUT ....................................                                     [100%]\n36 passed in 102.76s (0:01:42)\n ERR \nRESULT [] EXIT 0 OUT ........................................................................ [  3%]\n........................................................................ [  7%]\n........................................................................ [ 11%]\n........................................................................ [ 15%]\n........................................................................ [ 19%]\n........................................................................ [ 22%]\n........................................................................ [ 26%]\n........................................................................ [ 30%]\n........................................................................ [ 34%]\n.........................................................s.............. [ 38%]\n........................................................................ [ 42%]\n........................................................................ [ 45%]\n........................................................................ [ 49%]\n........................................................................ [ 53%]\n........................................................................ [ 57%]\n......s................................................................. [ 61%]\n...............................................................sssssssss [ 65%]\nss....................................................s................. [ 68%]\n........................................................................ [ 72%]\n........................................................................ [ 76%]\n........................................................................ [ 80%]\n........................................................................ [ 84%]\n........................................................................ [ 88%]\n........................................................................ [ 91%]\n........................................................................ [ 95%]\n........................................................................ [ 99%]\n........                                                                 [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.13/site-packages/fastapi/testclient.py:1\n  /Users/steventran/jobpipe/.venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n1866 passed, 14 skipped, 1 warning in 416.27s (0:06:56)\n ERR \nVERIFIED_PUSH\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T01:02:56.696577+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
