@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "error": null,
+  "finished_at_utc": "2026-10-08T13:06:53.401241+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "d69a128c23178486d6e7b79839f202ec0e4a3d99d0c678acbbf9e37fe2179165",
+  "request_id": "jobpipe-live-ats-redirect-navigation-guard-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "7fc27d0338bc76dbec7665ff352a060f5598827a"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "6c4b014f0f365e3c8e263125fa34d6c5b09afaa3"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "d69a128c23178486d6e7b79839f202ec0e4a3d99d0c678acbbf9e37fe2179165",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-live-ats-redirect-navigation-guard-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 4.768,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 3946,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-live-ats-redirect-navigation-guard-20261008-01/script.py",
+      "script_sha256": "c92e9d0ffaba78874dfb84664e86702a3bec875eb6d7edb95215a9c642d9f7b0",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   6c4b014..7fc27d0  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT 0 ...............                                                          [100%]\n15 passed in 0.34s\n \n[main 7fc27d0] fix: reject unapproved navigation redirects in public ATS diagnostics\n 2 files changed, 44 insertions(+)\nVERIFIED_PUSH 7fc27d0338bc76dbec7665ff352a060f5598827a\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T13:06:48.230400+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
