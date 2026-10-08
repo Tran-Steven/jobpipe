@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T01:30:13.887303+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "a547c2cb157ce9b9140ff4da920c0af2bf75597ffd670f2254a1958b31d41820",
+  "request_id": "jobpipe-workday-registration-evidence-gate-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "66d63886d9851360bf7d548c3bfa2ee78a758fbd"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "66d63886d9851360bf7d548c3bfa2ee78a758fbd"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "a547c2cb157ce9b9140ff4da920c0af2bf75597ffd670f2254a1958b31d41820",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-registration-evidence-gate-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.242,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1743,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-registration-evidence-gate-20261008-01/script.py",
+      "script_sha256": "c9824f01991ced6d7a17712b529a6386ca57277158a32d2f0cac2ca8090f6036",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "HEAD_MATCH True REMOTE_MATCH True\nDIRTY_PATHS ['adapters/protocol.py', 'do-again.toml', 'do-again-policy.json']\nSECTION 935 1089\n941 checkpoint=\"workday.auth.login\",\n953 if await registration_password.is_visible(timeout=500):\n954 if await _click_named(dialog, (\"Close\",)):\n956 except Exception:\n958 if await _click_named(scope, (\"Create Account\", \"Create an Account\")):\n965 checkpoint=\"workday.auth.login\",\n981 checkpoint=\"workday.auth.register\",\n995 except (CredentialStoreError, KeychainError, ValueError):\n1002 checkpoint=\"workday.auth.register\",\n1011 if await _click_named(scope, (\"Sign In\", \"Log In\")):\n1019 checkpoint=\"workday.auth.register\",\n1037 checkpoint=\"workday.auth.register\",\n1044 if registration.unresolved_required:\n1052 checkpoint=\"workday.auth.register\",\n1054 \"unresolved_labels\": list(registration.unresolved_required),\n1060 if not registration.fields_ready:\n1068 checkpoint=\"workday.auth.register\",\n1070 \"diagnostics\": await _stage_diagnostics(context.page),\n1075 if not await _click_create_account_submit(context.page):\n1083 checkpoint=\"workday.auth.register\",\n1084 details={\"diagnostics\": await _stage_diagnostics(context.page)},\nSECTION 2150 2220\n2156 form = page.locator(\n2159 if await form.is_visible(timeout=800):\n2161 except Exception:\n2169 fields_ready=bool(email_ok and password_ok),\n2170 unresolved_required=unresolved,\n2174 async def _click_create_account_submit(page: Any) -> bool:\n2176 form = page.locator(\n2179 if await form.is_visible(timeout=800):\n2186 if await candidate.is_visible(timeout=350) and await candidate.is_enabled():\n2190 return True\n2192 return False\n2193 return await _click_named(form, (\"Create Account\", \"Register\"))\n2194 except Exception:\n2200 if not await verify.is_visible(timeout=500):\n2201 return False\n2208 if await button.is_visible(timeout=350) and await button.is_enabled():\n2212 return True\n2213 except Exception:\n2215 return False\nSECTION 2313 2380\n2313 except Exception:\n2316 except Exception:\n2319 return False\n2322 async def _stage_diagnostics(page: Any) -> dict[str, Any]:\n2370 except Exception:\n2379 if await locator.is_visible(timeout=800):\nHAS_DISABLED_TEST True\nHAS_ENABLED_TEST True\nHAS_DIAGNOSTICS_TEST True\nNEXT_INVESTIGATION Compare registration form locator and click phase with live DOM evidence; if no post-fix live evidence is available, report this blocker and stop unchanged retries.\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T01:30:13.325101+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
