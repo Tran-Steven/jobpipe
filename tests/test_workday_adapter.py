@@ -1439,3 +1439,26 @@ async def test_registration_create_account_failure_returns_nonsecret_diagnostics
     outcome, _ = await WorkdayAdapter()._register(context, None)
     assert outcome.checkpoint == "workday.auth.register"
     assert outcome.details["diagnostics"]["account_creation_controls"][0]["disabled"]
+
+
+
+@pytest.mark.asyncio
+async def test_registration_uses_only_enabled_create_account_control():
+    playwright_module = pytest.importorskip("playwright.async_api")
+    async with playwright_module.async_playwright() as playwright:
+        try:
+            browser = await playwright.chromium.launch(headless=True)
+        except Exception as exc:
+            pytest.skip(f"Chromium unavailable: {type(exc).__name__}")
+        try:
+            page = await browser.new_page()
+            await page.set_content(
+                '<form><input data-automation-id="verifyPassword" type="password">'
+                '<button data-automation-id="createAccountSubmitButton" disabled>Creating...</button>'
+                '<button data-automation-id="createAccountSubmitButton" type="button" onclick="window.createClicks=(window.createClicks||0)+1">Create Account</button>'
+                '</form>'
+            )
+            assert await _click_create_account_submit(page)
+            assert await page.evaluate("window.createClicks") == 1
+        finally:
+            await browser.close()

@@ -2177,12 +2177,19 @@ async def _click_create_account_submit(page: Any) -> bool:
             'form:has([data-automation-id="verifyPassword"])'
         ).first
         if await form.is_visible(timeout=800):
-            submit = form.locator(
+            candidates = form.locator(
                 '[data-automation-id="createAccountSubmitButton"]'
-            ).first
-            if await submit.is_visible(timeout=600):
-                await submit.click()
+            )
+            enabled = []
+            for index in range(min(await candidates.count(), 10)):
+                candidate = candidates.nth(index)
+                if await candidate.is_visible(timeout=350) and await candidate.is_enabled():
+                    enabled.append(candidate)
+            if len(enabled) == 1:
+                await enabled[0].click()
                 return True
+            if len(enabled) > 1:
+                return False
             return await _click_named(form, ("Create Account", "Register"))
     except Exception:
         pass
@@ -2198,7 +2205,7 @@ async def _click_create_account_submit(page: Any) -> bool:
         visible = []
         for index in range(min(await buttons.count(), 10)):
             button = buttons.nth(index)
-            if await button.is_visible(timeout=350):
+            if await button.is_visible(timeout=350) and await button.is_enabled():
                 visible.append(button)
         if len(visible) == 1:
             await visible[0].click()
