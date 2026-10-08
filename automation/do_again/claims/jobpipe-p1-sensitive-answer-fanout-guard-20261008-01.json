@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T04:10:03.616097+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "2ee8924fe7e6deb00f3a3314268ee539d980329371cf807676229d9b72679d14",
+  "request_id": "jobpipe-p1-sensitive-answer-fanout-guard-20261008-01",
+  "schema_version": 1
+}
