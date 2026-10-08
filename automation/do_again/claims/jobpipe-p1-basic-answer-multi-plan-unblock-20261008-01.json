@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T04:07:53.472332+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "077a972c6e52ca10151e05a774b3953dac8caa1ad2bc8c0ec66fe527dd94e142",
+  "request_id": "jobpipe-p1-basic-answer-multi-plan-unblock-20261008-01",
+  "schema_version": 1
+}
