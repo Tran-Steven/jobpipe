@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T02:20:30.445842+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "0129c45cd64bb34f517b105b55379285c4b54bce84af2973cc2fdd00fd8d331c",
+  "request_id": "jobpipe-workday-uncertain-account-state-audit-20261008-01",
+  "schema_version": 1
+}
