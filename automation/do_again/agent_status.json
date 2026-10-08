@@ -3,13 +3,11 @@
   "control_worktree": "/Users/steventran/.do_again/projects/42ba1b7dcb92/control",
   "host": "Stevens-Mac-mini.local",
   "instance_id": "Stevens-Mac-mini.local:46487:1791434177:b54c78afd413",
-  "last_request_id": "jobpipe-p1-answer-fanout-hang-isolation-20261008-01",
-  "last_request_state": "succeeded",
   "pid": 46487,
   "remote": "origin",
   "repo": "/Users/steventran/jobpipe",
   "schema_version": 1,
   "started_at_utc": "2026-10-08T04:36:17.416840+00:00",
-  "state": "ready",
-  "updated_at_utc": "2026-10-08T04:48:02.614214+00:00"
+  "state": "stopped",
+  "updated_at_utc": "2026-10-08T04:49:37.194417+00:00"
 }
