@@ -1,13 +1,13 @@
 {
   "control_branch": "operator-control",
-  "control_worktree": "/Users/steventran/.do_again/projects/42ba1b7dcb92/control",
+  "control_worktree": "/Users/steventran/.do_again/jobpipe-control",
   "host": "Stevens-Mac-mini.local",
-  "instance_id": "Stevens-Mac-mini.local:68262:1791475211:57ca471c3af1",
-  "pid": 68262,
+  "instance_id": "Stevens-Mac-mini.local:7816:1791479663:5d4056ba56cc",
+  "pid": 7816,
   "remote": "origin",
   "repo": "/Users/steventran/jobpipe",
   "schema_version": 1,
-  "started_at_utc": "2026-10-08T16:00:11.706033+00:00",
+  "started_at_utc": "2026-10-08T17:14:23.186849+00:00",
   "state": "ready",
-  "updated_at_utc": "2026-10-08T16:00:11.967399+00:00"
+  "updated_at_utc": "2026-10-08T17:14:23.187708+00:00"
 }
