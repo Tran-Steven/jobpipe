@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-five-commit-workday-milestone-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T03:50:15Z",
+  "expires_at_utc": "2026-10-08T04:50:15Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess\nrepo=Path('/Users/steventran/jobpipe')\ndef cmd(*a):\n p=subprocess.run(['git',*a],cwd=repo,capture_output=True,text=True,check=True,timeout=25)\n return p.stdout\nhead=cmd('rev-parse','HEAD').strip();remote=cmd('rev-parse','origin/main').strip()\nprint('HEAD',head,'ORIGIN',remote)\nif head!='2b57fff8ec673fef7fbeb6fe5ce00110a48a3f34' or head!=remote:raise SystemExit('AUTHORITY_CHANGED')\nprint('DIRTY',cmd('status','--short'))\nprint('LAST_FIVE',cmd('log','-5','--format=%h %s'))\nprint('CHANGE_SUMMARY',cmd('diff','--stat','81464f215821dfd569a575b6a1d5b918eee09dd8..HEAD'))\nprint('SOURCE_GUARDS')\nfor name,terms in [('adapters/workday.py',('WorkdayRegistrationClickUncertain','do_not_retry_register')),('jobctl.py',('Registration uncertain','registration uncertain')),('utils/csv_apply.py',('registration uncertain',)),('tests/test_workday_adapter.py',('uncertain_registration_keeps_generated_credential','registration_click_exception_never_retries')),('tests/test_csv_apply.py',('uncertain_registration_cannot_be_loaded',))]:\n content=(repo/name).read_text().splitlines()\n print('FILE',name,[(i+1,line.strip()[:140]) for i,line in enumerate(content) if any(term in line for term in terms)][:25])\nprint('PROOF_CLASSIFICATION','Local synthetic regressions and receipt test suites passed; no verified post-fix live Alteryx Workday Review checkpoint and no real submissions.')\nprint('ACCEPTANCE','Milestone assessment after five implementation commits: evidence-backed safety and user-facing advancement, remaining live Workday blocker, highest-value next implementation target under GitHub roadmap issue #1. No file edits, browser, credentials or real ATS submission.')\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 110
+  }
+}
