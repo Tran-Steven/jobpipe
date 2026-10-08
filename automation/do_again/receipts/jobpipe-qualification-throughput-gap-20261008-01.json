@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T01:33:53.913678+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "92c7f526483c9b0efe158b9eba73d52cddfa34cbea32b8db691131dd2a1bd67d",
+  "request_id": "jobpipe-qualification-throughput-gap-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "66d63886d9851360bf7d548c3bfa2ee78a758fbd"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "66d63886d9851360bf7d548c3bfa2ee78a758fbd"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "92c7f526483c9b0efe158b9eba73d52cddfa34cbea32b8db691131dd2a1bd67d",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-qualification-throughput-gap-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 1.278,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1133,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-qualification-throughput-gap-20261008-01/script.py",
+      "script_sha256": "db26e9e0408f50f674ae222980bcdf15017e0ea13ec2b2f490b2b019773d7e4d",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "HEAD 66d63886d9851360bf7d548c3bfa2ee78a758fbd\nORIGIN_MAIN 66d63886d9851360bf7d548c3bfa2ee78a758fbd\nDIRTY  M adapters/protocol.py\n M do-again.toml\n?? do-again-policy.json\n\nAREA core FILES_WITH_TERMS 3\nHIT core/application_answer_taxonomy.py [(42, 'SALARY = \"salary\"'), (68, 'COMPENSATION = \"COMPENSATION\"'), (253, 'CanonicalApplicationAnswerKey.SALARY,'), (255, 'CanonicalAnswerSensitivity.COMPENSATION,'), (257, '\"salary_expectation\",')]\nHIT core/application_answers.py [(324, '\"compensation\": CanonicalAnswerSensitivity.COMPENSATION,'), (1363, '\"do not fill salary expectation\",'), (1364, '\"do not include salary expectation\",'), (1368, 'forbidden.add(CanonicalApplicationAnswerKey.SALARY)'), (1622, 'key is CanonicalApplicationAnswerKey.SALARY')]\nHIT core/profile_store.py [(51, '\"compensation\",'), (60, '\"COMPENSATION\",'), (282, '\"salary\": \"salary_expectation\",')]\nAREA tests FILES_WITH_TERMS 8\nHIT tests/test_application_answers.py [(318, 'CanonicalApplicationAnswerKey.SALARY,'), (419, '\"salary\",'), (422, 'sensitivity=\"COMPENSATION\",'), (431, 'instructions=\"Do not fill salary expectation. Consent is approved.\",'), (436, 'assert CanonicalApplicationAnswerKey.SALARY not in projected')]\nHIT tests/test_applypilot_integration.py [(43, '\"compensation\": {\"answer_strategy\": \"Discuss based on total compensation\"},')]\nHIT tests/test_ats_adapter_contract.py [(212, 'assert canonical_key_for(\"Current salary\") == \"unknown\"'), (213, 'assert canonical_key_for(\"Desired salary\") == \"salary\"')]\nHIT tests/test_generic_ai_modules.py [(698, '{\"index\": 9, \"canonical_key\": \"salary\", \"confidence\": 0.50},'), (891, '\"salary\": \"Synthetic salary\",'), (900, 'assert \"Synthetic salary\" in redactions'), (1380, 'salary = FormControl('), (1384, 'label=\"Expected compensation\",')]\nHIT tests/test_migrate_private_home.py [(44, '\"compensation\": {\"answer_strategy\": \"Discuss with recruiter\"},')]\nHIT tests/test_prioritization_policy.py [(362, 'constraint_type=\"SALARY_FORMULA\",')]\nHIT tests/test_profile_store.py [(56, '\"salary\": _record(\"invented\", verified=False),'), (72, 'assert \"salary\" not in profile[\"canonical_answers\"]')]\nHIT tests/test_stagehand_adapter.py [(83, '\"salary_expectation\": \"150000\",')]\nSCOPE read-only inspect qualification and queue throughput roadmap gap; no credentials, browser or application actions\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T01:33:52.227433+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
