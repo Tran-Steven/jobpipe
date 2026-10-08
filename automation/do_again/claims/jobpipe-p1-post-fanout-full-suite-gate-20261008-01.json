@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:70110:1791434979:7696abc569f9",
+  "claimed_at_utc": "2026-10-08T04:53:52.072069+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 70110,
+  "request_fingerprint": "5c235215973a45d7b4a776148b56f97d0cd09c512aff0897e3a53d554faf5556",
+  "request_id": "jobpipe-p1-post-fanout-full-suite-gate-20261008-01",
+  "schema_version": 1
+}
