@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T02:01:02.853537+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "debd8ff9321dd3be29ed9191bf161a8a89698d0558b479d4d372fc92f2f5b3f1",
+  "request_id": "jobpipe-salary-source-admission-seam-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "81464f215821dfd569a575b6a1d5b918eee09dd8"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "81464f215821dfd569a575b6a1d5b918eee09dd8"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "debd8ff9321dd3be29ed9191bf161a8a89698d0558b479d4d372fc92f2f5b3f1",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-salary-source-admission-seam-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.31,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1676,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-salary-source-admission-seam-20261008-01/script.py",
+      "script_sha256": "4fd3cb6494f9af87f6cd6f78250421c368aa6da2bbaeeb57a460afba9b46be50",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "HEAD 81464f215821dfd569a575b6a1d5b918eee09dd8 ORIGIN 81464f215821dfd569a575b6a1d5b918eee09dd8\nDIRTY  M adapters/protocol.py\n M do-again.toml\n?? do-again-policy.json\n\nFILE core/job_discovery.py LINES 726\nENTRY 100 class ResolvedJobCandidate:\nENTRY 151 class JobPosting:\nENTRY 328 def _normalize_candidate(candidate: ResolvedJobCandidate) -> dict[str, Any]:\nENTRY 387 def _job_posting_from_dict(\nFILE core/job_search.py LINES 329\nFILE core/job_salary_eligibility.py LINES 51\nENTRY 18 class SalaryEvidence:\nENTRY 42 def decide_salary(evidence: SalaryEvidence | None, usd_annual_base_floor: float) -> SalaryDecision:\nFILE development_doc/contracts/job-posting.schema.json LINES 135\nACCEPTANCE_READY Salary admission integration must provide provider-sourced period/currency/base provenance, keep old JobPosting records readable, and prove unknown salary survives; stop if source contracts cannot supply this. Read-only, no application attempts.\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T02:01:02.088763+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
