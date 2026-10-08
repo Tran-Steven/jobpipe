@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:70110:1791434979:7696abc569f9",
+  "claimed_at_utc": "2026-10-08T05:20:22.041553+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 70110,
+  "request_fingerprint": "fe7fe013803a97c3688c26299476cd86bb0805e6aa40e6454311e6676b3d4584",
+  "request_id": "jobpipe-ats-smoke-per-adapter-review-proof-20261008-01",
+  "schema_version": 1
+}
