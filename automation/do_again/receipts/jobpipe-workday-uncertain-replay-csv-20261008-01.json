@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T02:45:13.181522+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "43bc8439818485e943b0646b2deffdd491c405ad47a7f2ea34b0a2b2744e6ae9",
+  "request_id": "jobpipe-workday-uncertain-replay-csv-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "227b00fb0142aa92df0c826f27980b65e2a452ad"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "d094c5969d9543b10450b4bf2eba5113f594b627"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "43bc8439818485e943b0646b2deffdd491c405ad47a7f2ea34b0a2b2744e6ae9",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-uncertain-replay-csv-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 457.027,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 3704,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-uncertain-replay-csv-20261008-01/script.py",
+      "script_sha256": "62c00e06d4ff9f0b378a351aa05821a9b2bbef383548f4cf5425d005f75bbda3",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   d094c59..227b00f  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "[main 227b00f] fix: persist uncertain Workday registration as non-replayable queue state\n 2 files changed, 32 insertions(+)\nTEST ['tests/test_jobctl.py', '-k', 'uncertain_workday_account_creation_is_not_requeued'] EXIT 1 F\n=================================== FAILURES ===================================\n_ test_uncertain_workday_account_creation_is_not_requeued_as_generic_needs_user _\n\ntmp_path = PosixPath('/private/var/folders/hz/0lpwv9355wl9kvss20pbt19c0000gn/T/pytest-of-steventran/pytest-43/test_uncertain_workday_account0')\n\n    def test_uncertain_workday_account_creation_is_not_requeued_as_generic_needs_user(tmp_path: Path):\n        csv_path = tmp_path / \"queue.csv\"\n        resume_dir = tmp_path / \"resumes\"\n        resume_dir.mkdir()\n        (resume_dir / \"resume.pdf\").write_bytes(b\"synthetic\")\n        _queue(csv_path)\n        application = load_csv_queue(\n            csv_path, resume_dir, priorities=\"Medium\", statuses=\"Pending\"\n        )[0]\n        outcome = ApplicationOutcome(\n            run_id=\"uncertain-workday\",\n            job_id=\"synthetic-workday\",\n            status=OutcomeStatus.NEEDS_USER_LOGIN,\n            phase=OutcomePhase.AUTHENTICATE,\n            reason_code=ReasonCode.LOGIN_REQUIRED,\n            message=\"Registration may already have succeeded\",\n            details={\"do_not_retry_register\": True},\n        )\n        _project_csv_outcome(csv_path, application, outcome)\n        row = next(csv.DictReader(csv_path.open(encoding=\"utf-8\")))\n>       assert row[\"status\"] == \"Registration uncertain\"\nE       AssertionError: assert 'Needs user' == 'Registration uncertain'\nE         \nE         - Registration uncertain\nE         + Needs user\n\ntests/test_jobctl.py:511: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_jobctl.py::test_uncertain_workday_account_creation_is_not_requeued_as_generic_needs_user\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 13 deselected in 1.66s\n \nTEST ['tests/test_jobctl.py'] EXIT 0 ..............                                                           [100%]\n14 passed in 1.29s\n \nTEST [] EXIT 0 ..................................................... [ 26%]\n........................................................................ [ 30%]\n........................................................................ [ 34%]\n.........................................................s.............. [ 38%]\n........................................................................ [ 41%]\n........................................................................ [ 45%]\n........................................................................ [ 49%]\n........................................................................ [ 53%]\n........................................................................ [ 57%]\n.................s...................................................... [ 60%]\n........................................................................ [ 64%]\n..sssssssssss....................................................s...... [ 68%]\n........................................................................ [ 72%]\n........................................................................ [ 76%]\n........................................................................ [ 79%]\n........................................................................ [ 83%]\n........................................................................ [ 87%]\n........................................................................ [ 91%]\n........................................................................ [ 95%]\n........................................................................ [ 98%]\n......................                                                   [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.13/site-packages/fastapi/testclient.py:1\n  /Users/steventran/jobpipe/.venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n1880 passed, 14 skipped, 1 warning in 445.39s (0:07:25)\n \nVERIFIED_PUSH\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T02:37:35.647264+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
