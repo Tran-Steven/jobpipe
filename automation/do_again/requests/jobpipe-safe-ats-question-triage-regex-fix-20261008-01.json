@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-safe-ats-question-triage-regex-fix-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T14:24:20Z",
+  "expires_at_utc": "2026-10-08T15:24:20Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess,os,signal\nrepo=Path('/Users/steventran/jobpipe');base='a97223391016df4285c38f5a46654e53ff61fe21'\nsrc=repo/'tools/ats_question_triage.py';test=repo/'tests/test_ats_question_triage.py'\ndef git(*a):return subprocess.run(['git',*a],cwd=repo,check=True,text=True,capture_output=True).stdout.strip()\nif git('rev-parse','HEAD')!=base or git('rev-parse','origin/main')!=base:raise SystemExit('AUTHORITY_CHANGED')\nif not src.is_file() or not test.is_file():raise SystemExit('PRIOR_FAILED_SCRIPT_FILES_MISSING')\ns=src.read_text()\nif 'classify_field' not in s or '_CONTACT' not in s:raise SystemExit('UNEXPECTED_SOURCE')\n# Prior generated Python contains double-escaped regex backslashes in raw strings.\nold=r'\\\\s'\nnew=r'\\s'\nif s.count(old)<5:raise SystemExit('EXPECTED_ESCAPING_BUG_NOT_PRESENT')\nsrc.write_text(s.replace(old,new))\np=subprocess.Popen([str(repo/'.venv/bin/python'),'-m','pytest','-q','tests/test_ats_question_triage.py','tests/test_ats_field_labels.py','tests/test_live_ats_inspect.py'],cwd=repo,text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)\ntry:o,e=p.communicate(timeout=120)\nexcept subprocess.TimeoutExpired:\n os.killpg(p.pid,signal.SIGKILL);raise SystemExit('TEST_TIMEOUT')\nprint('TEST_EXIT',p.returncode,'STDOUT',o[-3000:],'STDERR',e[-800:],flush=True)\nif p.returncode:raise SystemExit('FAILED_TESTS_NO_PUSH')\nif git('rev-parse','HEAD')!=base or git('rev-parse','origin/main')!=base:raise SystemExit('AUTHORITY_CHANGED_AFTER_TESTS')\nsubprocess.run(['git','add','--','tools/ats_question_triage.py','tests/test_ats_question_triage.py'],cwd=repo,check=True)\nsubprocess.run(['git','commit','-m','feat: safe verified contact field triage with human-review fallback'],cwd=repo,check=True)\nsubprocess.run(['git','push','origin','main'],cwd=repo,check=True)\nprint('VERIFIED_PUSH',git('rev-parse','HEAD'),flush=True)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 210
+  }
+}
