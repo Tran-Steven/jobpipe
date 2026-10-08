@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T14:49:54.856861+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "c8176f2db93b3ee3ae6cd2bf91d3965f56647d9c71acd97042a639533c32d9bf",
+  "request_id": "jobpipe-reviewed-answer-integration-assertion-fix-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "ee92da2f176d381696e33626e409f9bb4c50561b"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "ee92da2f176d381696e33626e409f9bb4c50561b"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "c8176f2db93b3ee3ae6cd2bf91d3965f56647d9c71acd97042a639533c32d9bf",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-reviewed-answer-integration-assertion-fix-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.256,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 2639,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-reviewed-answer-integration-assertion-fix-20261008-01/script.py",
+      "script_sha256": "03dc375afb3f9c594ce588dd688cd7a5bdaaecb2570a9ac52592162ed2a5a395",
+      "stderr": "SORT_ORDER_ASSERTION_CHANGED\n",
+      "stderr_truncated": false,
+      "stdout": "",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T14:49:54.231092+00:00",
+  "state": "failed",
+  "traceback": null
+}
