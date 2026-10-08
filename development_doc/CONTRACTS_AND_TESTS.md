@@ -1974,6 +1974,13 @@ compatible, missing API credentials remain distinct, and Visual QA remains
 
 # M1b Isolated Subscription CLI Structured Runner
 
+Reliability regression coverage distinguishes input-only validation from native
+Seatbelt execution: malformed-image/count tests forbid subprocess creation and
+use an explicit executable-availability fixture on every platform. A separate
+missing-sandbox test proves valid requests fail with `ISOLATION_UNAVAILABLE`
+without spawning. Workday registration diagnostics and uncertain-click tests
+inject an in-memory credential store; they never depend on host Keychain access.
+
 `IsolatedStructuredModelRequest` accepts a deterministic typed projection,
 strict JSON Schema, bounded stdin text, and up to four content-validated
 managed PNG/JPEG images. `IsolatedSubscriptionCLIRunner` executes exactly one
