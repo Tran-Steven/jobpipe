@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T15:14:32.499321+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "ab028bbd66986bcc7d741a28bee19c83c2a3ac55d26a2f4cef77f0bf6fdd3fd2",
+  "request_id": "jobpipe-live-lever-private-snapshot-pipeline-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "f9a68e8839d8c942566788f0a942b2813142a8d8"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "f9a68e8839d8c942566788f0a942b2813142a8d8"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "ab028bbd66986bcc7d741a28bee19c83c2a3ac55d26a2f4cef77f0bf6fdd3fd2",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-live-lever-private-snapshot-pipeline-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 7.38,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 2274,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-live-lever-private-snapshot-pipeline-20261008-01/script.py",
+      "script_sha256": "d84606b3bad4b622ce69e66feda8bf74361711dc7a26bfbb1aa1bd33609ff408",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "EXIT 0 OUTPUT {\"auth\": \"not_attempted\", \"fill\": \"not_attempted\", \"http_status\": 200, \"metadata_only\": true, \"review_items\": 18, \"snapshot_field_count\": 34, \"snapshot_mode\": \"0600\", \"submission\": \"not_attempted\", \"verified_profile_candidates\": 3}\n ERROR \nLIVE_PRIVATE_SNAPSHOT_REVIEW_PIPELINE_VERIFIED\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T15:14:24.591947+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
