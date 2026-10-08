@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:70110:1791434979:7696abc569f9",
+  "claimed_at_utc": "2026-10-08T05:05:46.726930+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 70110,
+  "request_fingerprint": "d07effc3d8143b85c5cdca2c624a4cddbb0ee96c8f73e41f6520e90724b0572d",
+  "request_id": "jobpipe-no-submit-ats-review-smoke-path-fix-20261008-02",
+  "schema_version": 1
+}
