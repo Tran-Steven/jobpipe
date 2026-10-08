@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "error": null,
+  "finished_at_utc": "2026-10-08T06:56:59.806350+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "82f7f582c45e66dc47734150e0321501248e454708a8983d488bba3af3cd467c",
+  "request_id": "jobpipe-ats-gate-mixed-queue-chromium-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "57ff2325d6b639c163c23990cb2bdc0f485f9c1a"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "d3300bde5d8938bcb502185591b052488ec5c20c"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "82f7f582c45e66dc47734150e0321501248e454708a8983d488bba3af3cd467c",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-ats-gate-mixed-queue-chromium-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 47.989,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 3892,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-ats-gate-mixed-queue-chromium-20261008-01/script.py",
+      "script_sha256": "a6d8cf0cc1364e2c2c31b895c68f70693726a6e52497603325fb0aa4a9c24b1d",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   d3300bd..57ff232  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT 0 ......                                                                   [100%]\n6 passed in 0.13s\n \nRESULT 0 ============================= test session starts ==============================\nplatform darwin -- Python 3.13.15, pytest-9.1.1, pluggy-1.6.0 -- /Users/steventran/jobpipe/.venv/bin/python\ncachedir: .pytest_cache\nrootdir: /Users/steventran/jobpipe\nconfigfile: pytest.ini\nplugins: asyncio-1.4.0, anyio-4.15.1\nasyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollecting ... collected 44 items / 27 deselected / 17 selected\n\ntests/test_ats_adapter_contract.py::test_adapter_reaches_review_with_required_fields_and_upload[greenhouse-GreenhouseAdapter-expected0] PASSED [  5%]\ntests/test_ats_adapter_contract.py::test_adapter_reaches_review_with_required_fields_and_upload[lever-LeverAdapter-expected1] PASSED [ 11%]\ntests/test_ats_adapter_contract.py::test_adapter_reaches_review_with_required_fields_and_upload[ashby-AshbyAdapter-expected2] PASSED [ 17%]\ntests/test_ats_adapter_contract.py::test_adapter_reaches_review_with_required_fields_and_upload[jobvite-JobviteAdapter-expected3] PASSED [ 23%]\ntests/test_ats_adapter_contract.py::test_submit_requires_gate_b[greenhouse-GreenhouseAdapter-_expected0] PASSED [ 29%]\ntests/test_ats_adapter_contract.py::test_submit_requires_gate_b[lever-LeverAdapter-_expected1] PASSED [ 35%]\ntests/test_ats_adapter_contract.py::test_submit_requires_gate_b[ashby-AshbyAdapter-_expected2] PASSED [ 41%]\ntests/test_ats_adapter_contract.py::test_submit_requires_gate_b[jobvite-JobviteAdapter-_expected3] PASSED [ 47%]\ntests/test_ats_adapter_contract.py::test_review_requires_a_final_submit_control PASSED [ 52%]\ntests/test_ats_adapter_contract.py::test_browser_navigates_local_http_ats_page_to_review_without_submit[greenhouse-GreenhouseAdapter-expected0] PASSED [ 58%]\ntests/test_ats_adapter_contract.py::test_browser_navigates_local_http_ats_page_to_review_without_submit[lever-LeverAdapter-expected1] PASSED [ 64%]\ntests/test_ats_adapter_contract.py::test_browser_navigates_local_http_ats_page_to_review_without_submit[ashby-AshbyAdapter-expected2] PASSED [ 70%]\ntests/test_ats_adapter_contract.py::test_browser_navigates_local_http_ats_page_to_review_without_submit[jobvite-JobviteAdapter-expected3] PASSED [ 76%]\ntests/test_ats_adapter_contract.py::test_apply_csv_continues_from_missing_material_to_real_chromium_review[greenhouse-GreenhouseAdapter-expected0] PASSED [ 82%]\ntests/test_ats_adapter_contract.py::test_apply_csv_continues_from_missing_material_to_real_chromium_review[lever-LeverAdapter-expected1] PASSED [ 88%]\ntests/test_ats_adapter_contract.py::test_apply_csv_continues_from_missing_material_to_real_chromium_review[ashby-AshbyAdapter-expected2] PASSED [ 94%]\ntests/test_ats_adapter_contract.py::test_apply_csv_continues_from_missing_material_to_real_chromium_review[jobvite-JobviteAdapter-expected3] PASSED [100%]\n\n====================== 17 passed, 27 deselected in 43.66s ======================\nATS_FIXTURE_REVIEW_GATE=PASS; LIVE_REVIEW=NOT_VERIFIED; SUBMISSIONS=NOT_ATTEMPTED\n \n[main 57ff232] test: gate ATS fixture readiness on mixed-queue Chromium Review\n 2 files changed, 28 insertions(+), 3 deletions(-)\nVERIFIED_PUSH 57ff2325d6b639c163c23990cb2bdc0f485f9c1a\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T06:56:11.409689+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
