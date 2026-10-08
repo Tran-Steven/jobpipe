@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T01:37:42.201838+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "01ae33cbb1d6b9e51757369cd400e2ced6477cae61e59bcc9206197f1b7dcbde",
+  "request_id": "jobpipe-salary-decision-contract-20261008-01",
+  "schema_version": 1
+}
