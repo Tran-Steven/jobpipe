@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:70110:1791434979:7696abc569f9",
+  "error": null,
+  "finished_at_utc": "2026-10-08T05:07:49.205266+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "d07effc3d8143b85c5cdca2c624a4cddbb0ee96c8f73e41f6520e90724b0572d",
+  "request_id": "jobpipe-no-submit-ats-review-smoke-path-fix-20261008-02",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "3435b774e13a692443215349e04e176823871598"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "48c1c8dc12abae84a349548f50f64bd48f7691ed"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "d07effc3d8143b85c5cdca2c624a4cddbb0ee96c8f73e41f6520e90724b0572d",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-no-submit-ats-review-smoke-path-fix-20261008-02/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 120.649,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 2948,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-no-submit-ats-review-smoke-path-fix-20261008-02/script.py",
+      "script_sha256": "3ca00e9a92bc10b47965d2608ef316d898a060e96775bac96f5510bbf88d6b0d",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   48c1c8d..3435b77  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT ['/Users/steventran/jobpipe/.venv/bin/python', '/Users/steventran/jobpipe/tools/ats_review_smoke.py'] 0 .........                                                                [100%]\n9 passed, 27 deselected in 34.46s\nATS_FIXTURE_REVIEW_GATE=PASS; LIVE_REVIEW=NOT_VERIFIED; SUBMISSIONS=NOT_ATTEMPTED\n \nRESULT ['/Users/steventran/jobpipe/.venv/bin/python', '-m', 'pytest', '-q', '--maxfail=1', 'tests/test_ats_adapter_contract.py'] 0 ....................................                                     [100%]\n36 passed in 81.94s (0:01:21)\n \n[main 3435b77] tools: add no-submit ATS review fixture smoke gate\n 1 file changed, 36 insertions(+)\n create mode 100644 tools/ats_review_smoke.py\nVERIFIED_PUSH 3435b774e13a692443215349e04e176823871598\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T05:05:48.116627+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
