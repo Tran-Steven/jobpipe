@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T02:02:13.829777+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "aa4a31551a761ef5ba1b8a6a7fbf1717fa4508e389f4c6e16bd6557f2bb1ee79",
+  "request_id": "jobpipe-workday-evidence-inventory-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "81464f215821dfd569a575b6a1d5b918eee09dd8"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "81464f215821dfd569a575b6a1d5b918eee09dd8"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "aa4a31551a761ef5ba1b8a6a7fbf1717fa4508e389f4c6e16bd6557f2bb1ee79",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-evidence-inventory-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.522,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1182,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-evidence-inventory-20261008-01/script.py",
+      "script_sha256": "96e1ae7fd545588722efa403b06151695f2697d2dac285e69cc70810143c7b76",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "HEAD_MATCH True\nDIRTY  M adapters/protocol.py\n M do-again.toml\n?? do-again-policy.json\n\nRELEVANT_ARTIFACT_PATHS tests ['tests/test_authorized_submission_execution.py', 'tests/test_auth.py', 'tests/test_submission_authorization.py', 'tests/test_workday_adapter.py', 'tests/test_authenticated_subject_session.py', 'tests/test_single_file_base_latex_registration.py', 'tests/__pycache__/test_authenticated_subject_session.cpython-313-pytest-9.1.1.pyc', 'tests/__pycache__/test_authorized_submission_execution.cpython-313-pytest-9.1.1.pyc', 'tests/__pycache__/test_workday_adapter.cpython-313-pytest-9.1.1.pyc', 'tests/__pycache__/test_submission_authorization.cpython-313-pytest-9.1.1.pyc', 'tests/__pycache__/test_single_file_base_latex_registration.cpython-313-pytest-9.1.1.pyc', 'tests/__pycache__/test_auth.cpython-313-pytest-9.1.1.pyc', 'tests/support/workday_fsm.py', 'tests/fixtures/workday/auth_on_autofill_route.html', 'tests/fixtures/workday/mixed_auth.html', 'tests/support/__pycache__/workday_fsm.cpython-313.pyc']\nRELEVANT_ARTIFACT_PATHS development_doc []\nREGISTRATION_FAILURE_PATH 1061 self._restore_generated_credential(context, previous_password)\nREGISTRATION_FAILURE_PATH 1062 return (\nREGISTRATION_FAILURE_PATH 1063 _needs_user(\nREGISTRATION_FAILURE_PATH 1064 context,\nREGISTRATION_FAILURE_PATH 1065 OutcomeStatus.NEEDS_USER_LOGIN,\nREGISTRATION_FAILURE_PATH 1066 ReasonCode.LOGIN_REQUIRED,\nREGISTRATION_FAILURE_PATH 1067 \"Workday registration fields could not be completed\",\nREGISTRATION_FAILURE_PATH 1068 checkpoint=\"workday.auth.register\",\nREGISTRATION_FAILURE_PATH 1069 details={\nREGISTRATION_FAILURE_PATH 1070 \"diagnostics\": await _stage_diagnostics(context.page),\nREGISTRATION_FAILURE_PATH 1071 },\nREGISTRATION_FAILURE_PATH 1072 ),\nREGISTRATION_FAILURE_PATH 1073 password,\nREGISTRATION_FAILURE_PATH 1074 )\nREGISTRATION_FAILURE_PATH 1075 if not await _click_create_account_submit(context.page):\nREGISTRATION_FAILURE_PATH 1076 self._restore_generated_credential(context, previous_password)\nREGISTRATION_FAILURE_PATH 1077 return (\nREGISTRATION_FAILURE_PATH 1078 _needs_user(\nREGISTRATION_FAILURE_PATH 1079 context,\nREGISTRATION_FAILURE_PATH 1080 OutcomeStatus.NEEDS_USER_LOGIN,\nREGISTRATION_FAILURE_PATH 1081 ReasonCode.LOGIN_REQUIRED,\nREGISTRATION_FAILURE_PATH 1082 \"Workday account creation control could not be activated\",\nREGISTRATION_FAILURE_PATH 1083 checkpoint=\"workday.auth.register\",\nREGISTRATION_FAILURE_PATH 1084 details={\"diagnostics\": await _stage_diagnostics(context.page)},\nREGISTRATION_FAILURE_PATH 1085 ),\nREGISTRATION_FAILURE_PATH 1086 password,\nREGISTRATION_FAILURE_PATH 1087 )\nREGISTRATION_FAILURE_PATH 1088 return None, password\nREGISTRATION_FAILURE_PATH 1089 \nREGISTRATION_FAILURE_PATH 1090 def _save_generated_credential(\nOBSERVATION No live browser request or credentials accessed. If post-fix sanitized Workday DOM evidence is absent, do not repeat unchanged live attempt; mark missing evidence and prioritize supported ATS fixture reliability.\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T02:02:12.822933+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
