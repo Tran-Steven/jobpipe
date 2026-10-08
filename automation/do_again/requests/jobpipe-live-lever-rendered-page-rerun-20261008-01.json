@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-live-lever-rendered-page-rerun-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T13:38:35Z",
+  "expires_at_utc": "2026-10-08T14:38:35Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess,json,os,signal\nrepo=Path('/Users/steventran/jobpipe');base='b8a787b5b6c9df5bda03db4b5c9f3da67d80317a'\nurl='https://jobs.lever.co/ethena/f85bcfd1-8d2c-4cf5-a6ab-1c8ddab14c65'\ndef git(*a):return subprocess.run(['git',*a],cwd=repo,check=True,text=True,capture_output=True).stdout.strip()\nif git('rev-parse','HEAD')!=base:raise SystemExit('AUTHORITY_CHANGED')\np=subprocess.Popen([str(repo/'.venv/bin/python'),'tools/live_ats_inspect.py',url],cwd=repo,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)\ntry:o,e=p.communicate(timeout=75)\nexcept subprocess.TimeoutExpired:\n os.killpg(p.pid,signal.SIGKILL);raise SystemExit('DIAGNOSTIC_TIMEOUT')\nprint('INSPECT_EXIT',p.returncode,flush=True)\nif p.returncode:\n print('INSPECT_ERROR',e[-600:],flush=True);raise SystemExit(p.returncode)\nr=json.loads(o)\nassert r['url_host']=='jobs.lever.co' and r['diagnostic_only'] is True\nassert r['submission']=='not_attempted' and r['auth']=='not_attempted'\nassert r['live_review']=='not_verified'\nassert isinstance(r['rendered_text_length'],int) and r['rendered_text_length']>=0\nassert r['empty_rendered_page']==(r['rendered_text_length']==0)\nassert isinstance(r['unavailable_page_indicators'],list)\nprint('LIVE_RENDERED_PAGE_DIAGNOSTIC',json.dumps(r,sort_keys=True),flush=True)\nprint('HEAD_UNCHANGED',git('rev-parse','HEAD')==base,flush=True)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 140
+  }
+}
