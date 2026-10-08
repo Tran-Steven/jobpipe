@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "error": null,
+  "finished_at_utc": "2026-10-08T06:43:45.774872+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "d9048fb6601995385bf9939c8badc62f97e30e67eafc4d7c53b41954b573dce8",
+  "request_id": "jobpipe-queue-real-chromium-review-integration-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "9d52bb31992ab0e867e6816e449c4d26cce9136b"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "09262dbf2ec916e30a49e6323af09b0774bb7927"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "d9048fb6601995385bf9939c8badc62f97e30e67eafc4d7c53b41954b573dce8",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-queue-real-chromium-review-integration-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 7.915,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 5176,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-queue-real-chromium-review-integration-20261008-01/script.py",
+      "script_sha256": "7b3651e03db705cd2b62d3cb60d16779259244f76bf9152ac41229ac43dfe7bf",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   09262db..9d52bb3  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT 0 .                                                                        [100%]\n1 passed, 40 deselected in 4.66s\n \n[main 9d52bb3] test: prove blocked queue row precedes real Chromium ATS Review\n 1 file changed, 71 insertions(+)\nVERIFIED_PUSH 9d52bb31992ab0e867e6816e449c4d26cce9136b\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T06:43:37.464352+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
