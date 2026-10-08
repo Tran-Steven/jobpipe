@@ -3,13 +3,13 @@
   "control_worktree": "/Users/steventran/.do_again/projects/42ba1b7dcb92/control",
   "host": "Stevens-Mac-mini.local",
   "instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
-  "last_request_id": "jobpipe-apply-csv-browser-lease-mixed-fairness-20261008-01",
-  "last_request_state": "failed",
+  "last_request_id": "jobpipe-browser-lease-mixed-fairness-company-fix-20261008-02",
+  "last_request_state": "succeeded",
   "pid": 56125,
   "remote": "origin",
   "repo": "/Users/steventran/jobpipe",
   "schema_version": 1,
   "started_at_utc": "2026-10-08T05:41:46.220348+00:00",
   "state": "ready",
-  "updated_at_utc": "2026-10-08T06:36:25.672368+00:00"
+  "updated_at_utc": "2026-10-08T06:37:14.154398+00:00"
 }
