@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:70110:1791434979:7696abc569f9",
+  "claimed_at_utc": "2026-10-08T05:13:49.699612+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 70110,
+  "request_fingerprint": "8b44815515691b85342e255fa770dabc2794e2443daa019a8e19ea591f92b0d3",
+  "request_id": "jobpipe-ats-smoke-browser-skip-failclosed-20261008-01",
+  "schema_version": 1
+}
