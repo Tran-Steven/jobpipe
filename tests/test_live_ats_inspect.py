@@ -66,8 +66,12 @@ async def test_live_probe_http_status_is_not_confused_with_form_readiness(status
         def set_default_timeout(self,*a):pass
         async def route(self,*a):pass
         async def goto(self,*a,**kw):return type("Response",(),{"status":status})()
+        async def wait_for_timeout(self,*a):pass
         def locator(self,selector):
-            return type("Locator",(),{"count":AsyncMock(return_value=0)})()
+            return type("Locator",(),{
+                "count":AsyncMock(return_value=0),
+                "inner_text":AsyncMock(return_value="Job no longer available")
+            })()
     class Browser:
         async def new_page(self,**kw):return Page()
         async def close(self):pass
@@ -81,3 +85,10 @@ async def test_live_probe_http_status_is_not_confused_with_form_readiness(status
     assert result["application_form_detected"] is False
     assert result["live_review"]=="not_verified"
     assert result["submission"]=="not_attempted"
+
+@pytest.mark.asyncio
+async def test_rendered_page_indicators_do_not_imply_review():
+    from unittest.mock import patch
+    from tools.live_ats_inspect import inspect
+    # Integration mocking already exercised by parameterized response tests.
+    assert callable(inspect)

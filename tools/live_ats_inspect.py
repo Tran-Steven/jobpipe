@@ -35,14 +35,25 @@ async def inspect(url: str)->dict:
             if blocked_navigations or not allowed_url(page.url):
                 raise ValueError("Navigation left approved ATS HTTPS domains")
             status=response.status if response is not None else None
+            # Bounded observation only: do not click, fill, or authenticate.
+            await page.wait_for_timeout(2500)
             form_count=await page.locator("form").count()
             input_count=await page.locator("input").count()
+            body_text=await page.locator("body").inner_text(timeout=8000)
+            normalized=" ".join(body_text.split())
+            indicators=tuple(term for term in
+                ("not found","no longer available","position has been filled",
+                 "job is closed","access denied")
+                if term in normalized.casefold())
             return {
                 "url_host":urlsplit(page.url).hostname,
                 "reachable":status is not None and 200 <= status < 400,
                 "http_status":status,
                 "application_form_detected":bool(form_count and input_count),
                 "diagnostic_only":True,
+                "rendered_text_length":len(normalized),
+                "empty_rendered_page":not bool(normalized),
+                "unavailable_page_indicators":list(indicators),
                 "final_scheme":urlsplit(page.url).scheme,
                 "form_count":form_count,
                 "input_count":input_count,
