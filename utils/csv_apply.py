@@ -90,6 +90,10 @@ def load_csv_queue(
     for row_index, row in enumerate(rows):
         priority = row.get("priority", "").strip().casefold()
         status = row.get("status", "").strip().casefold()
+        # A possibly-created ATS account needs human reconciliation, not an
+        # application attempt. Explicit status filters cannot override this.
+        if status == "registration uncertain":
+            continue
         if priority not in priority_rank or status not in status_rank:
             continue
 

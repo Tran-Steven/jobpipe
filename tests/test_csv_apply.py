@@ -122,3 +122,21 @@ def test_load_csv_queue_validates_schema(tmp_path):
 
     with pytest.raises(ValueError, match="missing required columns"):
         load_csv_queue(csv_path, tmp_path)
+
+
+def test_uncertain_registration_cannot_be_loaded_even_with_explicit_status(tmp_path):
+    csv_path = tmp_path / "jobs.csv"
+    resumes = tmp_path / "resumes"
+    resumes.mkdir()
+    _write_csv(csv_path, [
+        _row("Uncertain", "High", "Registration uncertain"),
+        _row("Safe", "High", "Pending"),
+    ])
+    selected = load_csv_queue(
+        csv_path, resumes, priorities="High",
+        statuses="Registration uncertain,Pending",
+    )
+    assert [item.company for item in selected] == ["Safe"]
+    assert load_csv_queue(
+        csv_path, resumes, statuses="Registration uncertain"
+    ) == []
