@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-ats-smoke-per-adapter-verbose-fix-20261008-02",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T05:21:00Z",
+  "expires_at_utc": "2026-10-08T06:21:00Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess,os,signal\nrepo=Path('/Users/steventran/jobpipe');src=repo/'tools/ats_review_smoke.py';test=repo/'tests/test_ats_review_smoke.py'\nbase='591832cea7d132086751ab806d269f6e58f67bc0'\ndef git(*a):return subprocess.run(['git',*a],cwd=repo,check=True,capture_output=True,text=True).stdout\nif git('rev-parse','HEAD').strip()!=base or git('rev-parse','origin/main').strip()!=base:raise SystemExit('AUTHORITY_CHANGED')\ns=src.read_text();t=test.read_text()\nif 'review_verified = all(' not in s or 'test_smoke_refuses_count_only_without_adapter_coverage' not in t:raise SystemExit('PREVIOUS_CHANGE_MISSING')\nold='''\"-q\", \"-v\", \"--tb=short\", TEST,'''\nnew='''\"-vv\", \"--tb=short\", TEST,'''\nif s.count(old)!=1:raise SystemExit('OUTPUT_FLAG_ANCHOR_CHANGED')\nsrc.write_text(s.replace(old,new,1))\ndef run(args,seconds):\n p=subprocess.Popen(args,cwd=repo,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)\n try:o,e=p.communicate(timeout=seconds)\n except subprocess.TimeoutExpired:\n  os.killpg(p.pid,signal.SIGTERM)\n  try:o,e=p.communicate(timeout=8)\n  except subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);o,e=p.communicate()\n  print('TIMEOUT',o[-1500:],flush=True);raise SystemExit(124)\n print('RESULT',p.returncode,o[-5200:],e[-700:],flush=True)\n return p.returncode,o\nrc,_=run([str(repo/'.venv/bin/python'),'-m','pytest','-q','tests/test_ats_review_smoke.py'],80)\nif rc:raise SystemExit('UNIT_FAILURE')\nrc,out=run([str(repo/'.venv/bin/python'),str(src)],360)\nif rc or 'ATS_FIXTURE_REVIEW_GATE=PASS' not in out:raise SystemExit('SMOKE_FAILURE')\nsubprocess.run(['git','add','--','tools/ats_review_smoke.py','tests/test_ats_review_smoke.py'],cwd=repo,check=True)\nsubprocess.run(['git','commit','-m','fix: report per-adapter ATS Review evidence from verbose pytest'],cwd=repo,check=True)\nsubprocess.run(['git','push','origin','main'],cwd=repo,check=True,timeout=90)\nprint('VERIFIED_PUSH',git('rev-parse','HEAD').strip(),flush=True)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 700
+  }
+}
