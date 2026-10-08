@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T02:04:21.734427+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "e92889e1361fd7e7ddb1653340163234dc3f2576c5162ef47ca7b18f2b296ca2",
+  "request_id": "jobpipe-workday-uncertain-registration-click-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "81464f215821dfd569a575b6a1d5b918eee09dd8"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "81464f215821dfd569a575b6a1d5b918eee09dd8"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "e92889e1361fd7e7ddb1653340163234dc3f2576c5162ef47ca7b18f2b296ca2",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-uncertain-registration-click-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 6.703,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 4862,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-uncertain-registration-click-20261008-01/script.py",
+      "script_sha256": "14270947272d0b5cd9ab581943077568672ae54aa6908f2a5781c23c4d7be4ff",
+      "stderr": "ANCHOR_CHANGED\n",
+      "stderr_truncated": false,
+      "stdout": "TEST ['tests/test_workday_adapter.py', '-k', 'registration_click_exception_never_retries_potential_account_creation'] EXIT 1 F\n=================================== FAILURES ===================================\n__ test_registration_click_exception_never_retries_potential_account_creation __\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109435940>\n\n    @pytest.mark.asyncio\n    async def test_registration_click_exception_never_retries_potential_account_creation(monkeypatch):\n        playwright_module = pytest.importorskip(\"playwright.async_api\")\n        from playwright.async_api import Locator\n        async with playwright_module.async_playwright() as playwright:\n            try:\n                browser = await playwright.chromium.launch(headless=True)\n            except Exception as exc:\n                pytest.skip(f\"Chromium unavailable: {type(exc).__name__}\")\n            try:\n                page = await browser.new_page()\n                await page.set_content(\n                    '<form><input data-automation-id=\"verifyPassword\" type=\"password\">'\n                    '<button data-automation-id=\"createAccountSubmitButton\" type=\"button\" onclick=\"window.clickCount=(window.clickCount||0)+1\">Create Account</button>'\n                    '</form>'\n                )\n                original_click = Locator.click\n                async def click_then_lose_response(self, *args, **kwargs):\n                    await original_click(self, *args, **kwargs)\n                    raise TimeoutError('simulated click response lost after DOM event')\n                monkeypatch.setattr(Locator, 'click', click_then_lose_response)\n                assert not await _click_create_account_submit(page)\n>               assert await page.evaluate('window.clickCount') == 1\nE               assert 2 == 1\n\ntests/test_workday_adapter.py:1508: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_workday_adapter.py::test_registration_click_exception_never_retries_potential_account_creation\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 75 deselected in 4.48s\n \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T02:04:14.652270+00:00",
+  "state": "failed",
+  "traceback": null
+}
