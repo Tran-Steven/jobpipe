@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:46487:1791434177:b54c78afd413",
+  "claimed_at_utc": "2026-10-08T04:41:32.258773+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 46487,
+  "request_fingerprint": "027421f523793520190a239bc4bfbe7ec0bc28978ae1b44672a093567259d715",
+  "request_id": "jobpipe-p1-answer-fanout-failure-isolation-20261008-01",
+  "schema_version": 1
+}
