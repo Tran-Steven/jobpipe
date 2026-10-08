@@ -14,6 +14,7 @@ PATTERNS = (
     "submit_requires_gate_b",
     "review_requires_a_final_submit_control",
     "browser_navigates_local_http_ats_page_to_review_without_submit",
+    "apply_csv_continues_from_missing_material_to_real_chromium_review",
 )
 
 def main() -> int:
@@ -55,6 +56,17 @@ def main() -> int:
             for line in output.splitlines())
         for required_name in navigation_required
     )
+    mixed_queue_required = (
+        "test_apply_csv_continues_from_missing_material_to_real_chromium_review[greenhouse-",
+        "test_apply_csv_continues_from_missing_material_to_real_chromium_review[lever-",
+        "test_apply_csv_continues_from_missing_material_to_real_chromium_review[ashby-",
+        "test_apply_csv_continues_from_missing_material_to_real_chromium_review[jobvite-",
+    )
+    mixed_queue_verified = all(
+        any(required_name in line and " PASSED" in line
+            for line in output.splitlines())
+        for required_name in mixed_queue_required
+    )
     review_verified = all(
         any(required_name in line and " PASSED" in line
             for line in output.splitlines())
@@ -64,9 +76,10 @@ def main() -> int:
         "test_submit_requires_gate_b" in line and " PASSED" in line
         for line in output.splitlines()
     )
-    good = (rc == 0 and count >= 13
+    good = (rc == 0 and count >= 17
             and not re.search(r"\d+ skipped", output)
-            and review_verified and navigation_verified and safeguard_verified)
+            and review_verified and navigation_verified
+            and mixed_queue_verified and safeguard_verified)
     print(f"ATS_FIXTURE_REVIEW_GATE={'PASS' if good else 'FAIL'}; LIVE_REVIEW=NOT_VERIFIED; SUBMISSIONS=NOT_ATTEMPTED", flush=True)
     return 0 if good else (rc or 1)
 
