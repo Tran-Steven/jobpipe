@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-p1-cross-job-answer-reuse-seam-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T03:54:40Z",
+  "expires_at_utc": "2026-10-08T04:54:40Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess\nrepo=Path('/Users/steventran/jobpipe')\ndef git(*a):return subprocess.run(['git',*a],cwd=repo,check=True,capture_output=True,text=True).stdout.strip()\nhead=git('rev-parse','HEAD');remote=git('rev-parse','origin/main')\nprint('HEAD',head,'ORIGIN',remote)\nif head!='2b57fff8ec673fef7fbeb6fe5ce00110a48a3f34' or head!=remote:raise SystemExit('AUTHORITY_CHANGED')\nprint('DIRTY',git('status','--short'))\npaths=['core/application_answer_resolution.py','core/application_answers.py','core/application_fact_writer.py','core/human_attention_queue.py','tests/test_application_answer_resolution.py','tests/test_application_answers.py','tests/test_application_fact_writer.py']\nterms=['resolve','write_user_confirmed','allowed_scope','job_ids','canonical_key','verified','source_record_id','attention_item_id','def test_']\nfor name in paths:\n p=repo/name\n if not p.exists():continue\n lines=p.read_text().splitlines()\n print('FILE',name,'LENGTH',len(lines))\n hits=[(i+1,line.strip()[:160]) for i,line in enumerate(lines) if any(t in line for t in terms)]\n print('MATCHES',hits[:75])\nprint('ACCEPTANCE','Identify exact existing cross-job verified-answer reuse path, whether a single confirmed canonical fact applies to two distinct compatible jobs, and the narrowest missing end-to-end regression. Preserve sensitivity, expiry, scope and per-job exceptions. Report a concrete implementation seam and fixture/test names, or proof already covered. Read-only, no user data, browser, credentials, or live applications.')\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 110
+  }
+}
