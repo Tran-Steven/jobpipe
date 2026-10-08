@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "claimed_at_utc": "2026-10-08T06:30:04.601283+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 56125,
+  "request_fingerprint": "200855be1446d089ffae855fd6984fa2d921eba7dcccb85a6d303d1245694f7c",
+  "request_id": "jobpipe-apply-csv-mixed-outcome-fairness-20261008-01",
+  "schema_version": 1
+}
