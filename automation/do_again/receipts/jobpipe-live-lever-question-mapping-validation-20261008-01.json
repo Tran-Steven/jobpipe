@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T14:08:45.138955+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "f3555dce82664f0a75f9002f1363b63e2ba5570e128e59228bad37669fbdbcde",
+  "request_id": "jobpipe-live-lever-question-mapping-validation-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "3447fb079b463a43d5dc59bb68e35f4f129475a1"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "3447fb079b463a43d5dc59bb68e35f4f129475a1"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "f3555dce82664f0a75f9002f1363b63e2ba5570e128e59228bad37669fbdbcde",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-live-lever-question-mapping-validation-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 10.09,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 2609,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-live-lever-question-mapping-validation-20261008-01/script.py",
+      "script_sha256": "e568eeda33ba69a0abd1e1a3a1d38b3ddfb345770d290addaa2776f8c7bcceac",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "EXIT 0 OUTPUT {\"ambiguous\": [{\"label\": \"\", \"type\": \"text\"}, {\"label\": \"\", \"type\": \"textarea\"}, {\"label\": \"\", \"type\": \"textarea\"}, {\"label\": \"\", \"type\": \"textarea\"}, {\"label\": \"Yes\", \"type\": \"radio\"}, {\"label\": \"No\", \"type\": \"radio\"}, {\"label\": \"\", \"type\": \"select-one\"}, {\"label\": \"Yes\", \"type\": \"radio\"}, {\"label\": \"No\", \"type\": \"radio\"}, {\"label\": \"\", \"type\": \"textarea\"}, {\"label\": \"\", \"type\": \"textarea\"}], \"ambiguous_count\": 11, \"auth\": \"not_attempted\", \"fill\": \"not_attempted\", \"grouped\": [], \"grouped_count\": 0, \"required\": [{\"ambiguous\": false, \"label\": \"Full name\\n\\u2731\", \"question\": \"\", \"type\": \"text\"}, {\"ambiguous\": false, \"label\": \"Email\\n\\u2731\", \"question\": \"\", \"type\": \"email\"}, {\"ambiguous\": false, \"label\": \"Phone\\n\\u2731\", \"question\": \"\", \"type\": \"text\"}, {\"ambiguous\": false, \"label\": \"I acknowledge that I have read and understand Ethena\\u2019s AI policy for interviews.\", \"question\": \"\", \"type\": \"checkbox\"}, {\"ambiguous\": true, \"label\": \"\", \"question\": \"\", \"type\": \"textarea\"}, {\"ambiguous\": true, \"label\": \"\", \"question\": \"\", \"type\": \"textarea\"}, {\"ambiguous\": true, \"label\": \"Yes\", \"question\": \"\", \"type\": \"radio\"}, {\"ambiguous\": true, \"label\": \"No\", \"question\": \"\", \"type\": \"radio\"}, {\"ambiguous\": true, \"label\": \"\", \"question\": \"\", \"type\": \"select-one\"}, {\"ambiguous\": true, \"label\": \"Yes\", \"question\": \"\", \"type\": \"radio\"}, {\"ambiguous\": true, \"label\": \"No\", \"question\": \"\", \"type\": \"radio\"}, {\"ambiguous\": true, \"label\": \"\", \"question\": \"\", \"type\": \"textarea\"}], \"required_count\": 12, \"review\": \"not_verified\", \"status\": 200, \"submit\": \"not_attempted\", \"total\": 34}\n STDERR \nLIVE_READONLY_QUESTION_MAPPING_VERIFIED\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T14:08:34.522658+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
