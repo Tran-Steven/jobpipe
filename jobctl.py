@@ -150,22 +150,23 @@ def _event_metrics(events: list[Any]) -> dict[str, Any]:
             outcome_events.append(outcome)
 
     latest: dict[str, dict[str, Any]] = {}
-    review_runs: set[str] = set()
-    supported_runs: set[str] = set()
+    run_adapters: dict[str, str] = {}
     model_calls: list[int] = []
     for outcome in outcome_events:
         run_id = str(outcome.get("run_id") or "")
         if run_id:
             latest[run_id] = outcome
         adapter = str(outcome.get("adapter") or "")
-        if adapter in SUPPORTED_ATS and run_id:
-            supported_runs.add(run_id)
-            # Count only the latest authoritative state, not an old Review
-            # later invalidated by a correction or failed verification.
+        if adapter and run_id:
+            run_adapters[run_id] = adapter
         details = outcome.get("details")
         if isinstance(details, dict) and isinstance(details.get("model_calls"), int):
             model_calls.append(details["model_calls"])
 
+    supported_runs = {
+        run_id for run_id, adapter in run_adapters.items()
+        if adapter in SUPPORTED_ATS
+    }
     review_runs = {
         run_id for run_id in supported_runs
         if latest.get(run_id, {}).get("status") in

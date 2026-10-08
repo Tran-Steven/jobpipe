@@ -24,3 +24,19 @@ def test_latest_review_and_verified_submission_counted_once():
 def test_no_supported_runs():
     result=_event_metrics([event("x","REVIEW_READY","unknown")])["supported_ats_review_arrival"]
     assert result=={"reached":0,"runs":0,"rate":None}
+
+
+def test_latest_unsupported_adapter_excludes_historical_supported_run():
+    result=_event_metrics([
+        event("a","REVIEW_READY","greenhouse"),
+        event("a","REVIEW_READY","unsupported"),
+        event("b","REVIEW_READY","ashby"),
+    ])["supported_ats_review_arrival"]
+    assert result=={"reached":1,"runs":1,"rate":1.0}
+
+def test_adapterless_correction_preserves_identity_and_invalidates_review():
+    result=_event_metrics([
+        event("a","REVIEW_READY","greenhouse"),
+        event("a","NEEDS_USER",""),
+    ])["supported_ats_review_arrival"]
+    assert result=={"reached":0,"runs":1,"rate":0.0}
