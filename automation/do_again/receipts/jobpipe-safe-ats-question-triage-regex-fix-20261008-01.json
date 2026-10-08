@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T14:25:00.666942+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "8ccb0e9be1dfd124c2447da13fad73094475d9366c20ed9bb29068e0f405f887",
+  "request_id": "jobpipe-safe-ats-question-triage-regex-fix-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "c4035f70f82fa929f6fadd57d3106b70eec7192d"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "a97223391016df4285c38f5a46654e53ff61fe21"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "8ccb0e9be1dfd124c2447da13fad73094475d9366c20ed9bb29068e0f405f887",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-safe-ats-question-triage-regex-fix-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 10.46,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1894,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-safe-ats-question-triage-regex-fix-20261008-01/script.py",
+      "script_sha256": "d2d2ad31a296f8a6b6db36a2bef6c43029d9ecbf59eca3c49f739a9149363796",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   a972233..c4035f7  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "TEST_EXIT 0 STDOUT ...........................                                              [100%]\n27 passed in 6.24s\n STDERR \n[main c4035f7] feat: safe verified contact field triage with human-review fallback\n 2 files changed, 63 insertions(+)\n create mode 100644 tests/test_ats_question_triage.py\n create mode 100644 tools/ats_question_triage.py\nVERIFIED_PUSH c4035f70f82fa929f6fadd57d3106b70eec7192d\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T14:24:49.699606+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
