@@ -25,3 +25,16 @@ def test_unproven_or_invalid_salary_fails_closed():
         SalaryEvidence(120000, 90000, 'USD', 'BASE', 'https://example.org/job')
     with pytest.raises(ValueError):
         SalaryEvidence(50000, 80000, 'USD', 'BASE', '')
+
+def test_hourly_base_is_not_compared_to_annual_floor():
+    evidence = SalaryEvidence(80, 95, 'USD', 'BASE', 'https://example.org/job', pay_period='HOURLY')
+    assert decide_salary(evidence, 100000) is SalaryDecision.NEEDS_BASE_EVIDENCE
+
+def test_monthly_base_is_not_compared_to_annual_floor():
+    evidence = SalaryEvidence(7000, 8500, 'USD', 'BASE', 'https://example.org/job', pay_period='MONTHLY')
+    assert decide_salary(evidence, 100000) is SalaryDecision.NEEDS_BASE_EVIDENCE
+
+def test_invalid_salary_period_is_rejected():
+    import pytest
+    with pytest.raises(ValueError):
+        SalaryEvidence(90000, 110000, 'USD', 'BASE', 'https://example.org/job', pay_period='FORTNIGHT')

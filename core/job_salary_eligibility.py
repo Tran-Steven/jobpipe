@@ -21,6 +21,7 @@ class SalaryEvidence:
     currency: str
     pay_kind: str
     source_url: str
+    pay_period: str = 'ANNUAL'
 
     def __post_init__(self):
         if (isinstance(self.minimum, bool) or isinstance(self.maximum, bool)
@@ -32,6 +33,8 @@ class SalaryEvidence:
             raise ValueError('unknown currency')
         if self.pay_kind not in ('BASE', 'TOTAL', 'BONUS', 'EQUITY', 'UNKNOWN'):
             raise ValueError('unknown pay kind')
+        if self.pay_period not in ('ANNUAL', 'HOURLY', 'MONTHLY', 'WEEKLY', 'UNKNOWN'):
+            raise ValueError('unknown pay period')
         if not isinstance(self.source_url, str) or not self.source_url.startswith(('https://', 'http://')):
             raise ValueError('salary provenance URL required')
 
@@ -41,7 +44,7 @@ def decide_salary(evidence: SalaryEvidence | None, usd_annual_base_floor: float)
         raise ValueError('invalid annual USD base floor')
     if evidence is None:
         return SalaryDecision.ELIGIBLE_UNKNOWN
-    if evidence.currency != 'USD' or evidence.pay_kind != 'BASE':
+    if evidence.currency != 'USD' or evidence.pay_kind != 'BASE' or evidence.pay_period != 'ANNUAL':
         return SalaryDecision.NEEDS_BASE_EVIDENCE
     if evidence.maximum < usd_annual_base_floor:
         return SalaryDecision.EXCLUDED_BELOW_FLOOR
