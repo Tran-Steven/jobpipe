@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:20294:1791433127:ecca2f4f373c",
+  "error": null,
+  "finished_at_utc": "2026-10-08T04:22:30.084216+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "c9b6ed2102c6c91355b86c2e13fecfa03ed02b3c72625c0d1e58c2772ad106f7",
+  "request_id": "jobpipe-p1-two-real-answer-preparations-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "4b4bf0905bb97a0716a9dc64aea24773b69b1dd3"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "a318d2904f638d00a30f9550e63e579251b175c2"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "c9b6ed2102c6c91355b86c2e13fecfa03ed02b3c72625c0d1e58c2772ad106f7",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-two-real-answer-preparations-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 18.802,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 6663,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-two-real-answer-preparations-20261008-01/script.py",
+      "script_sha256": "cd2021f092e5913d8952233807d9ec9391cc1e3d7174c27cbf1bb9358715d8ac",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   a318d29..4b4bf09  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT ['tests/test_application_answers.py', '-k', 'one_verified_basic_answer_prepares_two_real_distinct_job_answer_sets'] 0 .                                                                        [100%]\n1 passed, 22 deselected in 3.36s\n \nRESULT ['tests/test_application_answers.py', 'tests/test_application_answer_resolution.py', 'tests/test_human_attention_queue.py'] 0 .............................................                            [100%]\n45 passed in 8.79s\n \n[main 4b4bf09] test: verify shared basic answer prepares two distinct job answer sets\n 1 file changed, 89 insertions(+)\nVERIFIED_PUSH 4b4bf0905bb97a0716a9dc64aea24773b69b1dd3\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T04:22:10.696538+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
