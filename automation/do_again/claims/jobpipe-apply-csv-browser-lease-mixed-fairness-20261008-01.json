@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "claimed_at_utc": "2026-10-08T06:36:18.175817+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 56125,
+  "request_fingerprint": "44825692c6ba7fb53b8602ec6cd73a0c1a80d5e67f6aa2256effffc5f3555b9f",
+  "request_id": "jobpipe-apply-csv-browser-lease-mixed-fairness-20261008-01",
+  "schema_version": 1
+}
