@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T14:42:56.479866+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "b55dc7e360956e2739f65df75701e20105df9e0c90d7c296499094600dd60544",
+  "request_id": "jobpipe-ats-reviewed-answer-availability-integration-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "ee92da2f176d381696e33626e409f9bb4c50561b"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "ee92da2f176d381696e33626e409f9bb4c50561b"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "b55dc7e360956e2739f65df75701e20105df9e0c90d7c296499094600dd60544",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-ats-reviewed-answer-availability-integration-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 10.068,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 5286,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-ats-reviewed-answer-availability-integration-20261008-01/script.py",
+      "script_sha256": "8c81d3910abaac62b2abbb00aa3243d9ada04b740f39aace691cc745d601bd18",
+      "stderr": "TEST_FAILURE_NO_PUSH\n",
+      "stderr_truncated": false,
+      "stdout": "TEST_EXIT 1 STDOUT FF..................................                                     [100%]\n=================================== FAILURES ===================================\n______________ test_normalization_handles_newlines_and_whitespace ______________\n\n    def test_normalization_handles_newlines_and_whitespace():\n>       assert normalize_question(\" Do you use  AI\\\\n in your role? \")==normalize_question(\"Do you use AI in your role?\")\nE       AssertionError: assert 'do you use a...in your role?' == 'do you use ai in your role?'\nE         \nE         - do you use ai in your role?\nE         + do you use ai\\n in your role?\nE         ?              ++\n\ntests/test_ats_review_answer_matches.py:5: AssertionError\n________ test_exact_scoped_verified_answer_annotation_never_leaks_value ________\n\n    def test_exact_scoped_verified_answer_annotation_never_leaks_value():\n        fields=[{\"question\":\"Do you use AI in your role?\",\"label\":\"Yes\",\"type\":\"radio\",\"required\":True},\n                {\"question\":\"Do you use AI in your role?\",\"label\":\"No\",\"type\":\"radio\",\"required\":True},\n                {\"question\":\"Background check concerns?\",\"type\":\"textarea\",\"required\":True},\n                {\"question\":\"Full name ✱\",\"label\":\"Full name ✱\",\"type\":\"text\",\"required\":True}]\n        bank=[{\"question\":\"Do you use AI in your role?\",\"answer\":\"PRIVATE_TEST_RESPONSE\",\"scope\":\"employer\",\"employer\":\"Ethena\",\"human_verified\":True},\n              {\"question\":\"Background check concerns?\",\"answer\":\"PRIVATE_UNVERIFIED\",\"scope\":\"global\",\"human_verified\":False}]\n        out=build_review_with_verified_matches(fields,{\"full_name\"},bank,\"Ethena\")\n        assert out[\"review_item_count\"]==2\n        assert out[\"verified_answer_match_count\"]==1\n        assert out[\"human_review\"][0][\"status\"]==\"human_review\"\n>       assert out[\"human_review\"][0][\"verified_answer_available\"]\nE       assert False\n\ntests/test_ats_review_answer_matches.py:18: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_ats_review_answer_matches.py::test_normalization_handles_newlines_and_whitespace\nFAILED tests/test_ats_review_answer_matches.py::test_exact_scoped_verified_answer_annotation_never_leaks_value\n2 failed, 34 passed in 8.51s\n STDERR \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T14:42:45.408612+00:00",
+  "state": "failed",
+  "traceback": null
+}
