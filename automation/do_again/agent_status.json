@@ -3,13 +3,13 @@
   "control_worktree": "/Users/steventran/.do_again/projects/42ba1b7dcb92/control",
   "host": "Stevens-Mac-mini.local",
   "instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
-  "last_request_id": "jobpipe-private-verified-scoped-answer-bank-20261008-01",
-  "last_request_state": "succeeded",
+  "last_request_id": "jobpipe-ats-reviewed-answer-availability-integration-20261008-01",
+  "last_request_state": "failed",
   "pid": 54526,
   "remote": "origin",
   "repo": "/Users/steventran/jobpipe",
   "schema_version": 1,
   "started_at_utc": "2026-10-08T13:09:10.631749+00:00",
   "state": "ready",
-  "updated_at_utc": "2026-10-08T14:40:33.065927+00:00"
+  "updated_at_utc": "2026-10-08T14:42:59.355571+00:00"
 }
