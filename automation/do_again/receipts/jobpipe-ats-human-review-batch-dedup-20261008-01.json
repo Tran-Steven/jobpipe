@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T14:35:26.493208+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "f4f9a85b3e6de25449615700675ffc005874cac70470566a09e817830649e734",
+  "request_id": "jobpipe-ats-human-review-batch-dedup-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "e0ba9a4fff99f926093f844f387ba0067a580cbe"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "c4035f70f82fa929f6fadd57d3106b70eec7192d"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "f4f9a85b3e6de25449615700675ffc005874cac70470566a09e817830649e734",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-ats-human-review-batch-dedup-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 8.407,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 5417,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-ats-human-review-batch-dedup-20261008-01/script.py",
+      "script_sha256": "61d7f8c72389bd4e419b181a44391c08fe20473de074e5d958889a75158bf22b",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   c4035f7..e0ba9a4  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "TEST_EXIT 0 STDOUT ..............................                                           [100%]\n30 passed in 5.13s\n STDERR \n[main e0ba9a4] feat: deduplicate ATS human review questions without storing answers\n 2 files changed, 69 insertions(+)\n create mode 100644 tests/test_ats_review_batch.py\n create mode 100644 tools/ats_review_batch.py\nVERIFIED_PUSH e0ba9a4fff99f926093f844f387ba0067a580cbe\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T14:35:17.529394+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
