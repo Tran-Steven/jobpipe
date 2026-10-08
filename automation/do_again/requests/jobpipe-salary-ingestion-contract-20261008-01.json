@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-salary-ingestion-contract-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T01:35:20Z",
+  "expires_at_utc": "2026-10-08T02:35:20Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess\nrepo=Path('/Users/steventran/jobpipe')\nprint('HEAD',subprocess.run(['git','rev-parse','HEAD'],cwd=repo,text=True,capture_output=True,check=True).stdout.strip())\nprint('DIRTY',subprocess.run(['git','status','--short'],cwd=repo,text=True,capture_output=True,check=True).stdout)\nsections={'core/job_discovery.py':[(295,445),(590,678)],'core/job_prioritization.py':[(120,245)],'tests/test_job_discovery.py':[(1,90)]}\nfor name,ranges in sections.items():\n path=repo/name\n if not path.exists():print('MISSING',name);continue\n lines=path.read_text().splitlines()\n for start,end in ranges:\n  print('SECTION',name,start,end)\n  for i in range(start-1,min(end,len(lines))):print(str(i+1)+': '+lines[i][:185])\nprint('ACCEPTANCE','Identify exact normalization, persistence, revision and prioritization compatibility points required for structured base salary provenance. Unknown/missing salary must continue without rejection; no inferred salary, no live application.')\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 85
+  }
+}
