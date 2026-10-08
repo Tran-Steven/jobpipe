@@ -347,3 +347,41 @@ async def test_replay_is_unchanged_without_queue_parser_write_or_rerun(
         "submit",
     ):
         assert forbidden not in ui_source
+
+
+@pytest.mark.asyncio
+async def test_one_basic_answer_resumes_two_matching_jobs_without_replay(tmp_path):
+    home = PrivateHome(tmp_path / "private")
+    home.ensure()
+    original = _item(key=CanonicalApplicationAnswerKey.EMAIL)
+    other = _raw(type(original), item_id="human-attention-item-"+"b"*64,
+                 subject_id=SUBJECT, application_plan_id="plan-2",
+                 job_id="job-2", audience=HumanAttentionAudience.USER,
+                 attention_kind=HumanAttentionKind.USER_FACT_REQUIRED,
+                 source_stage=ApplicationPreparationStage.APPLICATION_ANSWERS,
+                 canonical_answer_key=CanonicalApplicationAnswerKey.EMAIL,
+                 required_action="Confirm your email", source_record_id="answer-set-2")
+    queue = _raw(HumanAttentionQueueResult,
+                 status=HumanAttentionQueueStatus.SUCCEEDED,
+                 subject_id=SUBJECT, items=(original,other))
+    writer = _Writer()
+    parser = _Parser(ApplicationAnswerResolutionProposal(
+        canonical_key=CanonicalApplicationAnswerKey.EMAIL,
+        resolution_kind=ApplicationAnswerResolutionKind.FACT,
+        value="test@example.test", evidence_text="My email is test@example.test",
+        unambiguous=True))
+    calls=[]
+    common=dict(queue_reader=lambda **kw:queue, parser=parser,
+                fact_write_service=writer,
+                attestation_repository=PlanScopedApplicationAttestationRepository(home),
+                preparation_callable=_preparation_callable(ApplicationPreparationStatus.COMPLETED,calls),
+                receipt_repository=ApplicationAnswerResolutionReceiptRepository(home))
+    cmd=ApplicationAnswerResolutionCommand(SUBJECT,original.item_id,
+                                          "My email is test@example.test", NOW)
+    first=await resolve_application_answer(cmd,**common)
+    assert first.status is ApplicationAnswerResolutionStatus.RESOLVED_AND_PREPARATION_COMPLETED
+    assert {x.application_plan_id for x in calls}=={"plan-1","plan-2"}
+    assert len(calls)==2 and len(writer.calls)==1
+    replay=await resolve_application_answer(cmd,**common)
+    assert replay.status is ApplicationAnswerResolutionStatus.UNCHANGED
+    assert len(calls)==2 and len(writer.calls)==1

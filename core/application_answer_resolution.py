@@ -630,6 +630,36 @@ async def resolve_application_answer(
             preparation_status = ApplicationPreparationStatus.FAILED
             preparation_reason = "PREPARATION_RERUN_FAILED"
             run_id = None
+        # A reusable BASIC fact can release other currently blocked plans.
+        # A high-stakes fact, user choice, or attestation must never fan out.
+        if (
+            proposal.resolution_kind is ApplicationAnswerResolutionKind.FACT
+            and definition.sensitivity.value == "BASIC"
+            and item.attention_kind is HumanAttentionKind.USER_FACT_REQUIRED
+        ):
+            seen_plans = {item.application_plan_id}
+            for candidate in queue.items:
+                if (
+                    candidate.application_plan_id in seen_plans
+                    or candidate.audience is not HumanAttentionAudience.USER
+                    or candidate.source_stage
+                    is not ApplicationPreparationStage.APPLICATION_ANSWERS
+                    or candidate.attention_kind
+                    is not HumanAttentionKind.USER_FACT_REQUIRED
+                    or candidate.canonical_answer_key is not item.canonical_answer_key
+                ):
+                    continue
+                seen_plans.add(candidate.application_plan_id)
+                try:
+                    await preparation_callable(
+                        RunApplicationPreparationCommand(
+                            subject_id=subject,
+                            application_plan_id=candidate.application_plan_id,
+                            now=command.now,
+                        )
+                    )
+                except (OSError, RuntimeError, TypeError, ValueError):
+                    pass  # Other jobs remain individually resumable.
         receipt = ApplicationAnswerResolutionReceipt.create(
             subject_id=subject,
             attention_item_id=item.item_id,
