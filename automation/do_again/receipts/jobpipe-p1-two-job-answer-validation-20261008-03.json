@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T04:02:57.521889+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "ae23b0fbae3debc8fa11baf08b6c28cc8edddc3fae378ef2c51a3e6f8b4fd4dd",
+  "request_id": "jobpipe-p1-two-job-answer-validation-20261008-03",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "dcf8a09aa5e0c06a2ac09252d214be19b8fbf70c"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "2b57fff8ec673fef7fbeb6fe5ce00110a48a3f34"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "ae23b0fbae3debc8fa11baf08b6c28cc8edddc3fae378ef2c51a3e6f8b4fd4dd",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-two-job-answer-validation-20261008-03/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 19.566,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 2090,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-two-job-answer-validation-20261008-03/script.py",
+      "script_sha256": "c96b95e73e8c0d017807cc4eef6f7f0dffe162df7524fa5b194011073d65cf73",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   2b57fff..dcf8a09  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "STATUS [' M adapters/protocol.py', ' M do-again.toml', ' M tests/test_application_answers.py', '?? do-again-policy.json']\nRESULT ['tests/test_application_answers.py', 'tests/test_application_answer_resolution.py'] EXIT 0 .........................                                                [100%]\n25 passed in 8.29s\n \n[main dcf8a09] test: verify cross-job reuse with exact scoped exclusion\n 1 file changed, 43 insertions(+)\nVERIFIED_PUSH dcf8a09aa5e0c06a2ac09252d214be19b8fbf70c\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T04:02:37.055126+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
