@@ -3,7 +3,7 @@
   "control_worktree": "/Users/steventran/.do_again/projects/42ba1b7dcb92/control",
   "host": "Stevens-Mac-mini.local",
   "instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
-  "last_request_id": "jobpipe-live-lever-private-snapshot-pipeline-20261008-01",
+  "last_request_id": "jobpipe-jobctl-one-command-ats-capture-review-20261008-01",
   "last_request_state": "succeeded",
   "pid": 54526,
   "remote": "origin",
@@ -11,5 +11,5 @@
   "schema_version": 1,
   "started_at_utc": "2026-10-08T13:09:10.631749+00:00",
   "state": "ready",
-  "updated_at_utc": "2026-10-08T15:14:35.467802+00:00"
+  "updated_at_utc": "2026-10-08T15:17:28.441660+00:00"
 }
