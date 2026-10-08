@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "claimed_at_utc": "2026-10-08T15:30:30.933538+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 54526,
+  "request_fingerprint": "dafe6bfc4be6fe985c1c0cbbec68e514f45fb2c0da2be5cb4316479ab1ea2398",
+  "request_id": "jobpipe-jobctl-interactive-review-input-fix-20261008-01",
+  "schema_version": 1
+}
