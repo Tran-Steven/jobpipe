@@ -13,6 +13,7 @@ PATTERNS = (
     "adapter_reaches_review_with_required_fields_and_upload",
     "submit_requires_gate_b",
     "review_requires_a_final_submit_control",
+    "browser_navigates_local_http_ats_page_to_review_without_submit",
 )
 
 def main() -> int:
@@ -43,6 +44,17 @@ def main() -> int:
         "test_adapter_reaches_review_with_required_fields_and_upload[ashby-",
         "test_adapter_reaches_review_with_required_fields_and_upload[jobvite-",
     )
+    navigation_required = (
+        "test_browser_navigates_local_http_ats_page_to_review_without_submit[greenhouse-",
+        "test_browser_navigates_local_http_ats_page_to_review_without_submit[lever-",
+        "test_browser_navigates_local_http_ats_page_to_review_without_submit[ashby-",
+        "test_browser_navigates_local_http_ats_page_to_review_without_submit[jobvite-",
+    )
+    navigation_verified = all(
+        any(required_name in line and " PASSED" in line
+            for line in output.splitlines())
+        for required_name in navigation_required
+    )
     review_verified = all(
         any(required_name in line and " PASSED" in line
             for line in output.splitlines())
@@ -52,9 +64,9 @@ def main() -> int:
         "test_submit_requires_gate_b" in line and " PASSED" in line
         for line in output.splitlines()
     )
-    good = (rc == 0 and count >= 9
+    good = (rc == 0 and count >= 13
             and not re.search(r"\d+ skipped", output)
-            and review_verified and safeguard_verified)
+            and review_verified and navigation_verified and safeguard_verified)
     print(f"ATS_FIXTURE_REVIEW_GATE={'PASS' if good else 'FAIL'}; LIVE_REVIEW=NOT_VERIFIED; SUBMISSIONS=NOT_ATTEMPTED", flush=True)
     return 0 if good else (rc or 1)
 
