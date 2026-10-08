@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T01:51:32.050787+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "ec92545dc23cb0723c167363f7b32a57f194ff4e7efaa8a9b287e502e55281df",
+  "request_id": "jobpipe-five-commit-milestone-audit-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "da91aaf880e170b91ec94cd2ca7799edc1328037"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "da91aaf880e170b91ec94cd2ca7799edc1328037"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "ec92545dc23cb0723c167363f7b32a57f194ff4e7efaa8a9b287e502e55281df",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-five-commit-milestone-audit-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.42,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1032,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-five-commit-milestone-audit-20261008-01/script.py",
+      "script_sha256": "34c39247543b982f31f807394fffbe6d65af4c839235167c70945292ad3b48c8",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "HEAD da91aaf880e170b91ec94cd2ca7799edc1328037\nORIGIN da91aaf880e170b91ec94cd2ca7799edc1328037\nDIRTY M adapters/protocol.py\n M do-again.toml\n?? do-again-policy.json\nFIVE_COMMITS da91aaf fix: require annual pay period for salary floor comparisons\n2bd2eca feat: formalize provenance-aware base salary eligibility decisions\n66d6388 test: enforce disabled Workday registration hard stop\nfcec90b fix: require unique enabled Workday registration button\ncf84a22 fix: exclude unresolved user blockers from default apply queue\nCHANGED_FILES adapters/workday.py\ncore/job_salary_eligibility.py\njobctl.py\ntests/test_job_salary_eligibility.py\ntests/test_jobctl.py\ntests/test_workday_adapter.py\nCAPABILITY core/job_salary_eligibility.py salary_evidence True decide_salary True\nCAPABILITY core/job_discovery.py salary_evidence False decide_salary False\nCAPABILITY core/current_priority_queue.py salary_evidence False decide_salary False\nCAPABILITY core/current_application_execution_queue.py salary_evidence False decide_salary False\nACCEPTANCE Milestone independent review: 5 commits versus issue 1; distinguish fixture test success from live ATS proof, note missing queue integration, preserve user changes and no live submission. No file modifications.\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T01:51:31.294572+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
