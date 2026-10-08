@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "claimed_at_utc": "2026-10-08T14:08:32.763382+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 54526,
+  "request_fingerprint": "f3555dce82664f0a75f9002f1363b63e2ba5570e128e59228bad37669fbdbcde",
+  "request_id": "jobpipe-live-lever-question-mapping-validation-20261008-01",
+  "schema_version": 1
+}
