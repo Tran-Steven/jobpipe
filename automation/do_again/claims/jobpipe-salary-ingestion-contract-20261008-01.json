@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T01:36:09.019425+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "4a6671dc3f8516280c79d9111fdbe1b906d3565d51d8993a720fb6032fd78e59",
+  "request_id": "jobpipe-salary-ingestion-contract-20261008-01",
+  "schema_version": 1
+}
