@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T14:18:23.570580+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "1a3e1b8b1da1a78d56d07c290f85e03d67e40424b8356dc6d4f61b1e48f48629",
+  "request_id": "jobpipe-lever-scoped-question-extraction-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "a97223391016df4285c38f5a46654e53ff61fe21"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "3447fb079b463a43d5dc59bb68e35f4f129475a1"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "1a3e1b8b1da1a78d56d07c290f85e03d67e40424b8356dc6d4f61b1e48f48629",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-lever-scoped-question-extraction-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 7.44,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 4490,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-lever-scoped-question-extraction-20261008-01/script.py",
+      "script_sha256": "d23c64ca2eda40d4fb87f28db915b4f8eb17437b21ef3536c232bb00bd82a6f0",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   3447fb0..a972233  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "TEST_EXIT 0 STDOUT .................                                                        [100%]\n17 passed in 3.85s\n STDERR \n[main a972233] fix: associate Lever application controls with scoped question labels\n 2 files changed, 43 insertions(+), 1 deletion(-)\nVERIFIED_PUSH a97223391016df4285c38f5a46654e53ff61fe21\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T14:18:15.753824+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
