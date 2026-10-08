@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "error": null,
+  "finished_at_utc": "2026-10-08T05:52:25.680047+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "5fb176c6a0a8c043d8fe56830062053017b026980db4ccc5d6361d1937ef8a69",
+  "request_id": "jobpipe-cli-ats-fixture-check-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "7a1acaa11b23e13e9b6590296b73d00de51a51c1"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "da4c0fc3e1adc1bf9dee4b714230f1a8f6bb0ce7"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "5fb176c6a0a8c043d8fe56830062053017b026980db4ccc5d6361d1937ef8a69",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-cli-ats-fixture-check-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 31.868,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 3291,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-cli-ats-fixture-check-20261008-01/script.py",
+      "script_sha256": "c06f59012efb6e5221c1e6e140d3c8006f2e24b969dcf6c1243b2bbfc1f539f0",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   da4c0fc..7a1acaa  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT 0 ..                                                                       [100%]\n2 passed in 1.18s\n \nRESULT 0 {\"fixture_review\": \"passed\", \"live_review\": \"not_verified\", \"note\": \"Local browser fixtures only; this does not verify any real ATS application\", \"real_submissions\": \"not_attempted\", \"supported_adapters\": [\"greenhouse\", \"lever\", \"ashby\", \"jobvite\"]}\n \n[main 7a1acaa] feat: expose ATS fixture readiness in jobctl CLI\n 2 files changed, 19 insertions(+)\n create mode 100644 tests/test_jobctl_ats_fixture_check.py\nVERIFIED_PUSH 7a1acaa11b23e13e9b6590296b73d00de51a51c1\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T05:51:53.409664+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
