@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T02:35:18.501112+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "ab87d8cd0a1840801aae026963eb7ca61dbe10a9967c7a8f36ca761e28834b86",
+  "request_id": "jobpipe-workday-register-restart-replay-audit-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "d094c5969d9543b10450b4bf2eba5113f594b627"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "d094c5969d9543b10450b4bf2eba5113f594b627"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "ab87d8cd0a1840801aae026963eb7ca61dbe10a9967c7a8f36ca761e28834b86",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-register-restart-replay-audit-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.361,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1429,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-register-restart-replay-audit-20261008-01/script.py",
+      "script_sha256": "d4f0079419f3a10c773b6aebea19e77cbb875e71e504c4a1047cab2d737ff71a",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "HEAD d094c5969d9543b10450b4bf2eba5113f594b627 ORIGIN d094c5969d9543b10450b4bf2eba5113f594b627\nDIRTY  M adapters/protocol.py\n M do-again.toml\n?? do-again-policy.json\n\nFILE adapters/workday.py HITS [(713, 'return _retryable(context, OutcomePhase.AUTHENTICATE, \"Workday page could not be loaded\", exc)'), (766, 'OutcomeStatus.NEEDS_USER_LOGIN,'), (782, 'retryable=True,'), (836, 'OutcomeStatus.NEEDS_USER_LOGIN,'), (885, 'retryable=True,'), (899, 'retryable=True,'), (912, 'OutcomeStatus.NEEDS_USER_LOGIN,'), (929, 'OutcomeStatus.NEEDS_USER_LOGIN,'), (938, 'OutcomeStatus.NEEDS_USER_LOGIN,'), (962, 'OutcomeStatus.NEEDS_USER_LOGIN,'), (978, 'OutcomeStatus.NEEDS_USER_LOGIN,'), (999, 'OutcomeStatus.NEEDS_USER_LOGIN,'), (1016, 'OutcomeStatus.NEEDS_USER_LOGIN,'), (1034, 'OutcomeStatus.NEEDS_USER_LOGIN,'), (1065, 'OutcomeStatus.NEEDS_USER_LOGIN,'), (1077, 'except WorkdayRegistrationClickUncertain:'), (1081, 'OutcomeStatus.NEEDS_USER_LOGIN,'), (1085, 'details={\"do_not_retry_register\": True},'), (1094, 'OutcomeStatus.NEEDS_USER_LOGIN,'), (1322, 'retryable=True,'), (1457, 'retryable=True,'), (2188, 'class WorkdayRegistrationClickUncertain(Exception):'), (2216, 'raise WorkdayRegistrationClickUncertain() from exc'), (2661, 'def _retryable('), (2675, 'retryable=True,')]\nFILE jobctl.py HITS [(334, 'elif outcome.retryable:')]\nFILE core/application_engine.py HITS [(715, 'retryable=True,'), (761, 'retryable=True,'), (807, '# retryable or look like a safe no-click policy skip.'), (855, 'retryable=True,')]\nTEST test_workday_adapter.py UNCERTAIN [(1507, 'from adapters.workday import WorkdayRegistrationClickUncertain'), (1508, 'with pytest.raises(WorkdayRegistrationClickUncertain):'), (1515, 'async def test_uncertain_registration_keeps_generated_credential_and_requests_reconciliation(monkeypatch):'), (1516, 'from adapters.workday import WorkdayRegistrationClickUncertain'), (1521, 'job_id=\"uncertain-registration\", run_id=\"uncertain-registration-run\",'), (1527, 'AsyncMock(side_effect=WorkdayRegistrationClickUncertain()))'), (1541, 'assert outcome.details[\"do_not_retry_register\"] is True')]\nACCEPTANCE Determine whether a Workday potentially-created account can be automatically retried after restart despite marker; recommend one integration regression if risk demonstrated. No live attempt, no code changes.\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T02:35:17.782318+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
