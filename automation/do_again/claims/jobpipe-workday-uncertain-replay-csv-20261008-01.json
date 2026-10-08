@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T02:37:33.833958+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "43bc8439818485e943b0646b2deffdd491c405ad47a7f2ea34b0a2b2744e6ae9",
+  "request_id": "jobpipe-workday-uncertain-replay-csv-20261008-01",
+  "schema_version": 1
+}
