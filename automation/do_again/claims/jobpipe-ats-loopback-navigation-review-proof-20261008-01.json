@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:14685:1791437004:3c2ef43038c4",
+  "claimed_at_utc": "2026-10-08T05:27:46.694370+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 14685,
+  "request_fingerprint": "98a7a03cddb5e95f0d5ae4d9c128db0bafdfaae1beaca9756c0968344dac2ded",
+  "request_id": "jobpipe-ats-loopback-navigation-review-proof-20261008-01",
+  "schema_version": 1
+}
