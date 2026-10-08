@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-csv-replay-workday-gate-20261008-02",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T03:46:35Z",
+  "expires_at_utc": "2026-10-08T04:46:35Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess,os,signal\nrepo=Path('/Users/steventran/jobpipe')\nbase='3fb4d24d11ee6f7f407c54e9265dcb490ee9024e'\ndef git(*args):return subprocess.run(['git',*args],cwd=repo,text=True,capture_output=True,check=True).stdout\nif git('rev-parse','HEAD').strip()!=base or git('rev-parse','origin/main').strip()!=base:raise SystemExit('AUTHORITY_CHANGED')\nfor name in ('utils/csv_apply.py','tests/test_csv_apply.py'):\n print('TARGET',name,git('status','--short','--',name).strip(),flush=True)\nsource=(repo/'utils/csv_apply.py').read_text()\ntests=(repo/'tests/test_csv_apply.py').read_text()\nif 'if status == \"registration uncertain\":' not in source or 'test_uncertain_registration_cannot_be_loaded_even_with_explicit_status' not in tests:raise SystemExit('PREVIOUS_FIX_NOT_PRESENT')\ndef check(args,timeout):\n p=subprocess.Popen([str(repo/'.venv/bin/python'),'-m','pytest','-q','--maxfail=1','--tb=short']+args,cwd=repo,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)\n try:o,e=p.communicate(timeout=timeout)\n except subprocess.TimeoutExpired:\n  os.killpg(p.pid,signal.SIGTERM)\n  try:o,e=p.communicate(timeout=8)\n  except subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);o,e=p.communicate()\n  print('TIMEOUT',args,o[-3000:],e[-1000:],flush=True);raise SystemExit(124)\n print('RESULT',args,p.returncode,o[-4500:],e[-900:],flush=True)\n return p.returncode\nif check(['tests/test_csv_apply.py','tests/test_jobctl.py'],135):raise SystemExit('CSV_GATE_FAIL')\n# Target prior failed stage explicitly; do not hide an unrelated browser failure.\nif check(['tests/test_workday_adapter.py'],260):raise SystemExit('WORKDAY_GATE_FAIL')\n# Run no broad suite here: four shards were validated at baseline; this diff only touches CSV admission.\nsubprocess.run(['git','add','--','utils/csv_apply.py','tests/test_csv_apply.py'],cwd=repo,check=True)\nsubprocess.run(['git','commit','-m','fix: exclude uncertain registration from CSV queue even with explicit statuses'],cwd=repo,check=True)\nsubprocess.run(['git','push','origin','main'],cwd=repo,check=True,timeout=90)\nprint('VERIFIED_PUSH',git('rev-parse','HEAD').strip(),flush=True)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 670
+  }
+}
