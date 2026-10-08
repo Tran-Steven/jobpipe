@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T14:37:46.293928+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "9ea652ac44185c653fc172b49199e745ce32cd8159561ca10b829abb982a498f",
+  "request_id": "jobpipe-live-lever-review-batch-validation-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "e0ba9a4fff99f926093f844f387ba0067a580cbe"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "e0ba9a4fff99f926093f844f387ba0067a580cbe"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "9ea652ac44185c653fc172b49199e745ce32cd8159561ca10b829abb982a498f",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-live-lever-review-batch-validation-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 7.237,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 2806,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-live-lever-review-batch-validation-20261008-01/script.py",
+      "script_sha256": "2818cfe8ce082f5959b4db19e1968a64ef1bfbb61c3922e1dfe883bdebd74975",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "EXIT 0 OUTPUT {\"auth\": \"not_attempted\", \"fill\": \"not_attempted\", \"grouped_multi_control_questions\": 3, \"http_status\": 200, \"input_field_count\": 34, \"no_submission\": \"not_attempted\", \"optional_review_items\": 11, \"required_review_items\": 7, \"review\": \"not_verified\", \"review_item_count\": 18, \"review_reasons\": {\"nontrivial_control\": 11, \"unknown_question\": 5, \"unverified_profile_fact\": 2}, \"verified_candidate_count\": 3}\n ERROR \nLIVE_READONLY_REVIEW_BATCH_VERIFIED\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T14:37:38.719712+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
