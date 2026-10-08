@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T01:50:52.833427+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "cfab1beb99db78af9b9ba2e6cc6c5932a0e9af64f3bb2065f408209ae6beee6b",
+  "request_id": "jobpipe-salary-period-guard-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "da91aaf880e170b91ec94cd2ca7799edc1328037"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "2bd2ecabf55e287e19a52e7cb63211dda06635f1"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "cfab1beb99db78af9b9ba2e6cc6c5932a0e9af64f3bb2065f408209ae6beee6b",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-salary-period-guard-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 384.272,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 3529,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-salary-period-guard-20261008-01/script.py",
+      "script_sha256": "f301d249e0aa06ee011e51ec10436e2023b3f05a2988f574deaecfeaa623b7e9",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   2bd2eca..da91aaf  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "[main da91aaf] fix: require annual pay period for salary floor comparisons\n 2 files changed, 17 insertions(+), 1 deletion(-)\nTEST ['tests/test_job_salary_eligibility.py'] EXIT 1 ......F\n=================================== FAILURES ===================================\n_______________ test_hourly_base_is_not_compared_to_annual_floor _______________\n\n    def test_hourly_base_is_not_compared_to_annual_floor():\n>       evidence = SalaryEvidence(80, 95, 'USD', 'BASE', 'https://example.org/job', pay_period='HOURLY')\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       TypeError: SalaryEvidence.__init__() got an unexpected keyword argument 'pay_period'\n\ntests/test_job_salary_eligibility.py:30: TypeError\n=========================== short test summary info ============================\nFAILED tests/test_job_salary_eligibility.py::test_hourly_base_is_not_compared_to_annual_floor\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 6 passed in 0.11s\n \nTEST ['tests/test_job_salary_eligibility.py'] EXIT 0 .........                                                                [100%]\n9 passed in 0.30s\n \nTEST [] EXIT 0 ..................................................... [ 26%]\n........................................................................ [ 30%]\n........................................................................ [ 34%]\n.........................................................s.............. [ 38%]\n........................................................................ [ 41%]\n........................................................................ [ 45%]\n........................................................................ [ 49%]\n........................................................................ [ 53%]\n........................................................................ [ 57%]\n...............s........................................................ [ 60%]\n........................................................................ [ 64%]\nsssssssssss....................................................s........ [ 68%]\n........................................................................ [ 72%]\n........................................................................ [ 76%]\n........................................................................ [ 80%]\n........................................................................ [ 83%]\n........................................................................ [ 87%]\n........................................................................ [ 91%]\n........................................................................ [ 95%]\n........................................................................ [ 99%]\n..................                                                       [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.13/site-packages/fastapi/testclient.py:1\n  /Users/steventran/jobpipe/.venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n1876 passed, 14 skipped, 1 warning in 378.01s (0:06:18)\n \nVERIFIED_PUSH\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T01:44:28.135887+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
