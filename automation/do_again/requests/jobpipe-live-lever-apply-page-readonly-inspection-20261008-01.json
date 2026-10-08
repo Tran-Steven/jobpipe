@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-live-lever-apply-page-readonly-inspection-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T13:49:20Z",
+  "expires_at_utc": "2026-10-08T14:49:20Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess,json,os,signal\nrepo=Path('/Users/steventran/jobpipe');base='b8a787b5b6c9df5bda03db4b5c9f3da67d80317a'\nurl='https://jobs.lever.co/ethena/f85bcfd1-8d2c-4cf5-a6ab-1c8ddab14c65/apply'\ndef git(*a):return subprocess.run(['git',*a],cwd=repo,check=True,text=True,capture_output=True).stdout.strip()\nif git('rev-parse','HEAD')!=base:raise SystemExit('AUTHORITY_CHANGED')\np=subprocess.Popen([str(repo/'.venv/bin/python'),'tools/live_ats_inspect.py',url],cwd=repo,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)\ntry:o,e=p.communicate(timeout=75)\nexcept subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);raise SystemExit('TIMEOUT')\nprint('INSPECT_EXIT',p.returncode,flush=True)\nif p.returncode:\n print('INSPECT_ERROR_TAIL',e[-700:],flush=True);raise SystemExit('INSPECTION_FAILED')\nx=json.loads(o)\nassert x['url_host']=='jobs.lever.co' and x['diagnostic_only'] is True,x\nassert x['auth']=='not_attempted' and x['submission']=='not_attempted' and x['live_review']=='not_verified',x\nassert isinstance(x['http_status'],int) and isinstance(x['form_count'],int) and isinstance(x['input_count'],int),x\nassert x['application_form_detected']==bool(x['form_count'] and x['input_count']),x\nprint('LIVE_PUBLIC_LEVER_APPLY_PAGE',json.dumps(x,sort_keys=True),flush=True)\nassert git('rev-parse','HEAD')==base\nprint('HEAD_UNCHANGED=True; SUBMISSIONS=NOT_ATTEMPTED',flush=True)\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 140
+  }
+}
