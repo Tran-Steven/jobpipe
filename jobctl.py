@@ -313,6 +313,12 @@ def _project_csv_outcome(
     if outcome.status is OutcomeStatus.SUBMITTED_VERIFIED:
         status = "Submitted"
         next_action = "Monitor the application ledger and mailbox for follow-up."
+    elif outcome.details.get("do_not_retry_register") is True:
+        status = "Registration uncertain"
+        next_action = (
+            "Human: reconcile the possibly created Workday account before "
+            "attempting registration again."
+        )
     elif outcome.status is OutcomeStatus.SUBMIT_UNKNOWN:
         status = "Submission unknown"
         next_action = (

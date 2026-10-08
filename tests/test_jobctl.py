@@ -486,3 +486,29 @@ def test_default_apply_csv_selection_does_not_replay_user_blockers():
     assert "pending" in selected
     assert "ready to apply" in selected
     assert "Needs user" in REVIEWED_STATUSES
+
+
+def test_uncertain_workday_account_creation_is_not_requeued_as_generic_needs_user(tmp_path: Path):
+    csv_path = tmp_path / "queue.csv"
+    resume_dir = tmp_path / "resumes"
+    resume_dir.mkdir()
+    (resume_dir / "resume.pdf").write_bytes(b"synthetic")
+    _queue(csv_path)
+    application = load_csv_queue(
+        csv_path, resume_dir, priorities="Medium", statuses="Pending"
+    )[0]
+    outcome = ApplicationOutcome(
+        run_id="uncertain-workday",
+        job_id="synthetic-workday",
+        status=OutcomeStatus.NEEDS_USER_LOGIN,
+        phase=OutcomePhase.AUTHENTICATE,
+        reason_code=ReasonCode.LOGIN_REQUIRED,
+        message="Registration may already have succeeded",
+        details={"do_not_retry_register": True},
+    )
+    _project_csv_outcome(csv_path, application, outcome)
+    row = next(csv.DictReader(csv_path.open(encoding="utf-8")))
+    assert row["status"] == "Registration uncertain"
+    assert "reconcile" in row["next_action"].lower()
+    assert load_csv_queue(csv_path, resume_dir, priorities="Medium", statuses="Needs user") == []
+    assert load_csv_queue(csv_path, resume_dir, priorities="Medium", statuses=jobctl.DEFAULT_STATUSES) == []
