@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T02:20:32.690192+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "0129c45cd64bb34f517b105b55379285c4b54bce84af2973cc2fdd00fd8d331c",
+  "request_id": "jobpipe-workday-uncertain-account-state-audit-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "534ef4b4eafee02097246eaf2b51f758d8d1c890"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "534ef4b4eafee02097246eaf2b51f758d8d1c890"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "0129c45cd64bb34f517b105b55379285c4b54bce84af2973cc2fdd00fd8d331c",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-uncertain-account-state-audit-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.291,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 908,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-uncertain-account-state-audit-20261008-01/script.py",
+      "script_sha256": "acf393006df938e2144a60895c61dd4751e0387743444db6d3e6bf9c3eb526cb",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "HEAD 534ef4b4eafee02097246eaf2b51f758d8d1c890\nORIGIN 534ef4b4eafee02097246eaf2b51f758d8d1c890\nSTATUS  M adapters/protocol.py\n M do-again.toml\n?? do-again-policy.json\n\nSECTION 1022 1095\n1022:             )\n1023:         password = generated_password or generate_strong_password(\n1024:             config.generated_password_length\n1025:         )\n1026:         # Persist first. If the Keychain write or read-back fails, never enter\n1027:         # this generated secret into Workday and never create an unrecoverable\n1028:         # account credential.\n1029:         if not self._save_generated_credential(context, password):\n1030:             self._restore_generated_credential(context, previous_password)\n1031:             return (\n1032:                 _needs_user(\n1033:                     context,\n1034:                     OutcomeStatus.NEEDS_USER_LOGIN,\n1035:                     ReasonCode.LOGIN_REQUIRED,\n1036:                     \"The generated Workday password could not be stored safely\",\n1037:                     checkpoint=\"workday.auth.register\",\n1038:                     details={\"credential_store\": \"write_failed\"},\n1039:                 ),\n1040:                 password,\n1041:             )\n1042: \n1043:         registration = await _fill_registration(context.page, email, password)\n1044:         if registration.unresolved_required:\n1045:             self._restore_generated_credential(context, previous_password)\n1046:             return (\n1047:                 _needs_user(\n1048:                     context,\n1049:                     OutcomeStatus.NEEDS_USER,\n1050:                     ReasonCode.UNKNOWN_REQUIRED_QUESTION,\n1051:                     \"An unknown required Workday registration agreement needs user review\",\n1052:                     checkpoint=\"workday.auth.register\",\n1053:                     details={\n1054:                         \"unresolved_labels\": list(registration.unresolved_required),\n1055:                         \"terms_ruleset\": REGISTRATION_TERMS_RULESET_VERSION,\n1056:                     },\n1057:                 ),\n1058:                 password,\n1059:             )\n1060:         if not registration.fields_ready:\n1061:             self._restore_generated_credential(context, previous_password)\n1062:             return (\n1063:                 _needs_user(\n1064:                     context,\n1065:                     OutcomeStatus.NEEDS_USER_LOGIN,\n1066:                     ReasonCode.LOGIN_REQUIRED,\n1067:                     \"Workday registration fields could not be completed\",\n1068:                     checkpoint=\"workday.auth.register\",\n1069:                     details={\n1070:                         \"diagnostics\": await _stage_diagnostics(context.page),\n1071:                     },\n1072:                 ),\n1073:                 password,\n1074:             )\n1075:         if not await _click_create_account_submit(context.page):\n1076:             self._restore_generated_credential(context, previous_password)\n1077:             return (\n1078:                 _needs_user(\n1079:                     context,\n1080:                     OutcomeStatus.NEEDS_USER_LOGIN,\n1081:                     ReasonCode.LOGIN_REQUIRED,\n1082:                     \"Workday account creation control could not be activated\",\n1083:                     checkpoint=\"workday.auth.register\",\n1084:                     details={\"diagnostics\": await _stage_diagnostics(context.page)},\n1085:                 ),\n1086:                 password,\n1087:             )\n1088:         return None, password\n1089: \n1090:     def _save_generated_credential(\n1091:         self,\n1092:         context: WorkdayApplicationContext,\n1093:         password: str,\n1094:     ) -> bool:\n1095:         email = _profile_email(context.profile)\nSECTION 2174 2223\n2174: async def _click_create_account_submit(page: Any) -> bool:\n2175:     click_attempted = False\n2176:     try:\n2177:         form = page.locator(\n2178:             'form:has([data-automation-id=\"verifyPassword\"])'\n2179:         ).first\n2180:         if await form.is_visible(timeout=800):\n2181:             candidates = form.locator(\n2182:                 '[data-automation-id=\"createAccountSubmitButton\"]'\n2183:             )\n2184:             enabled = []\n2185:             for index in range(min(await candidates.count(), 10)):\n2186:                 candidate = candidates.nth(index)\n2187:                 if await candidate.is_visible(timeout=350) and await candidate.is_enabled():\n2188:                     enabled.append(candidate)\n2189:             if len(enabled) == 1:\n2190:                 click_attempted = True\n2191:                 await enabled[0].click()\n2192:                 return True\n2193:             if len(enabled) > 1:\n2194:                 return False\n2195:             return await _click_named(form, (\"Create Account\", \"Register\"))\n2196:     except Exception:\n2197:         if click_attempted:\n2198:             return False  # Browser may have delivered the account-creation click.\n2199:     try:\n2200:         verify = page.locator(\n2201:             '[data-automation-id=\"verifyPassword\"]'\n2202:         ).first\n2203:         if not await verify.is_visible(timeout=500):\n2204:             return False\n2205:         buttons = page.locator(\n2206:             '[data-automation-id=\"createAccountSubmitButton\"]'\n2207:         )\n2208:         visible = []\n2209:         for index in range(min(await buttons.count(), 10)):\n2210:             button = buttons.nth(index)\n2211:             if await button.is_visible(timeout=350) and await button.is_enabled():\n2212:                 visible.append(button)\n2213:         if len(visible) == 1:\n2214:             await visible[0].click()\n2215:             return True\n2216:     except Exception:\n2217:         pass\n2218:     return False\n2219: \n2220: \n2221: async def _click_apply(page: Any) -> bool:\n2222:     try:\n2223:         locator = page.locator('[data-automation-id=\"jobPostingApplyButton\"]').first\nACCEPTANCE Confirm whether uncertain account-create click is classified as possible account creation, retains generated credential, and prevents unguarded retry. Report only read-only evidence, no credential values or browser attempt.\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T02:20:32.086794+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
