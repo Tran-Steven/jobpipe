@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "error": null,
+  "finished_at_utc": "2026-10-08T05:45:59.863769+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "b1b47bdcc3267b7c0f23a7275c9e39c05563e422e133a9c7184c6de8265e2655",
+  "request_id": "jobpipe-ats-machine-readable-readiness-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "da4c0fc3e1adc1bf9dee4b714230f1a8f6bb0ce7"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "ab35832a791cd4f4394c416e1f19023ed9110e60"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "b1b47bdcc3267b7c0f23a7275c9e39c05563e422e133a9c7184c6de8265e2655",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-ats-machine-readable-readiness-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 48.028,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 3985,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-ats-machine-readable-readiness-20261008-01/script.py",
+      "script_sha256": "decaec1e5bc01116ddd3c92dfdde45ef78168dcbcb55c138be8b49a6231a36d0",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   ab35832..da4c0fc  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT 0 ....                                                                     [100%]\n4 passed in 0.06s\n \nRESULT 0 {\"fixture_review\": \"passed\", \"live_review\": \"not_verified\", \"note\": \"Local browser fixtures only; this does not verify any real ATS application\", \"real_submissions\": \"not_attempted\", \"supported_adapters\": [\"greenhouse\", \"lever\", \"ashby\", \"jobvite\"]}\n \n[main da4c0fc] feat: emit explicit machine-readable ATS fixture readiness report\n 2 files changed, 51 insertions(+)\n create mode 100644 tests/test_ats_readiness_report.py\n create mode 100644 tools/ats_readiness_report.py\nVERIFIED_PUSH da4c0fc3e1adc1bf9dee4b714230f1a8f6bb0ce7\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T05:45:11.335699+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
