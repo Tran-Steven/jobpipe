@@ -514,21 +514,22 @@ async def test_browser_navigates_local_http_ats_page_to_review_without_submit(
         thread.join(timeout=3)
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("name,adapter_cls,expected", ADAPTERS)
 async def test_apply_csv_continues_from_missing_material_to_real_chromium_review(
-    page, resume_file, profile, tmp_path
+    page, resume_file, profile, tmp_path, name, adapter_cls, expected
 ):
     """Browser-backed second row; only local fixture pages; never Submit."""
     from types import SimpleNamespace
     from unittest.mock import MagicMock, patch
     import jobctl
 
-    url="http://127.0.0.1/fixture/greenhouse-review"
-    html=(FIXTURE_DIR/"greenhouse.html").read_text(encoding="utf-8")
+    url=f"http://127.0.0.1/fixture/{name}-review"
+    html=(FIXTURE_DIR/f"{name}.html").read_text(encoding="utf-8")
     await page.route(url,lambda route:route.fulfill(
         status=200,content_type="text/html",body=html))
     rows=[
-        SimpleNamespace(company="No Materials",row={"status":"Pending","source":"greenhouse"}),
-        SimpleNamespace(company="Local Fixture",row={"status":"Pending","source":"greenhouse"}),
+        SimpleNamespace(company="No Materials",row={"status":"Pending","source":name}),
+        SimpleNamespace(company="Local Fixture",row={"status":"Pending","source":name}),
     ]
     args=jobctl.build_parser().parse_args([
         "--home",str(tmp_path),"apply-csv","--csv",str(tmp_path/"jobs.csv"),
@@ -551,10 +552,10 @@ async def test_apply_csv_continues_from_missing_material_to_real_chromium_review
     async def execute(**kwargs):
         assert kwargs["request_submit"] is False
         assert kwargs["page"] is page
-        context=context_for(page,"greenhouse",profile,resume_file,
+        context=context_for(page,name,profile,resume_file,
             answers={"work_authorization":"Yes"},request_submit=False)
         from dataclasses import replace
-        outcome=await GreenhouseAdapter().run(
+        outcome=await adapter_cls().run(
             replace(context,job_url=url,navigate=True))
         actual.append(outcome)
         return outcome
@@ -581,5 +582,7 @@ async def test_apply_csv_continues_from_missing_material_to_real_chromium_review
          patch.object(jobctl,"async_playwright",return_value=PlaywrightContext()):
         await jobctl.cmd_apply_csv(args)
     assert len(actual)==1 and actual[0].status is OutcomeStatus.REVIEW_READY
+    assert expected <= set(actual[0].details["review"]["filled_fields"])
+    assert actual[0].details["review"]["uploaded_files"] == ["resume"]
     assert project.call_count==2
     assert await page.evaluate("window.fixtureSubmitCount")==0
