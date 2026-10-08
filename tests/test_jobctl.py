@@ -512,3 +512,17 @@ def test_uncertain_workday_account_creation_is_not_requeued_as_generic_needs_use
     assert "reconcile" in row["next_action"].lower()
     assert load_csv_queue(csv_path, resume_dir, priorities="Medium", statuses="Needs user") == []
     assert load_csv_queue(csv_path, resume_dir, priorities="Medium", statuses=jobctl.DEFAULT_STATUSES) == []
+
+
+def test_apply_csv_explicit_uncertain_status_never_initializes_ats(monkeypatch, tmp_path: Path):
+    from types import SimpleNamespace
+    from unittest.mock import MagicMock
+    vault = SimpleNamespace(paths=SimpleNamespace(job_queue=tmp_path / "queue.csv", master_documents=tmp_path))
+    monkeypatch.setattr(jobctl.CandidateVault, "load", lambda home: vault)
+    application = SimpleNamespace(row={"status": "Registration uncertain"})
+    monkeypatch.setattr(jobctl, "load_csv_queue", lambda *args, **kwargs: [application])
+    called = []
+    monkeypatch.setattr(jobctl, "MacOSSecurityCredentialStore", lambda: called.append('credentials'))
+    args = build_parser().parse_args(["--home", str(tmp_path), "apply-csv", "--statuses", "Registration uncertain"])
+    assert asyncio.run(jobctl.cmd_apply_csv(args)) == 0
+    assert called == []

@@ -614,6 +614,13 @@ async def cmd_apply_csv(args: argparse.Namespace) -> int:
     if args.preview:
         args.list = True
         return cmd_queue(args)
+    # Human reconciliation is mandatory even if --statuses explicitly includes
+    # Registration uncertain. Never start credentials, a browser, or ATS auth.
+    queue = [
+        item for item in queue
+        if getattr(item, "row", {}).get("status", "").strip().casefold()
+        != "registration uncertain"
+    ]
     if not queue:
         _json_print({"queue": str(csv_path), "selected": 0})
         return 0

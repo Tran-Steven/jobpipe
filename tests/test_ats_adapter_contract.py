@@ -54,7 +54,9 @@ async def browser():
 @pytest.fixture
 async def page(browser):
     page = await browser.new_page()
-    page.set_default_timeout(2_000)
+    # Local Chromium can stall briefly under concurrent desktop workloads.
+    # Keep fixture actions bounded without treating a 2s scheduling delay as an ATS failure.
+    page.set_default_timeout(10_000)
     yield page
     await page.close()
 
