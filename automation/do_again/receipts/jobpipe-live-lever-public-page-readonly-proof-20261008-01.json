@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T13:13:49.184256+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "92353e08313fcef1398dbdda80958fb04c8efb1e0282a45c3ae1cb635edc8e91",
+  "request_id": "jobpipe-live-lever-public-page-readonly-proof-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "7fc27d0338bc76dbec7665ff352a060f5598827a"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "7fc27d0338bc76dbec7665ff352a060f5598827a"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "92353e08313fcef1398dbdda80958fb04c8efb1e0282a45c3ae1cb635edc8e91",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-live-lever-public-page-readonly-proof-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 16.216,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1580,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-live-lever-public-page-readonly-proof-20261008-01/script.py",
+      "script_sha256": "cd0a04953a93c3d5eb7399f6f24c26f319e07a55978137aec5e9c6f977cde4ca",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "INSPECT_EXIT 0\nLIVE_READONLY_RESULT=PASS {\"auth\": \"not_attempted\", \"button_count\": 0, \"final_scheme\": \"https\", \"form_count\": 0, \"input_count\": 0, \"live_review\": \"not_verified\", \"reachable\": true, \"submission\": \"not_attempted\", \"url_host\": \"jobs.lever.co\"}\nSOURCE_LIVE_PUBLIC_ATS=yes; APPLICATION_REVIEW=NOT_VERIFIED; SUBMISSIONS=NOT_ATTEMPTED\nHEAD_UNCHANGED True\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T13:13:32.575394+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
