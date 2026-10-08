@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T13:32:34.748302+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "82a552655e051ef3263b06ec094aca5f0a0bf8f810b7c58709a0dcb4c8556d40",
+  "request_id": "jobpipe-live-ats-rendered-state-diagnostic-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "b8a787b5b6c9df5bda03db4b5c9f3da67d80317a"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "a705a94e501e664359e6071947120a64abc927a4"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "82a552655e051ef3263b06ec094aca5f0a0bf8f810b7c58709a0dcb4c8556d40",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-live-ats-rendered-state-diagnostic-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 6.185,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 3537,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-live-ats-rendered-state-diagnostic-20261008-01/script.py",
+      "script_sha256": "679afa75a5019c6802da529e53e640b4bb1d9cbbbb83af4245bed51f59c8958f",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   a705a94..b8a787b  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT 0 ...............                                                          [100%]\n15 passed in 0.39s\n \n[main b8a787b] feat: inspect bounded rendered public ATS page state without interaction\n 2 files changed, 23 insertions(+), 1 deletion(-)\nVERIFIED_PUSH b8a787b5b6c9df5bda03db4b5c9f3da67d80317a\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T13:32:28.005333+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
