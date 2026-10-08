@@ -2075,3 +2075,5 @@ and mandatory-dependency fail-fast plus redacted diagnostics and static
 legacy/fake/event-loop-bridge exclusions.
 
 The execution-policy record identity is computed before formatting its ID, preserving identical hashes while supporting Python 3.11 syntax. CI validates all supported Python/platform combinations.
+
+ATS helper candidate annotations reject withdrawn/revoked records and expired, malformed, or timezone-naive expiry timestamps. Eligibility is recomputed for each lookup, including exact expiry equality; a truthy string cannot stand in for explicit human verification. This fixes helper annotation integrity only. Production answer provenance consolidation and legacy-record reconfirmation remain separate J2 work; these annotations never authorize browser filling or submission.
