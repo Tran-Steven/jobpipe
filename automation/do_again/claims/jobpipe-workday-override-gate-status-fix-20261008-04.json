@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T02:59:12.982477+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "8b46be582d5c49ede97a776cfdec83cc77df79763b3c6be674c66de26bd16e5f",
+  "request_id": "jobpipe-workday-override-gate-status-fix-20261008-04",
+  "schema_version": 1
+}
