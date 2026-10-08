@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T01:31:46.322059+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "898ad5f2c0c7711930bd436a47250748faa7f659babd607a6aab7db498d8da38",
+  "request_id": "jobpipe-workday-aria-disabled-guard-20261008-01",
+  "schema_version": 1
+}
