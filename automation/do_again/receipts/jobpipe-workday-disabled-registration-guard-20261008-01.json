@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T01:28:37.160007+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "1156b1f3ae633001a6572fc4ab6dcb695e2d9194ab3b8b0a2b8ac6c4e7f5e142",
+  "request_id": "jobpipe-workday-disabled-registration-guard-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "66d63886d9851360bf7d548c3bfa2ee78a758fbd"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "fcec90b66dc3acc1609ff6a0fe00f851e6c7219d"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "1156b1f3ae633001a6572fc4ab6dcb695e2d9194ab3b8b0a2b8ac6c4e7f5e142",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-disabled-registration-guard-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 601.164,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 3654,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-disabled-registration-guard-20261008-01/script.py",
+      "script_sha256": "03ce58a7878ab5dbbfadaedb9514edfffcce3945fa6b780d24e30a2d0057af76",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   fcec90b..66d6388  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "[main 66d6388] test: enforce disabled Workday registration hard stop\n 1 file changed, 20 insertions(+)\nTEST ['tests/test_workday_adapter.py', '-k', 'registration_never_clicks_when_create_controls_disabled'] EXIT 0 .                                                                        [100%]\n1 passed, 74 deselected in 35.30s\n \nALREADY_SAFE: no source edit needed; retain only regression test\nTEST ['tests/test_workday_adapter.py'] EXIT 0 ........................................................................ [ 96%]\n...                                                                      [100%]\n75 passed in 77.58s (0:01:17)\n \nTEST ['tests/test_ats_adapter_contract.py'] EXIT 0 ....................................                                     [100%]\n36 passed in 113.76s (0:01:53)\n \nTEST [] EXIT 0 ..................................................... [  7%]\n........................................................................ [ 11%]\n........................................................................ [ 15%]\n........................................................................ [ 19%]\n........................................................................ [ 22%]\n........................................................................ [ 26%]\n........................................................................ [ 30%]\n........................................................................ [ 34%]\n.........................................................s.............. [ 38%]\n........................................................................ [ 42%]\n........................................................................ [ 45%]\n........................................................................ [ 49%]\n........................................................................ [ 53%]\n........................................................................ [ 57%]\n......s................................................................. [ 61%]\n...............................................................sssssssss [ 65%]\nss....................................................s................. [ 68%]\n........................................................................ [ 72%]\n........................................................................ [ 76%]\n........................................................................ [ 80%]\n........................................................................ [ 84%]\n........................................................................ [ 88%]\n........................................................................ [ 91%]\n........................................................................ [ 95%]\n........................................................................ [ 99%]\n.........                                                                [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.13/site-packages/fastapi/testclient.py:1\n  /Users/steventran/jobpipe/.venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n1867 passed, 14 skipped, 1 warning in 367.77s (0:06:07)\n \nVERIFIED_PUSH\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T01:18:35.668201+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
