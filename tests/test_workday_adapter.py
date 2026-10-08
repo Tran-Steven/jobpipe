@@ -1462,3 +1462,23 @@ async def test_registration_uses_only_enabled_create_account_control():
             assert await page.evaluate("window.createClicks") == 1
         finally:
             await browser.close()
+
+
+@pytest.mark.asyncio
+async def test_registration_never_clicks_when_create_controls_disabled():
+    playwright_module = pytest.importorskip("playwright.async_api")
+    async with playwright_module.async_playwright() as playwright:
+        try:
+            browser = await playwright.chromium.launch(headless=True)
+        except Exception as exc:
+            pytest.skip(f"Chromium unavailable: {type(exc).__name__}")
+        try:
+            page = await browser.new_page()
+            await page.set_content(
+                '<form><input data-automation-id="verifyPassword" type="password">'
+                '<button data-automation-id="createAccountSubmitButton" disabled>Create Account</button>'
+                '</form>'
+            )
+            assert not await _click_create_account_submit(page)
+        finally:
+            await browser.close()
