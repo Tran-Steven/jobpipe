@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-workday-restart-replay-contract-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T02:36:00Z",
+  "expires_at_utc": "2026-10-08T03:36:00Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess\nrepo=Path('/Users/steventran/jobpipe')\nexpected='d094c5969d9543b10450b4bf2eba5113f594b627'\nfor cmd in [('git','rev-parse','HEAD'),('git','rev-parse','origin/main'),('git','status','--short')]:\n p=subprocess.run(cmd,cwd=repo,capture_output=True,text=True,check=True,timeout=20)\n print('AUTHORITY',cmd,p.stdout.strip())\nhead=subprocess.run(['git','rev-parse','HEAD'],cwd=repo,capture_output=True,text=True,check=True).stdout.strip()\nif head!=expected:raise SystemExit('HEAD_CHANGED')\npaths=['jobctl.py','adapters/workday.py','tests/test_jobctl.py','tests/test_workday_adapter.py','core/outcomes.py']\nneedles=['do_not_retry_register','_project_csv_outcome','DEFAULT_STATUSES','fresh_registration_with_existing_credential_prefers_sign_in','def _register(']\nfor name in paths:\n lines=(repo/name).read_text().splitlines()\n print('FILE',name)\n for i,s in enumerate(lines):\n  if any(q in s for q in needles):\n   print('MATCH',i+1,' '.join(x.strip() for x in lines[max(0,i-3):min(len(lines),i+11)])[:1400])\nprint('ACCEPTANCE','Determine from actual call paths whether an uncertain registration marker is durably projected and prevented from automatic replay; whether stored credential causes sign-in on resumption; identify one exact failing acceptance case or report safe existing path. No code edits, browser, credentials, or live application.')\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 80
+  }
+}
