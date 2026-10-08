@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T03:00:07.949597+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "8b46be582d5c49ede97a776cfdec83cc77df79763b3c6be674c66de26bd16e5f",
+  "request_id": "jobpipe-workday-override-gate-status-fix-20261008-04",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "227b00fb0142aa92df0c826f27980b65e2a452ad"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "227b00fb0142aa92df0c826f27980b65e2a452ad"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "8b46be582d5c49ede97a776cfdec83cc77df79763b3c6be674c66de26bd16e5f",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-override-gate-status-fix-20261008-04/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 52.409,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 2431,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-override-gate-status-fix-20261008-04/script.py",
+      "script_sha256": "4ac36457110e0bed13ce11a8c3fd084a10d31b8028a9d9e4b8eefc9a74d0fd2a",
+      "stderr": "ASHBY_OR_ATS_FAILURE\n",
+      "stderr_truncated": false,
+      "stdout": "STATUS_ENTRIES [' M adapters/protocol.py', ' M do-again.toml', ' M jobctl.py', ' M tests/test_jobctl.py', '?? do-again-policy.json']\nTEST ['tests/test_ats_adapter_contract.py', '-k', 'explicit_confirmation_produces_verified_evidence'] EXIT 1 .F\n=================================== FAILURES ===================================\n_ test_explicit_confirmation_produces_verified_evidence[lever-LeverAdapter-_expected1] _\n\npage = <Page url='about:blank'>\nresume_file = PosixPath('/private/var/folders/hz/0lpwv9355wl9kvss20pbt19c0000gn/T/pytest-of-steventran/pytest-50/test_explicit_confirmation_pro1/sanitized-resume.pdf')\nprofile = {'personal': {'first_name': 'Ada', 'last_name': 'Example', 'email': 'ada@example.test', 'phone': '+1 555 0100', ...}}\nname = 'lever', adapter_cls = <class 'adapters.lever.LeverAdapter'>\n_expected = {'email', 'full_name', 'resume'}\n\n    @pytest.mark.parametrize(\"name,adapter_cls,_expected\", ADAPTERS)\n    async def test_explicit_confirmation_produces_verified_evidence(\n        page, resume_file, profile, name, adapter_cls, _expected\n    ):\n        await load_fixture(page, name)\n        context = context_for(\n            page,\n            name,\n            profile,\n            resume_file,\n            answers={\"Are you legally authorized to work in this location?\": \"Yes\"},\n            request_submit=True,\n            permit=\"gate-b:test-only\",\n            validator=accept_test_permit,\n        )\n    \n        outcome = await adapter_cls().run(context)\n    \n>       assert outcome.status is OutcomeStatus.SUBMITTED_VERIFIED\nE       AssertionError: assert <OutcomeStatus.FAILED_RETRYABLE: 'FAILED_RETRYABLE'> is <OutcomeStatus.SUBMITTED_VERIFIED: 'SUBMITTED_VERIFIED'>\nE        +  where <OutcomeStatus.FAILED_RETRYABLE: 'FAILED_RETRYABLE'> = ApplicationOutcome(run_id='lever-fixture-run', job_id='lever-fixture-job', status=<OutcomeStatus.FAILED_RETRYABLE: 'FA...evidence_refs=(), details=mappingproxy({'model_calls': 0}), schema_version=1, created_at='2026-10-08T03:00:05.843492Z').status\nE        +  and   <OutcomeStatus.SUBMITTED_VERIFIED: 'SUBMITTED_VERIFIED'> = OutcomeStatus.SUBMITTED_VERIFIED\n\ntests/test_ats_adapter_contract.py:348: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_ats_adapter_contract.py::test_explicit_confirmation_produces_verified_evidence[lever-LeverAdapter-_expected1]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed, 32 deselected in 49.58s\n \n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T02:59:14.923343+00:00",
+  "state": "failed",
+  "traceback": null
+}
