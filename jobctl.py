@@ -1064,6 +1064,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     subparsers.add_parser("readiness", help="Check whether ATS execution prerequisites are satisfied")
     subparsers.add_parser("ats-fixture-check", help="Run browser ATS fixture proof; never claims live readiness")
+    review_parser = subparsers.add_parser("ats-review-queue", help="Inspect sanitized ATS questions and verified answer availability offline; no approval or submission")
+    review_parser.add_argument("--fields", required=True)
+    review_parser.add_argument("--bank", required=True)
+    review_parser.add_argument("--employer", required=True)
+    review_parser.add_argument("--verified-profile-keys", default="")
+
 
     autopilot_parser = subparsers.add_parser("autopilot", help="Run the job pipeline and continue into ATS execution when ready")
     autopilot_parser.add_argument("--profile", default="config/jobpipe.search.yaml")
@@ -1141,6 +1147,13 @@ def main() -> int:
                 args.csv,
             )))
             return 0
+        if args.command == "ats-review-queue":
+            from tools.ats_review_cli import main as ats_review_main
+            return ats_review_main([
+                "--fields", args.fields, "--bank", args.bank,
+                "--employer", args.employer,
+                "--verified-profile-keys", args.verified_profile_keys,
+            ])
         if args.command == "ats-fixture-check":
             from tools.ats_readiness_report import main as ats_fixture_main
             return ats_fixture_main()
