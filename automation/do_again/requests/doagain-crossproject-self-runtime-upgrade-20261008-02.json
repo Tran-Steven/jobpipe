@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "doagain-crossproject-self-runtime-upgrade-20261008-02",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T13:56:00.000000+00:00",
+  "expires_at_utc": "2026-10-08T14:16:00.000000+00:00",
+  "args": {
+    "language": "python",
+    "content": "\nimport json, os, subprocess\nfrom pathlib import Path\n\nsource=Path(\"/Users/steventran/do-again\")\nexpected_head=\"b5c09ec117b4cc9a3cb752ad248631a32a0b08eb\"\n\ndef run(args):\n    return subprocess.run(args,cwd=source,text=True,capture_output=True,check=False,env={**os.environ,\"PYTHONPATH\":str(source/\"src\")})\n\nhead=run([\"git\",\"rev-parse\",\"HEAD\"]).stdout.strip()\nif head!=expected_head:\n    raise SystemExit(f\"target main moved; refusing upgrade: {head}\")\n\npre=run([\"python3\",\"-m\",\"do_again.cli\",\"upgrade\",str(source)])\nprint(\"=== preflight ===\")\nprint(pre.stdout)\nprint(pre.stderr)\nif pre.returncode!=0:\n    raise SystemExit(\"preflight command failed\")\nprej=json.loads(pre.stdout)\nif prej.get(\"effective_blockers\"):\n    raise SystemExit(\"target not quiescent; no upgrade attempted: \"+json.dumps(prej.get(\"effective_blockers\")))\n\napply=run([\"python3\",\"-m\",\"do_again.cli\",\"upgrade\",str(source),\"--apply\"])\nprint(\"=== apply ===\")\nprint(apply.stdout)\nprint(apply.stderr)\nprint(\"apply_rc=\"+str(apply.returncode))\nif apply.returncode!=0:\n    raise SystemExit(\"guarded upgrade command failed\")\n\nvalue=json.loads(apply.stdout)\nif not value.get(\"applied\"):\n    raise SystemExit(\"upgrade deferred; no unsafe retry: \"+json.dumps(value.get(\"effective_blockers\") or value.get(\"preflight\",{}).get(\"blockers\")))\n\nverification=value.get(\"verification\") or {}\nif verification.get(\"hash_matches\") is not True:\n    raise SystemExit(\"post-upgrade runtime hash verification failed\")\nif not (verification.get(\"service\") or {}).get(\"running\"):\n    raise SystemExit(\"target service did not return running\")\n\nprint(json.dumps({\n  \"transaction_id\":value.get(\"transaction_id\"),\n  \"verification\":verification,\n},indent=2,sort_keys=True))\nprint(\"CROSS_PROJECT_SELF_RUNTIME_UPGRADE_ACCEPTANCE_OK\")\n",
+    "cwd": "/Users/steventran/jobpipe"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 300
+  }
+}
