@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T13:42:30.288015+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "c42041f770c51ace6dd93a6e0c2a854746d80ddc0f4aeee4c923f790806cd36b",
+  "request_id": "jobpipe-lever-public-apply-link-discovery-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "b8a787b5b6c9df5bda03db4b5c9f3da67d80317a"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "b8a787b5b6c9df5bda03db4b5c9f3da67d80317a"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "c42041f770c51ace6dd93a6e0c2a854746d80ddc0f4aeee4c923f790806cd36b",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-lever-public-apply-link-discovery-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 12.751,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 2335,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-lever-public-apply-link-discovery-20261008-01/script.py",
+      "script_sha256": "3c1ef743879d9a13be28d2319b69f681db5783a9e96b06d1da874449fe6b284c",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "EXIT 0 OUTPUT {\"applications_submitted\": 0, \"auth_attempted\": false, \"clicked\": false, \"http_status\": 200, \"links\": [{\"allowed\": true, \"path\": \"/ethena/f85bcfd1-8d2c-4cf5-a6ab-1c8ddab14c65/apply\", \"text\": \"APPLY FOR THIS JOB\", \"url_host\": \"jobs.lever.co\"}, {\"allowed\": true, \"path\": \"/ethena/f85bcfd1-8d2c-4cf5-a6ab-1c8ddab14c65/apply\", \"text\": \"APPLY FOR THIS JOB\", \"url_host\": \"jobs.lever.co\"}]}\n ERROR \nREAD_ONLY_LINK_DISCOVERY_OK\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T13:42:16.756870+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
