@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T02:19:45.251667+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "a996781b7a6affbdcd7c198e7e28feddf69cae1d3176d499698c2b33307fc794",
+  "request_id": "jobpipe-workday-uncertain-click-fix-20261008-02",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "534ef4b4eafee02097246eaf2b51f758d8d1c890"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "81464f215821dfd569a575b6a1d5b918eee09dd8"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "a996781b7a6affbdcd7c198e7e28feddf69cae1d3176d499698c2b33307fc794",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-uncertain-click-fix-20261008-02/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 831.284,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 3782,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-uncertain-click-fix-20261008-02/script.py",
+      "script_sha256": "5d97a0654e88b206e7fc30dbbb5775c0415646f2e3c39236e928b78df9fd164e",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   81464f2..534ef4b  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "[main 534ef4b] fix: do not retry uncertain Workday registration click\n 2 files changed, 30 insertions(+), 1 deletion(-)\nSTATUS  M adapters/protocol.py\n M do-again.toml\n M tests/test_workday_adapter.py\n?? do-again-policy.json\n\nTEST ['tests/test_workday_adapter.py', '-k', 'registration_click_exception_never_retries_potential_account_creation'] EXIT 1 F\n=================================== FAILURES ===================================\n__ test_registration_click_exception_never_retries_potential_account_creation __\n\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1072c96e0>\n\n    @pytest.mark.asyncio\n    async def test_registration_click_exception_never_retries_potential_account_creation(monkeypatch):\n        playwright_module = pytest.importorskip(\"playwright.async_api\")\n        from playwright.async_api import Locator\n        async with playwright_module.async_playwright() as playwright:\n            try:\n                browser = await playwright.chromium.launch(headless=True)\n            except Exception as exc:\n                pytest.skip(f\"Chromium unavailable: {type(exc).__name__}\")\n            try:\n                page = await browser.new_page()\n                await page.set_content(\n                    '<form><input data-automation-id=\"verifyPassword\" type=\"password\">'\n                    '<button data-automation-id=\"createAccountSubmitButton\" type=\"button\" onclick=\"window.clickCount=(window.clickCount||0)+1\">Create Account</button>'\n                    '</form>'\n                )\n                original_click = Locator.click\n                async def click_then_lose_response(self, *args, **kwargs):\n                    await original_click(self, *args, **kwargs)\n                    raise TimeoutError('simulated click response lost after DOM event')\n                monkeypatch.setattr(Locator, 'click', click_then_lose_response)\n                assert not await _click_create_account_submit(page)\n>               assert await page.evaluate('window.clickCount') == 1\nE               assert 2 == 1\n\ntests/test_workday_adapter.py:1508: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_workday_adapter.py::test_registration_click_exception_never_retries_potential_account_creation\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 75 deselected in 12.26s\n \nTEST ['tests/test_workday_adapter.py', '-k', 'registration_click_exception_never_retries_potential_account_creation'] EXIT 0 .                                                                        [100%]\n1 passed, 75 deselected in 7.73s\n \nTEST ['tests/test_workday_adapter.py'] EXIT 0 ........................................................................ [ 94%]\n....                                                                     [100%]\n76 passed in 96.82s (0:01:36)\n \nTEST ['tests/test_ats_adapter_contract.py'] EXIT 0 ....................................                                     [100%]\n36 passed in 140.59s (0:02:20)\n \nTEST [] EXIT 0 ........................................................................ [  3%]\n........................................................................ [  7%]\n........................................................................ [ 11%]\n........................................................................ [ 15%]\n........................................................................ [ 19%]\n........................................................................ [ 22%]\n........................................................................ [ 26%]\n........................................................................ [ 30%]\n........................................................................ [ 34%]\n.........................................................s.............. [ 38%]\n........................................................................ [ 41%]\n........................................................................ [ 45%]\n........................................................................ [ 49%]\n........................................................................ [ 53%]\n........................................................................ [ 57%]\n................s....................................................... [ 60%]\n........................................................................ [ 64%]\n.sssssssssss....................................................s....... [ 68%]\n........................................................................ [ 72%]\n........................................................................ [ 76%]\n........................................................................ [ 79%]\n........................................................................ [ 83%]\n........................................................................ [ 87%]\n........................................................................ [ 91%]\n........................................................................ [ 95%]\n........................................................................ [ 98%]\n....................                                                     [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.13/site-packages/fastapi/testclient.py:1\n  /Users/steventran/jobpipe/.venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n1878 passed, 14 skipped, 1 warning in 538.98s (0:08:58)\n \nVERIFIED_PUSH\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T02:05:53.496525+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
