@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 def normalize_question(question: str) -> str:
-    return re.sub(r"\\s+"," ",question).strip().casefold()
+    return re.sub(r"\s+"," ",question).strip().casefold()
 
 def lookup_answer(records: list[dict[str,Any]], question: str, employer: str) -> dict[str,str] | None:
     """No fuzzy matching; global reuse requires explicit global scope and verification."""
