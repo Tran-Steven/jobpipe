@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:56125:1791438106:1a3cb0253d72",
+  "error": null,
+  "finished_at_utc": "2026-10-08T06:24:14.737302+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "3ea784ffc9bda36d3bb087323a1244ba8c5fee81be29f09e3ed8b1ad107d469e",
+  "request_id": "jobpipe-apply-csv-queue-fairness-argparse-fix-20261008-02",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "fa14160ffaa13df9c6a999eb58fac24ef05f6991"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "ae43b0efde38e303b2c9b39562c741bc5a9342a2"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "3ea784ffc9bda36d3bb087323a1244ba8c5fee81be29f09e3ed8b1ad107d469e",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-apply-csv-queue-fairness-argparse-fix-20261008-02/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 4.074,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1631,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-apply-csv-queue-fairness-argparse-fix-20261008-02/script.py",
+      "script_sha256": "fe6521f22bbfcd381a891f65320b9e4958bef09953dd798d7bb22c5253813d9e",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   ae43b0e..fa14160  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT 0 .........                                                                [100%]\n9 passed in 0.82s\n \n[main fa14160] test: verify apply-csv queue fairness across blocked material jobs\n 1 file changed, 46 insertions(+)\n create mode 100644 tests/test_apply_csv_queue_fairness.py\nVERIFIED_PUSH fa14160ffaa13df9c6a999eb58fac24ef05f6991\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T06:24:10.230310+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
