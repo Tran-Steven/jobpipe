@@ -2073,3 +2073,5 @@ Preparation stages; atomic controller installation and resource lifecycle;
 authenticated Refresh and Automation routing without missing-controller 503s;
 and mandatory-dependency fail-fast plus redacted diagnostics and static
 legacy/fake/event-loop-bridge exclusions.
+
+The execution-policy record identity is computed before formatting its ID, preserving identical hashes while supporting Python 3.11 syntax. CI validates all supported Python/platform combinations.
