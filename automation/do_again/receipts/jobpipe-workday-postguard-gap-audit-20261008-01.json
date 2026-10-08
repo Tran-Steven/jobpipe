@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T01:29:17.971684+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "bf52375666a3be6e96610eec4421acc4c6564bce1be7c70733a0a19f6e399855",
+  "request_id": "jobpipe-workday-postguard-gap-audit-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "66d63886d9851360bf7d548c3bfa2ee78a758fbd"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "66d63886d9851360bf7d548c3bfa2ee78a758fbd"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "bf52375666a3be6e96610eec4421acc4c6564bce1be7c70733a0a19f6e399855",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-postguard-gap-audit-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 0.365,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 1220,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-postguard-gap-audit-20261008-01/script.py",
+      "script_sha256": "2e1bfd05796b5804b6c9b1027d069608823f5521bf4cc997794501e6dad9363c",
+      "stderr": "",
+      "stderr_truncated": false,
+      "stdout": "HEAD 66d63886d9851360bf7d548c3bfa2ee78a758fbd\nREMOTE 66d63886d9851360bf7d548c3bfa2ee78a758fbd\nDIRTY  M adapters/protocol.py\n M do-again.toml\n?? do-again-policy.json\n\nSOURCE adapters/workday.py 955 1090\n960 return _needs_user(\n976 _needs_user(\n997 _needs_user(\n1014 _needs_user(\n1032 _needs_user(\n1043 registration = await _fill_registration(context.page, email, password)\n1044 if registration.unresolved_required:\n1047 _needs_user(\n1054 \"unresolved_labels\": list(registration.unresolved_required),\n1060 if not registration.fields_ready:\n1063 _needs_user(\n1075 if not await _click_create_account_submit(context.page):\n1078 _needs_user(\n1082 \"Workday account creation control could not be activated\",\nSOURCE adapters/workday.py 2174 2213\n2174 async def _click_create_account_submit(page: Any) -> bool:\n2179 if await form.is_visible(timeout=800):\n2186 if await candidate.is_visible(timeout=350) and await candidate.is_enabled():\n2189 await enabled[0].click()\n2192 return False\n2200 if not await verify.is_visible(timeout=500):\n2201 return False\n2208 if await button.is_visible(timeout=350) and await button.is_enabled():\n2211 await visible[0].click()\nREGISTRATION_TESTS ['async def test_registration_checks_only_versioned_known_terms():', 'async def test_registration_never_checks_unknown_required_checkbox():', 'async def test_unknown_registration_agreement_stops_before_account_creation(', 'async def test_failed_registration_restores_preexisting_keychain_credential(', 'async def test_fresh_registration_with_existing_credential_prefers_sign_in(monkeypatch):', 'async def test_mixed_auth_registration_uses_form_submit_not_duplicate_navigation():', 'async def test_workday_autofill_does_not_advance_hydrated_registration_surface(monkeypatch):', 'async def test_registration_create_account_failure_returns_nonsecret_diagnostics(monkeypatch):', 'async def test_registration_uses_only_enabled_create_account_control():', 'async def test_registration_never_clicks_when_create_controls_disabled():']\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T01:29:17.092892+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
