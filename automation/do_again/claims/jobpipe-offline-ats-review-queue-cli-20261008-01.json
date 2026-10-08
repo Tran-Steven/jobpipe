@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "claimed_at_utc": "2026-10-08T14:55:42.860702+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 54526,
+  "request_fingerprint": "a51f98b55ccf7067e71b4ad294740b085d44a171dd16eaca411857a965571e25",
+  "request_id": "jobpipe-offline-ats-review-queue-cli-20261008-01",
+  "schema_version": 1
+}
