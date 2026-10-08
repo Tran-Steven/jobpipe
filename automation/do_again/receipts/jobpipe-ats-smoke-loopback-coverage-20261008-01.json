@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:42552:1791437690:5f46a06c9e0b",
+  "error": null,
+  "finished_at_utc": "2026-10-08T05:38:51.381656+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "a086d6d88fe82a73c66956e7c7e82475ba6a3526cb54d59d9e3d552cd4a78eed",
+  "request_id": "jobpipe-ats-smoke-loopback-coverage-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "ab35832a791cd4f4394c416e1f19023ed9110e60"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "1b59f86304a1a25f8f35339384b6953832b35a5c"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "a086d6d88fe82a73c66956e7c7e82475ba6a3526cb54d59d9e3d552cd4a78eed",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-ats-smoke-loopback-coverage-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 45.442,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 4095,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-ats-smoke-loopback-coverage-20261008-01/script.py",
+      "script_sha256": "dfdcde26c8ea43f510dbee54d7f1d3ee8375d48f99dd856b1c7ebd99c728a4bc",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   1b59f86..ab35832  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "RESULT 0 .....                                                                    [100%]\n5 passed in 0.15s\n \nRESULT 0 ============================= test session starts ==============================\nplatform darwin -- Python 3.13.15, pytest-9.1.1, pluggy-1.6.0 -- /Users/steventran/jobpipe/.venv/bin/python\ncachedir: .pytest_cache\nrootdir: /Users/steventran/jobpipe\nconfigfile: pytest.ini\nplugins: asyncio-1.4.0, anyio-4.15.1\nasyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollecting ... collected 40 items / 27 deselected / 13 selected\n\ntests/test_ats_adapter_contract.py::test_adapter_reaches_review_with_required_fields_and_upload[greenhouse-GreenhouseAdapter-expected0] PASSED [  7%]\ntests/test_ats_adapter_contract.py::test_adapter_reaches_review_with_required_fields_and_upload[lever-LeverAdapter-expected1] PASSED [ 15%]\ntests/test_ats_adapter_contract.py::test_adapter_reaches_review_with_required_fields_and_upload[ashby-AshbyAdapter-expected2] PASSED [ 23%]\ntests/test_ats_adapter_contract.py::test_adapter_reaches_review_with_required_fields_and_upload[jobvite-JobviteAdapter-expected3] PASSED [ 30%]\ntests/test_ats_adapter_contract.py::test_submit_requires_gate_b[greenhouse-GreenhouseAdapter-_expected0] PASSED [ 38%]\ntests/test_ats_adapter_contract.py::test_submit_requires_gate_b[lever-LeverAdapter-_expected1] PASSED [ 46%]\ntests/test_ats_adapter_contract.py::test_submit_requires_gate_b[ashby-AshbyAdapter-_expected2] PASSED [ 53%]\ntests/test_ats_adapter_contract.py::test_submit_requires_gate_b[jobvite-JobviteAdapter-_expected3] PASSED [ 61%]\ntests/test_ats_adapter_contract.py::test_review_requires_a_final_submit_control PASSED [ 69%]\ntests/test_ats_adapter_contract.py::test_browser_navigates_local_http_ats_page_to_review_without_submit[greenhouse-GreenhouseAdapter-expected0] PASSED [ 76%]\ntests/test_ats_adapter_contract.py::test_browser_navigates_local_http_ats_page_to_review_without_submit[lever-LeverAdapter-expected1] PASSED [ 84%]\ntests/test_ats_adapter_contract.py::test_browser_navigates_local_http_ats_page_to_review_without_submit[ashby-AshbyAdapter-expected2] PASSED [ 92%]\ntests/test_ats_adapter_contract.py::test_browser_navigates_local_http_ats_page_to_review_without_submit[jobvite-JobviteAdapter-expected3] PASSED [100%]\n\n====================== 13 passed, 27 deselected in 40.61s ======================\nATS_FIXTURE_REVIEW_GATE=PASS; LIVE_REVIEW=NOT_VERIFIED; SUBMISSIONS=NOT_ATTEMPTED\n \n[main ab35832] test: require loopback navigation evidence in ATS Review smoke gate\n 2 files changed, 30 insertions(+), 3 deletions(-)\nVERIFIED_PUSH ab35832a791cd4f4394c416e1f19023ed9110e60\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T05:38:05.557556+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
