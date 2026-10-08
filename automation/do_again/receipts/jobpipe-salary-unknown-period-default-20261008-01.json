@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T01:59:52.250047+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "474af083c05eb88a26f7d6f9f10a588781a6536357001339b4d33d277f647b76",
+  "request_id": "jobpipe-salary-unknown-period-default-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "81464f215821dfd569a575b6a1d5b918eee09dd8"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "da91aaf880e170b91ec94cd2ca7799edc1328037"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "474af083c05eb88a26f7d6f9f10a588781a6536357001339b4d33d277f647b76",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-salary-unknown-period-default-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 440.36,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 3217,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-salary-unknown-period-default-20261008-01/script.py",
+      "script_sha256": "bae93cc2729db79962ab6b7bf97aa5dbf32ae171623dae854439ef410bf468ad",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   da91aaf..81464f2  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "[main 81464f2] fix: do not assume unqualified salary figures are annual\n 2 files changed, 8 insertions(+), 3 deletions(-)\nSTATUS_BEFORE  M adapters/protocol.py\n M do-again.toml\n?? do-again-policy.json\n\nTEST ['tests/test_job_salary_eligibility.py', '-k', 'unspecified_pay_period_must_not_be_assumed_annual'] EXIT 1 F\n=================================== FAILURES ===================================\n____________ test_unspecified_pay_period_must_not_be_assumed_annual ____________\n\n    def test_unspecified_pay_period_must_not_be_assumed_annual():\n        evidence = SalaryEvidence(85000, 95000, 'USD', 'BASE', 'https://example.org/job')\n>       assert evidence.pay_period == 'UNKNOWN'\nE       AssertionError: assert 'ANNUAL' == 'UNKNOWN'\nE         \nE         - UNKNOWN\nE         + ANNUAL\n\ntests/test_job_salary_eligibility.py:44: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_job_salary_eligibility.py::test_unspecified_pay_period_must_not_be_assumed_annual\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 9 deselected in 0.11s\n \nTEST ['tests/test_job_salary_eligibility.py'] EXIT 0 ..........                                                               [100%]\n10 passed in 0.10s\n \nTEST [] EXIT 0 ........................................................................ [  3%]\n........................................................................ [  7%]\n........................................................................ [ 11%]\n........................................................................ [ 15%]\n........................................................................ [ 19%]\n........................................................................ [ 22%]\n........................................................................ [ 26%]\n........................................................................ [ 30%]\n........................................................................ [ 34%]\n.........................................................s.............. [ 38%]\n........................................................................ [ 41%]\n........................................................................ [ 45%]\n........................................................................ [ 49%]\n........................................................................ [ 53%]\n........................................................................ [ 57%]\n................s....................................................... [ 60%]\n........................................................................ [ 64%]\n.sssssssssss....................................................s....... [ 68%]\n........................................................................ [ 72%]\n........................................................................ [ 76%]\n........................................................................ [ 79%]\n........................................................................ [ 83%]\n........................................................................ [ 87%]\n........................................................................ [ 91%]\n........................................................................ [ 95%]\n........................................................................ [ 98%]\n...................                                                      [100%]\n=============================== warnings summary ===============================\n.venv/lib/python3.13/site-packages/fastapi/testclient.py:1\n  /Users/steventran/jobpipe/.venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n1877 passed, 14 skipped, 1 warning in 434.07s (0:07:14)\n \nVERIFIED_PUSH\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T01:52:31.603292+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
