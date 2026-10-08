@@ -85,3 +85,55 @@ async def test_blocked_material_followed_by_review_ready_is_not_starved(tmp_path
     assert project.call_count==2
     output=capsys.readouterr().out
     assert '"status":"NEEDS_USER"' in output and '"status":"REVIEW_READY"' in output
+
+@pytest.mark.asyncio
+async def test_blocked_row_then_browser_leased_review_is_not_starved(tmp_path,capsys):
+    """Exercise real apply-csv browser lease branch without any real network."""
+    from unittest.mock import AsyncMock
+    args=jobctl.build_parser().parse_args([
+        "--home",str(tmp_path),"apply-csv","--csv",str(tmp_path/"jobs.csv"),
+        "--continue-on-user","--approve-gate-a"
+    ])
+    rows=[SimpleNamespace(company="Fixture One",row={"status":"Pending","source":"greenhouse"}),
+          SimpleNamespace(company="Fixture Two",row={"status":"Pending","source":"greenhouse"})]
+    paths=SimpleNamespace(job_queue=tmp_path/"jobs.csv",master_documents=tmp_path)
+    vault=SimpleNamespace(paths=paths,application_profile=lambda: {},policy={})
+    blocked=SimpleNamespace(status=jobctl.OutcomeStatus.NEEDS_USER,
+       exit_code=jobctl.ExitCode.NEEDS_USER,to_json=lambda:'{"status":"NEEDS_USER"}')
+    ready=SimpleNamespace(status=jobctl.OutcomeStatus.REVIEW_READY,
+       exit_code=jobctl.ExitCode.AWAITING_GATE_B,to_json=lambda:'{"status":"REVIEW_READY"}')
+    job=SimpleNamespace(job_id="1",company="Fixture",title="Engineer",
+       tier=SimpleNamespace(value="low"))
+    bundle=SimpleNamespace(policy=SimpleNamespace(blockers=[],
+       gate_a_actor=jobctl.ApprovalActor.HUMAN))
+    engine=MagicMock()
+    engine.submission_preflight.return_value=None
+    engine.execute=AsyncMock(return_value=ready)
+    engine.leases=object()
+    page=object()
+    lease=SimpleNamespace(session=SimpleNamespace(page=page),lease=object())
+    class FakeLease:
+        async def __aenter__(self):return lease
+        async def __aexit__(self,*args):return False
+    def make_bundle(*,application,**kwargs):
+        if application is rows[0]:raise FileNotFoundError("missing fixture")
+        return bundle,{}
+    with patch.object(jobctl.CandidateVault,"load",return_value=vault), \
+         patch.object(jobctl,"load_csv_queue",return_value=rows), \
+         patch.object(jobctl,"MacOSSecurityCredentialStore",return_value=object()), \
+         patch.object(jobctl.JobApplicationEngine,"from_private_home",return_value=engine), \
+         patch.object(jobctl,"_mailbox_verifier",return_value=None), \
+         patch.object(jobctl,"_build_application_bundle",side_effect=make_bundle), \
+         patch.object(jobctl,"_materials_required_outcome",return_value=(blocked,job)), \
+         patch.object(jobctl,"_project_csv_outcome") as project, \
+         patch.object(jobctl,"lease_browser_session",return_value=FakeLease()) as browser, \
+         patch.object(jobctl,"async_playwright",return_value=DummyPlaywright()):
+        rc=await jobctl.cmd_apply_csv(args)
+    assert rc==int(max(blocked.exit_code,ready.exit_code))
+    assert browser.call_count==1
+    assert engine.execute.await_count==1
+    assert engine.execute.await_args.kwargs["page"] is page
+    assert engine.execute.await_args.kwargs["request_submit"] is False
+    assert project.call_count==2
+    output=capsys.readouterr().out
+    assert '"status":"NEEDS_USER"' in output and '"status":"REVIEW_READY"' in output
