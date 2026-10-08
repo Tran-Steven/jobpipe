@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T03:18:21.752626+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "99816f427e07561e20099c60e66c202164c487bc99c64c46d93dc21091cad44e",
+  "request_id": "jobpipe-ats-bounded-suite-shards-20261008-01",
+  "schema_version": 1
+}
