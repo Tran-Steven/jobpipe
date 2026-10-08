@@ -1057,6 +1057,7 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser.add_argument("--csv", default="")
 
     subparsers.add_parser("readiness", help="Check whether ATS execution prerequisites are satisfied")
+    subparsers.add_parser("ats-fixture-check", help="Run browser ATS fixture proof; never claims live readiness")
 
     autopilot_parser = subparsers.add_parser("autopilot", help="Run the job pipeline and continue into ATS execution when ready")
     autopilot_parser.add_argument("--profile", default="config/jobpipe.search.yaml")
@@ -1127,6 +1128,9 @@ def main() -> int:
                 args.csv,
             )))
             return 0
+        if args.command == "ats-fixture-check":
+            from tools.ats_readiness_report import main as ats_fixture_main
+            return ats_fixture_main()
         if args.command == "readiness":
             readiness = jobpipe_application_readiness(args.home)
             jobpipe_print_json(readiness)
