@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "error": null,
+  "finished_at_utc": "2026-10-08T15:07:53.146284+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "79b072019c7becab9304cc8a77fa0d40b37890a904a1515db3b1cbb00d7bec34",
+  "request_id": "jobpipe-readonly-ats-capture-to-private-snapshot-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "f9a68e8839d8c942566788f0a942b2813142a8d8"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "aed90183d1a53aafdcee17eabda69fa03fa13312"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "79b072019c7becab9304cc8a77fa0d40b37890a904a1515db3b1cbb00d7bec34",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-readonly-ats-capture-to-private-snapshot-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 8.289,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 4966,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-readonly-ats-capture-to-private-snapshot-20261008-01/script.py",
+      "script_sha256": "dae1ed85e6ed1e8924ad6771896a0caa159d70fa224c2dd785b2444438b1c737",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   aed9018..f9a68e8  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "TEST_EXIT 0 STDOUT .............................................                            [100%]\n45 passed in 4.94s\n STDERR \n[main f9a68e8] feat: capture read-only public ATS fields to private review snapshot\n 2 files changed, 63 insertions(+)\n create mode 100644 tests/test_ats_capture_snapshot.py\n create mode 100644 tools/ats_capture_snapshot.py\nVERIFIED_PUSH f9a68e8839d8c942566788f0a942b2813142a8d8\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T15:07:44.159820+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
