@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:54526:1791464950:80885f1acb47",
+  "claimed_at_utc": "2026-10-08T15:23:58.231525+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 54526,
+  "request_fingerprint": "7edbe2ddd007172e3eacdb73f2547a92eba981ae48bd7b74c9f4eb3b7476b00a",
+  "request_id": "jobpipe-explicit-atomic-batch-answer-approval-20261008-01",
+  "schema_version": 1
+}
