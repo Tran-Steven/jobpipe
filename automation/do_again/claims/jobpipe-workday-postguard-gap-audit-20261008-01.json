@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "claimed_at_utc": "2026-10-08T01:29:15.374922+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 94823,
+  "request_fingerprint": "bf52375666a3be6e96610eec4421acc4c6564bce1be7c70733a0a19f6e399855",
+  "request_id": "jobpipe-workday-postguard-gap-audit-20261008-01",
+  "schema_version": 1
+}
