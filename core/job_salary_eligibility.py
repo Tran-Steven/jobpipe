@@ -21,7 +21,7 @@ class SalaryEvidence:
     currency: str
     pay_kind: str
     source_url: str
-    pay_period: str = 'ANNUAL'
+    pay_period: str = 'UNKNOWN'
 
     def __post_init__(self):
         if (isinstance(self.minimum, bool) or isinstance(self.maximum, bool)

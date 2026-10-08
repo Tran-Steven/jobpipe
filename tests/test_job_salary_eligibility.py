@@ -4,11 +4,11 @@ def test_unknown_salary_is_eligible():
     assert decide_salary(None, 100000) is SalaryDecision.ELIGIBLE_UNKNOWN
 
 def test_known_base_range_below_floor_is_excluded():
-    evidence = SalaryEvidence(85000, 95000, 'USD', 'BASE', 'https://example.org/job')
+    evidence = SalaryEvidence(85000, 95000, 'USD', 'BASE', 'https://example.org/job', pay_period='ANNUAL')
     assert decide_salary(evidence, 100000) is SalaryDecision.EXCLUDED_BELOW_FLOOR
 
 def test_known_base_range_reaching_floor_is_eligible():
-    evidence = SalaryEvidence(85000, 105000, 'USD', 'BASE', 'https://example.org/job')
+    evidence = SalaryEvidence(85000, 105000, 'USD', 'BASE', 'https://example.org/job', pay_period='ANNUAL')
     assert decide_salary(evidence, 100000) is SalaryDecision.ELIGIBLE_KNOWN
 
 def test_total_compensation_is_not_assumed_base():
@@ -38,3 +38,8 @@ def test_invalid_salary_period_is_rejected():
     import pytest
     with pytest.raises(ValueError):
         SalaryEvidence(90000, 110000, 'USD', 'BASE', 'https://example.org/job', pay_period='FORTNIGHT')
+
+def test_unspecified_pay_period_must_not_be_assumed_annual():
+    evidence = SalaryEvidence(85000, 95000, 'USD', 'BASE', 'https://example.org/job')
+    assert evidence.pay_period == 'UNKNOWN'
+    assert decide_salary(evidence, 100000) is SalaryDecision.NEEDS_BASE_EVIDENCE
