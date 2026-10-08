@@ -1,0 +1,9 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:42552:1791437690:5f46a06c9e0b",
+  "claimed_at_utc": "2026-10-08T05:38:04.114537+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "pid": 42552,
+  "request_fingerprint": "a086d6d88fe82a73c66956e7c7e82475ba6a3526cb54d59d9e3d552cd4a78eed",
+  "request_id": "jobpipe-ats-smoke-loopback-coverage-20261008-01",
+  "schema_version": 1
+}
