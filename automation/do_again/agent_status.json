@@ -3,13 +3,13 @@
   "control_worktree": "/Users/steventran/.do_again/projects/42ba1b7dcb92/control",
   "host": "Stevens-Mac-mini.local",
   "instance_id": "Stevens-Mac-mini.local:70110:1791434979:7696abc569f9",
-  "last_request_id": "jobpipe-no-submit-ats-review-smoke-20261008-01",
-  "last_request_state": "failed",
+  "last_request_id": "jobpipe-no-submit-ats-review-smoke-path-fix-20261008-02",
+  "last_request_state": "succeeded",
   "pid": 70110,
   "remote": "origin",
   "repo": "/Users/steventran/jobpipe",
   "schema_version": 1,
   "started_at_utc": "2026-10-08T04:49:39.551304+00:00",
   "state": "ready",
-  "updated_at_utc": "2026-10-08T05:05:09.444437+00:00"
+  "updated_at_utc": "2026-10-08T05:07:51.470335+00:00"
 }
