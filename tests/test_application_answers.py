@@ -901,3 +901,46 @@ def test_normal_profile_candidate_summary_and_execution_surfaces_are_unused(
             "adapters",
         )
     )
+
+
+def test_verified_global_answer_reused_across_distinct_job_plans_without_scope_leak(tmp_path: Path):
+    home = PrivateHome(tmp_path / "private")
+    job_a = "job-reuse-alpha"
+    job_b = "job-reuse-beta"
+    job_c = "job-reuse-restricted"
+    _write_vault(home, [
+        _record("email", "synthetic@example.test", fact_id="fact-global-email"),
+        _record("phone_number", "+1 555 0104",
+                scope={"job_ids": [job_a, job_b]}, fact_id="fact-scoped-phone"),
+    ])
+    plans = PrivateHomeApplicationPlanRepository(home)
+    answers = PrivateHomePreparedApplicationAnswerSetRepository(home)
+    prepared = []
+    for index, job in enumerate((job_a, job_b, job_c), start=1):
+        plan = ApplicationPlan.create(
+            subject_id=SUBJECT, job_id=job, job_revision=1,
+            job_content_hash=("%064x" % (index + 50)),
+            priority_decision_id=f"decision-reuse-{index}",
+            policy_id="priority-policy-v1", policy_version=1,
+            policy_content_hash="a" * 64,
+            accepted_job_intent_id=f"intent-reuse-{index}",
+            priority_level=ProposedPriorityLevel.P1, created_at=NOW,
+        )
+        assert plans.save(plan).plan == plan
+        result = prepare_application_answers(
+            PrepareApplicationAnswersCommand(
+                subject_id=SUBJECT, application_plan_id=plan.plan_id, now=NOW
+            ),
+            application_plan_repository=plans,
+            fact_provider=PrivateHomeApplicationFactProvider(home),
+            answer_policy=ApplicationAnswerPolicy.default(),
+            answer_set_repository=answers,
+        )
+        assert result.answer_set is not None
+        prepared.append((plan, result, _answers_by_key(result)))
+    for plan, result, values in prepared:
+        assert values[CanonicalApplicationAnswerKey.EMAIL].value == "synthetic@example.test"
+        assert result.answer_set.application_plan_id == plan.plan_id
+    for plan, result, values in prepared[:2]:
+        assert values[CanonicalApplicationAnswerKey.PHONE].value == "+1 555 0104"
+    assert CanonicalApplicationAnswerKey.PHONE not in prepared[2][2]
