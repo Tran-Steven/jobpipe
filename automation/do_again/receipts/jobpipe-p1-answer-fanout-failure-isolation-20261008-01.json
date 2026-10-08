@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:46487:1791434177:b54c78afd413",
+  "error": null,
+  "finished_at_utc": "2026-10-08T04:41:47.246077+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "027421f523793520190a239bc4bfbe7ec0bc28978ae1b44672a093567259d715",
+  "request_id": "jobpipe-p1-answer-fanout-failure-isolation-20261008-01",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "67be58a8404f5429ae8554712e8c651f9d559ab7"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "4b4bf0905bb97a0716a9dc64aea24773b69b1dd3"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "027421f523793520190a239bc4bfbe7ec0bc28978ae1b44672a093567259d715",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-answer-fanout-failure-isolation-20261008-01/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 13.294,
+      "language": "python",
+      "returncode": 0,
+      "script_bytes": 4428,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-p1-answer-fanout-failure-isolation-20261008-01/script.py",
+      "script_sha256": "4198cbccc4169b5be7c3a8f1f79942566e2a1302d078e194afe6de2895efe9b9",
+      "stderr": "To https://github.com/Tran-Steven/jobpipe.git\n   4b4bf09..67be58a  main -> main\n",
+      "stderr_truncated": false,
+      "stdout": "TEST ['tests/test_application_answer_resolution.py', '-k', 'shared_basic_answer_isolates_failed_job_and_continues_later_jobs'] EXIT 0 .                                                                        [100%]\n1 passed, 6 deselected in 1.76s\n \nTEST ['tests/test_application_answer_resolution.py', 'tests/test_application_answers.py', 'tests/test_human_attention_queue.py'] EXIT 0 ..............................................                           [100%]\n46 passed in 7.28s\n \n[main 67be58a] test: prove failed answer fanout job does not starve later jobs\n 1 file changed, 48 insertions(+)\nVERIFIED_PUSH 67be58a8404f5429ae8554712e8c651f9d559ab7\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T04:41:33.667802+00:00",
+  "state": "succeeded",
+  "traceback": null
+}
