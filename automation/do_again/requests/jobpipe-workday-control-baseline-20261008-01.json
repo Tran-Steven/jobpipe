@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-workday-control-baseline-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T00:56:00Z",
+  "expires_at_utc": "2026-10-08T01:56:00Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess\nrepo=Path('/Users/steventran/jobpipe')\nfor cmd in [['git','status','--short'],['git','rev-parse','HEAD'],['git','rev-parse','origin/main'],['git','diff','--name-only']]:\n p=subprocess.run(cmd,cwd=repo,capture_output=True,text=True,timeout=25)\n print('CMD',cmd,'EXIT',p.returncode,'OUT',p.stdout[-3500:],'ERR',p.stderr[-500:])\nsource=(repo/'adapters/workday.py').read_text().splitlines()\nfor start,end in [(1025,1090),(2170,2212),(2313,2365)]:\n print('WORKDAY',start,end)\n print('\\n'.join(f'{i+1}: {source[i][:210]}' for i in range(start-1,min(end,len(source)))))\ntests=(repo/'tests/test_workday_adapter.py').read_text().splitlines()\nprint('REGISTRATION_TEST_NAMES',[line.strip() for line in tests if line.strip().startswith('async def test_') and ('register' in line or 'account' in line)])\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 90
+  }
+}
