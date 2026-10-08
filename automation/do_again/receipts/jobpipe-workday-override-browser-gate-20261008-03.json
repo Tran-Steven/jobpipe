@@ -1,0 +1,45 @@
+{
+  "agent_instance_id": "Stevens-Mac-mini.local:94823:1791421997:ff5c0fc8578f",
+  "error": null,
+  "finished_at_utc": "2026-10-08T02:56:07.281138+00:00",
+  "host": "Stevens-Mac-mini.local",
+  "operation": "scratch_script",
+  "request_fingerprint": "66e60679b022646c66d54b3838a198d827cb899f157026c39a90fdd90b810129",
+  "request_id": "jobpipe-workday-override-browser-gate-20261008-03",
+  "result": {
+    "authority_after": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "227b00fb0142aa92df0c826f27980b65e2a452ad"
+    },
+    "authority_before": {
+      "repo_branch": "main",
+      "repo_dirty": true,
+      "repo_head": "227b00fb0142aa92df0c826f27980b65e2a452ad"
+    },
+    "operation": "scratch_script",
+    "request_fingerprint": "66e60679b022646c66d54b3838a198d827cb899f157026c39a90fdd90b810129",
+    "result": {
+      "argv": [
+        "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+        "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-override-browser-gate-20261008-03/script.py"
+      ],
+      "cwd": "/Users/steventran/jobpipe",
+      "duration_seconds": 1.252,
+      "language": "python",
+      "returncode": 1,
+      "script_bytes": 2073,
+      "script_path": "/Users/steventran/.do_again/projects/42ba1b7dcb92/state/scratch/jobpipe-workday-override-browser-gate-20261008-03/script.py",
+      "script_sha256": "2896248059cf345cbced17acfa4435a84403bf65a02910b02a9f9668eb580c6d",
+      "stderr": "UNEXPECTED_DIRTY\n",
+      "stderr_truncated": false,
+      "stdout": "STATUS M adapters/protocol.py\n M do-again.toml\n M jobctl.py\n M tests/test_jobctl.py\n?? do-again-policy.json\n",
+      "stdout_truncated": false,
+      "timed_out": false
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-08T02:56:05.052051+00:00",
+  "state": "failed",
+  "traceback": null
+}
