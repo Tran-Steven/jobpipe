@@ -160,12 +160,17 @@ def _event_metrics(events: list[Any]) -> dict[str, Any]:
         adapter = str(outcome.get("adapter") or "")
         if adapter in SUPPORTED_ATS and run_id:
             supported_runs.add(run_id)
-            if outcome.get("status") in {"REVIEW_READY", "SUBMITTED_VERIFIED"}:
-                review_runs.add(run_id)
+            # Count only the latest authoritative state, not an old Review
+            # later invalidated by a correction or failed verification.
         details = outcome.get("details")
         if isinstance(details, dict) and isinstance(details.get("model_calls"), int):
             model_calls.append(details["model_calls"])
 
+    review_runs = {
+        run_id for run_id in supported_runs
+        if latest.get(run_id, {}).get("status") in
+        {"REVIEW_READY", "SUBMITTED_VERIFIED"}
+    }
     verified = [
         outcome
         for outcome in latest.values()
