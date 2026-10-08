@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-workday-register-restart-replay-audit-20261008-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-08T02:34:45Z",
+  "expires_at_utc": "2026-10-08T03:34:45Z",
+  "args": {
+    "language": "python",
+    "cwd": "/Users/steventran/jobpipe",
+    "content": "from pathlib import Path\nimport subprocess\nrepo=Path('/Users/steventran/jobpipe')\nhead=subprocess.run(['git','rev-parse','HEAD'],cwd=repo,text=True,capture_output=True,check=True).stdout.strip()\nremote=subprocess.run(['git','rev-parse','origin/main'],cwd=repo,text=True,capture_output=True,check=True).stdout.strip()\nprint('HEAD',head,'ORIGIN',remote)\nif head!='d094c5969d9543b10450b4bf2eba5113f594b627' or remote!=head:raise SystemExit('AUTHORITY_CHANGED')\nprint('DIRTY',subprocess.run(['git','status','--short'],cwd=repo,text=True,capture_output=True,check=True).stdout)\nfor p in [repo/'adapters/workday.py',repo/'jobctl.py',repo/'core/application_engine.py']:\n lines=p.read_text().splitlines()\n hits=[(i+1,line.strip()[:165]) for i,line in enumerate(lines) if any(t in line for t in ('do_not_retry_register','WorkdayRegistrationClickUncertain','NEEDS_USER_LOGIN','retryable'))]\n print('FILE',p.relative_to(repo),'HITS',hits[:60])\nfor path in sorted((repo/'tests').glob('test_*workday*.py')):\n lines=path.read_text().splitlines()\n print('TEST',path.name,'UNCERTAIN',[ (i+1,line.strip()[:120]) for i,line in enumerate(lines) if 'uncertain' in line.lower() or 'do_not_retry_register' in line][:35])\nprint('ACCEPTANCE','Determine whether a Workday potentially-created account can be automatically retried after restart despite marker; recommend one integration regression if risk demonstrated. No live attempt, no code changes.')\n"
+  },
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 85
+  }
+}
