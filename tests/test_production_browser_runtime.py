@@ -411,3 +411,44 @@ async def test_suspension_ttl_policy_and_empty_token_do_not_modify_active_sessio
     assert empty.value.failure is BrowserRuntimeFailure.SESSION_RESUME_REJECTED
     async with provider.lease(owner="ttl-run", resume_token=token) as recovered:
         assert recovered.page is leased.page
+
+
+@pytest.mark.asyncio
+async def test_human_page_expires_automatically_without_followup_browser_request(
+    tmp_path: Path,
+) -> None:
+    _, playwright, _, runtime = _parts(tmp_path)
+    await runtime.start()
+    async with runtime.lease_provider().lease(owner="attended-user-run") as leased:
+        page = leased.page
+        leased.suspend_for_human(ttl_seconds=1)
+    assert not page.closed
+    await asyncio.sleep(1.1)
+    assert page.closed
+    assert runtime._suspended is None
+    assert runtime._suspend_timer is None
+    assert runtime.lease_manager.get("browser:chromium") is None
+    assert len(playwright.chromium.context.created) == 1
+    await runtime.close()
+
+
+@pytest.mark.asyncio
+async def test_suspending_and_resuming_does_not_leave_delayed_expiry_timer(
+    tmp_path: Path,
+) -> None:
+    _, _, _, runtime = _parts(tmp_path)
+    await runtime.start()
+    async with runtime.lease_provider().lease(owner="handoff-run") as first:
+        token = first.suspend_for_human(ttl_seconds=1)
+    original_timer = runtime._suspend_timer
+    assert original_timer is not None
+    async with runtime.lease_provider().lease(
+        owner="handoff-run", resume_token=token
+    ) as resumed:
+        assert resumed.page is first.page
+        assert original_timer.cancelled()
+        assert runtime._suspend_timer is None
+    await asyncio.sleep(1.1)
+    assert runtime._suspended is None
+    assert runtime._suspend_timer is None
+    await runtime.close()
