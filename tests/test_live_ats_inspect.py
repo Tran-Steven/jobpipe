@@ -169,8 +169,14 @@ async def test_network_guard_aborts_nonpublic_iframe_and_subresource_before_fetc
 
     class Page:
         url = "https://jobs.lever.co/acme/123"
+        def __init__(self):
+            self.context = type("RoutingContext", (), {
+                "route": self.register_context_route,
+            })()
         def set_default_timeout(self, *_args): pass
-        async def route(self, _pattern, handler):
+        async def route(self, _pattern, _handler):
+            raise AssertionError("page routing cannot guard popup initial requests")
+        async def register_context_route(self, _pattern, handler):
             self.guard = handler
         async def goto(self, _url, **_kwargs):
             unsafe = [
