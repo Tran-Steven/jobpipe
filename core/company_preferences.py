@@ -144,11 +144,12 @@ def effective_company_treatment(
     additional_blocked: tuple[str, ...] | list[str] = (),
     preferences: CompanyPreferences | None = None,
     subject_id: str | None = None,
+    home: PrivateHome | None = None,
 ) -> CompanyTreatment:
     prefs = (
         preferences
         if preferences is not None
-        else PrivateCompanyPreferences(subject_id=subject_id).read()
+        else PrivateCompanyPreferences(home, subject_id=subject_id).read()
     )
     if not prefs.enabled:
         return CompanyTreatment.ALLOW
