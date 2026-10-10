@@ -10,6 +10,7 @@ from typing import Any
 
 from .company_filters import CompanyTreatment
 from .company_preferences import effective_company_treatment
+from .job_quality import assess_job_quality
 from .accepted_job_intent import (
     AcceptedJobIntent,
     AcceptedJobIntentReadResult,
@@ -61,6 +62,7 @@ class RunnableApplicationStatus(str, Enum):
     BLOCKED_NEEDS_USER = "BLOCKED_NEEDS_USER"
     BLOCKED_EXCLUDED = "BLOCKED_EXCLUDED"
     BLOCKED_COMPANY = "BLOCKED_COMPANY"
+    BLOCKED_QUALITY_REVIEW = "BLOCKED_QUALITY_REVIEW"
     BLOCKED_PRIORITY = "BLOCKED_PRIORITY"
     BLOCKED_PROMOTION_REQUIRED = "BLOCKED_PROMOTION_REQUIRED"
     BLOCKED_JOB_STATE = "BLOCKED_JOB_STATE"
@@ -72,6 +74,7 @@ class RunnableApplicationReason(str, Enum):
     PRIORITY_NEEDS_USER = "PRIORITY_NEEDS_USER"
     PRIORITY_EXCLUDED = "PRIORITY_EXCLUDED"
     COMPANY_BLOCKED = "COMPANY_BLOCKED"
+    QUALITY_REVIEW_REQUIRED = "QUALITY_REVIEW_REQUIRED"
     PRIORITY_NOT_ADMITTED = "PRIORITY_NOT_ADMITTED"
     EXPLICIT_PROMOTION_REQUIRED = "EXPLICIT_PROMOTION_REQUIRED"
     JOB_STATE_UNAVAILABLE = "JOB_STATE_UNAVAILABLE"
@@ -105,6 +108,9 @@ _STATUS_REASON = {
     ),
     RunnableApplicationStatus.BLOCKED_COMPANY: (
         RunnableApplicationReason.COMPANY_BLOCKED
+    ),
+    RunnableApplicationStatus.BLOCKED_QUALITY_REVIEW: (
+        RunnableApplicationReason.QUALITY_REVIEW_REQUIRED
     ),
     RunnableApplicationStatus.BLOCKED_PRIORITY: (
         RunnableApplicationReason.PRIORITY_NOT_ADMITTED
@@ -349,6 +355,15 @@ def _classify(
             job=job,
             queue_status=queue_status,
             status=RunnableApplicationStatus.BLOCKED_COMPANY,
+            decision=decision,
+            intent=intent,
+        )
+    if assess_job_quality(job.title, job.description).requires_review:
+        return _blocked(
+            subject_id=subject_id,
+            job=job,
+            queue_status=queue_status,
+            status=RunnableApplicationStatus.BLOCKED_QUALITY_REVIEW,
             decision=decision,
             intent=intent,
         )
