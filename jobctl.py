@@ -26,6 +26,7 @@ from core.application_engine import JobApplicationEngine
 from core.company_filters import CompanyTreatment
 from core.company_preferences import effective_company_treatment, PrivateCompanyPreferences
 from core.job_history import JobHistoryState, PrivateJobHistory
+from core.submission_reconciliation import inspect_submission
 from core.browser_broker import lease_browser_session
 from core.bundles import (
     ApplicationBundle,
@@ -1022,6 +1023,16 @@ def cmd_company_filters(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_submission_inspect(args: argparse.Namespace) -> int:
+    """Report exactly what the private ledger and self-reported history prove."""
+    home = (
+        PrivateHome(Path(args.home).expanduser().resolve())
+        if args.home else PrivateHome.discover()
+    )
+    _json_print(inspect_submission(args.url, home=home))
+    return 0
+
+
 def cmd_job_history(args: argparse.Namespace) -> int:
     home = (
         PrivateHome(Path(args.home).expanduser().resolve())
@@ -1068,6 +1079,12 @@ def build_parser() -> argparse.ArgumentParser:
         history_parser = subparsers.add_parser(action, help=description)
         history_parser.add_argument("--url", required=True)
 
+
+    reconciliation = subparsers.add_parser(
+        "submission-status",
+        help="Read-only submission/uncertainty audit for one posting URL",
+    )
+    reconciliation.add_argument("--url", required=True)
 
     migrate_parser = subparsers.add_parser("migrate", help="Import an ApplyPilot workflow privately")
     migrate_parser.add_argument("workflow")
@@ -1216,6 +1233,8 @@ def main() -> int:
             return cmd_company_filters(args)
         if args.command in {"mark-applied", "dismiss-job", "clear-job-mark", "job-history"}:
             return cmd_job_history(args)
+        if args.command == "submission-status":
+            return cmd_submission_inspect(args)
         if args.command == "migrate":
             return cmd_migrate(args)
         if args.command == "mailbox":
