@@ -2024,3 +2024,33 @@ preserves P1d2 order and performs no claim, save, preparation or execution.
 - The entire response must be valid `apiVersion: "1"` published-job data with bounded size and at most 5,000 entries. Ambiguous or invalid entries fail closed; only absence from an otherwise valid complete board snapshot is treated as no longer published. Redirects and 5xx/timeouts are inconclusive, never proof of closure.
 - Ashby documents do not provide an independently authenticated legal-employer name. The board handle is mapped to `observation.company` with provenance `REQUEST:url.board`, **not** a verified legal-entity name. Third-party aliases are permitted only when the source company's normalized string matches that handle and the title and native hosted posting identity match the independently fetched posting. Brand/slug ambiguity is held rather than guessed.
 - Ashby work mode, location, posted time and description are taken from official public JSON. Unknown/unpublished/invalid records are not auto-admitted. This read-only verification adds no authorization to submit applications.
+
+
+### P1 privacy-preserving self-reported history portability
+
+Users may back up private `APPLIED_SELF_REPORTED` and `DISMISSED` marks
+without publishing raw employer/job URLs. The explicit
+`jobctl job-history-export --csv <new-output.csv>` action reads the
+private history SQLite database in read-only mode and atomically creates
+a **new**, mode-0600 CSV file with only
+`identity_hash,status,recorded_at`. The command refuses to overwrite existing
+files or follow an output symlink. It never calls a job board or ATS and cannot
+submit applications. `jobctl job-history-import --csv <backup.csv>` performs
+a read-only preview; a separate `--commit` is required for an atomic restore.
+The importer supports both original `job_url,status` and hash-only
+`identity_hash,status` formats, with strict type, SHA-256 and timezone
+validation. Source-domain aliases resolve only through previously corroborated
+employer posting identity, never through matching company/title. Existing
+applied marks cannot be downgraded by dismissals.
+
+A source CSV row with a missing `job_url` is reported as
+`unmatched_needs_review` in the preview but is **not** stored as proof of
+submission or guessed from title/company. An import with only unmatched rows
+cannot commit. For such rows the user must locate the actual posting URL and
+re-import explicitly. This preview is not a persisted unmatched-review queue;
+external histories without resolvable links remain a later #7 milestone.
+
+The hash-only backup still exposes **private application history**. SHA-256
+URL hashes are not guaranteed anonymous against someone who knows candidate
+URLs; keep exports local and secret, never commit them to Git or upload them
+as diagnostics. Imported self-reported marks are not verified ATS receipts.
