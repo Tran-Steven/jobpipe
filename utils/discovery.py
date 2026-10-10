@@ -11,7 +11,8 @@ from dataclasses import dataclass, asdict, field
 from typing import Optional
 from playwright.async_api import async_playwright, Page
 
-from core.company_filters import CompanyTreatment, company_treatment
+from core.company_filters import CompanyTreatment
+from core.company_preferences import effective_company_treatment
 from core.event_ledger import hash_job_url
 
 
@@ -36,7 +37,7 @@ def filter_company_jobs(jobs: list, profile: dict) -> list:
     additional = profile.get("preferences", {}).get("exclude_companies", [])
     return [
         job for job in jobs
-        if company_treatment(job.company, additional_blocked=additional)
+        if effective_company_treatment(job.company, additional_blocked=additional)
         is not CompanyTreatment.BLOCK
     ]
 
