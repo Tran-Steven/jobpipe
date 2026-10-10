@@ -91,7 +91,8 @@ class VerifiedPostingAliases:
             raise ValueError("posting alias database cannot be a symlink")
         if not path.is_file():
             return tuple(sorted(candidates))
-        with self._connect() as connection:
+        # A read must never create a DB, initialize schema, or mutate WAL.
+        with sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True) as connection:
             placeholders = ",".join("?" for _ in candidates)
             anchors = {
                 item[0]
