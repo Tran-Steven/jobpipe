@@ -31,6 +31,7 @@ const labels = {
     READY_TO_PREPARE: "Ready to prepare",
     NEEDS_INPUT: "Needs input",
     REVIEW_REQUIRED: "Safety review needed",
+    ALREADY_APPLIED: "Already applied",
     NOT_A_MATCH: "Not a match",
     APPLICATION_CREATED: "Application created",
     SYSTEM_ISSUE: "System issue",
