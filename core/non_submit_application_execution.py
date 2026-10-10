@@ -1097,13 +1097,33 @@ async def execute_non_submit_application(
             is NonSubmitApplicationExecutionReadStatus.FOUND
             and existing.record is not None
         ):
+            # Do not mask a persisted human challenge as successful replay.
+            # The browser lease currently closes the original working page
+            # when the non-submit invocation returns. Reopening an unrelated
+            # page would not resume the exact CAPTCHA/MFA/answer checkpoint.
+            # Explicitly preserve the typed human blocker without issuing
+            # another Gate A permit, launching Chrome or risking a submit.
+            if (
+                existing.record.execution_state
+                is NonSubmitExecutionRecordState.RUNTIME_INPUT_REQUIRED
+            ):
+                return ExecuteNonSubmitApplicationResult(
+                    NonSubmitApplicationExecutionStatus
+                    .DEFERRED_RUNTIME_INPUT_REQUIRED,
+                    existing.record,
+                    None,
+                    existing.record.outcome_status,
+                    False,
+                    "Human input remains required at the recorded checkpoint; "
+                    "exact browser-session handoff has not been qualified",
+                )
             return ExecuteNonSubmitApplicationResult(
                 NonSubmitApplicationExecutionStatus.UNCHANGED,
                 existing.record,
                 None,
                 existing.record.outcome_status,
                 False,
-                "identical non-submit execution already exists",
+                "identical completed non-submit execution already exists",
             )
         if (
             existing.status
