@@ -23,6 +23,7 @@ from source_connectors.contract import (
 
 from .company_filters import CompanyTreatment
 from .company_preferences import effective_company_treatment
+from .job_quality import assess_job_quality
 from .accepted_job_intent import (
     AcceptedJobIntent,
     AcceptedJobIntentRepository,
@@ -178,6 +179,7 @@ class CandidateDiscoveryStatus(StrEnum):
 
 class CandidateRefreshReason(StrEnum):
     BLOCKED_COMPANY = "BLOCKED_COMPANY"
+    QUALITY_REVIEW_REQUIRED = "QUALITY_REVIEW_REQUIRED"
     INVALID_CANDIDATE_URL = "INVALID_CANDIDATE_URL"
     PUBLIC_READ_FAILED = "PUBLIC_READ_FAILED"
     PUBLIC_READ_RESULT_INVALID = "PUBLIC_READ_RESULT_INVALID"
@@ -961,7 +963,10 @@ def _overall(
             item.discovery_status is CandidateDiscoveryStatus.FAILED
             or (
                 item.discovery_status is CandidateDiscoveryStatus.SKIPPED
-                and item.reason is not CandidateRefreshReason.BLOCKED_COMPANY
+                and item.reason not in {
+                    CandidateRefreshReason.BLOCKED_COMPANY,
+                    CandidateRefreshReason.QUALITY_REVIEW_REQUIRED,
+                }
             )
             or item.membership_status is CandidateMembershipStatus.FAILED
         )
@@ -1824,6 +1829,22 @@ async def refresh_job_library(
                     discovery_status=CandidateDiscoveryStatus.SKIPPED,
                     reason=CandidateRefreshReason.BLOCKED_COMPANY,
                     source_reason="COMPANY_BLOCKED",
+                )
+            )
+            continue
+        quality = assess_job_quality(
+            read_result.observation.title, read_result.observation.description
+        )
+        if quality.requires_review:
+            candidate_results.append(
+                _stopped_candidate(
+                    profile_ids=profile_ids,
+                    candidate=candidate,
+                    candidate_url=canonical_url,
+                    reader_status=ReadJobStatus.SUCCEEDED.value,
+                    discovery_status=CandidateDiscoveryStatus.SKIPPED,
+                    reason=CandidateRefreshReason.QUALITY_REVIEW_REQUIRED,
+                    source_reason="QUALITY_REVIEW_REQUIRED:" + ",".join(quality.signals),
                 )
             )
             continue
