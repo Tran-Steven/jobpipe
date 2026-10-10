@@ -1,0 +1,37 @@
+/* The only site-level change is reversible visibility of matched job cards. */
+.jobpipe-visual-hidden { display: none !important; }
+.jobpipe-visual-hide-actions {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  padding: 5px 0 2px; font-size: 11px;
+}
+.jobpipe-visual-hide-actions .jobpipe-visual-hide-button,
+#jobpipe-visual-hide-panel button {
+  appearance: none; border: 1px solid #b8bbc1; border-radius: 5px;
+  padding: 4px 7px; background: #fff; color: #30353b;
+  font: 500 11px/1.3 -apple-system, BlinkMacSystemFont, sans-serif;
+  cursor: pointer;
+}
+.jobpipe-visual-hide-actions button:disabled,
+#jobpipe-visual-hide-panel button:disabled { opacity: .45; cursor: not-allowed; }
+#jobpipe-visual-hide-panel {
+  position: fixed; right: 14px; bottom: 14px; z-index: 2147483647;
+  width: min(310px, calc(100vw - 28px));
+  background: #fff; color: #252c36; border: 1px solid #c9cbd0;
+  border-radius: 8px; box-shadow: 0 4px 18px #0002;
+  font: 12px/1.5 -apple-system, BlinkMacSystemFont, sans-serif;
+  padding: 11px;
+}
+#jobpipe-visual-hide-panel .jobpipe-visual-hide-title { font-weight: 650; margin-bottom: 3px; }
+#jobpipe-visual-hide-panel .jobpipe-visual-hide-toolbar { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0; }
+#jobpipe-visual-hide-panel .jobpipe-visual-hide-status { font-size: 11px; }
+#jobpipe-visual-hide-panel .jobpipe-visual-hide-note { margin: 8px 0 0; color: #515867; font-size: 10px; }
+#jobpipe-visual-hide-panel .jobpipe-visual-hide-rule { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 5px; }
+#jobpipe-visual-hide-panel .jobpipe-visual-hide-review-list { max-height: 180px; overflow: auto; border-top: 1px solid #ddd; padding-top: 7px; }
+#jobpipe-visual-hide-panel .jobpipe-visual-hide-review-list[hidden] { display: none !important; }
+#jobpipe-visual-hide-panel button:focus-visible,
+.jobpipe-visual-hide-actions button:focus-visible { outline: 2px solid #3875a7; outline-offset: 2px; }
+@media (prefers-color-scheme: dark) {
+  #jobpipe-visual-hide-panel { background: #20252e; color: #f4f5f6; border-color: #424754; }
+  #jobpipe-visual-hide-panel button { background: #313844; color: #f4f5f6; border-color: #555f6e; }
+  #jobpipe-visual-hide-panel .jobpipe-visual-hide-note { color: #bbc5d0; }
+}
