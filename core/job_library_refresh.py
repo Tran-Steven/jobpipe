@@ -21,6 +21,7 @@ from source_connectors.contract import (
     SourceJobObservation,
 )
 
+from .company_filters import CompanyTreatment, company_treatment
 from .accepted_job_intent import (
     AcceptedJobIntent,
     AcceptedJobIntentRepository,
@@ -175,6 +176,7 @@ class CandidateDiscoveryStatus(StrEnum):
 
 
 class CandidateRefreshReason(StrEnum):
+    BLOCKED_COMPANY = "BLOCKED_COMPANY"
     INVALID_CANDIDATE_URL = "INVALID_CANDIDATE_URL"
     PUBLIC_READ_FAILED = "PUBLIC_READ_FAILED"
     PUBLIC_READ_RESULT_INVALID = "PUBLIC_READ_RESULT_INVALID"
@@ -954,9 +956,14 @@ def _overall(
         for item in candidates
     )
     candidate_failures = sum(
-        item.discovery_status
-        in {CandidateDiscoveryStatus.SKIPPED, CandidateDiscoveryStatus.FAILED}
-        or item.membership_status is CandidateMembershipStatus.FAILED
+        (
+            item.discovery_status is CandidateDiscoveryStatus.FAILED
+            or (
+                item.discovery_status is CandidateDiscoveryStatus.SKIPPED
+                and item.reason is not CandidateRefreshReason.BLOCKED_COMPANY
+            )
+            or item.membership_status is CandidateMembershipStatus.FAILED
+        )
         for item in candidates
     )
     intent_failures = sum(
@@ -1728,6 +1735,19 @@ async def refresh_job_library(
     candidate_results: list[JobCandidateRefreshResult] = []
     for candidate_url, (candidate, source_ids) in candidates_by_url.items():
         profile_ids = tuple(source_ids)
+        if company_treatment(candidate.company) is CompanyTreatment.BLOCK:
+            candidate_results.append(
+                _stopped_candidate(
+                    profile_ids=profile_ids,
+                    candidate=candidate,
+                    candidate_url=candidate_url,
+                    reader_status="SKIPPED",
+                    discovery_status=CandidateDiscoveryStatus.SKIPPED,
+                    reason=CandidateRefreshReason.BLOCKED_COMPANY,
+                    source_reason="COMPANY_BLOCKED",
+                )
+            )
+            continue
         try:
             canonical_url = normalized_job_url(candidate.source_url)
         except (TypeError, ValueError):
@@ -1786,6 +1806,19 @@ async def refresh_job_library(
                     discovery_status=CandidateDiscoveryStatus.FAILED,
                     reason=CandidateRefreshReason.PUBLIC_READ_FAILED,
                     source_reason=read_result.reason_code.value,
+                )
+            )
+            continue
+        if company_treatment(read_result.observation.company) is CompanyTreatment.BLOCK:
+            candidate_results.append(
+                _stopped_candidate(
+                    profile_ids=profile_ids,
+                    candidate=candidate,
+                    candidate_url=canonical_url,
+                    reader_status=ReadJobStatus.SUCCEEDED.value,
+                    discovery_status=CandidateDiscoveryStatus.SKIPPED,
+                    reason=CandidateRefreshReason.BLOCKED_COMPANY,
+                    source_reason="COMPANY_BLOCKED",
                 )
             )
             continue
