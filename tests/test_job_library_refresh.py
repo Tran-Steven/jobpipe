@@ -542,3 +542,47 @@ async def test_blocked_employer_from_public_read_is_not_imported(tmp_path, monke
     assert reader.calls == [url]
     assert discovery.calls == []
     assert result.run.candidate_results[0].reason is CandidateRefreshReason.BLOCKED_COMPANY
+
+
+@pytest.mark.asyncio
+async def test_risky_public_posting_requires_review_before_discovery(tmp_path) -> None:
+    home = PrivateHome(tmp_path)
+    profile = _profile(home, "Synthetic Company", "synthetic")
+    url = "https://job-boards.greenhouse.io/synthetic/jobs/10126"
+    executor = _SearchExecutor({
+        profile.profile_id: _search_result(
+            profile, (_candidate(profile, "risk-1", url),)
+        ),
+    })
+
+    class _RiskyReader(_Reader):
+        async def __call__(self, request):
+            self.calls.append(request.url)
+            return ReadJobResult.succeeded(
+                replace(
+                    _observation(request.url),
+                    description="Applicants must pay a $250 application fee.",
+                )
+            )
+
+    reader = _RiskyReader()
+    discovery = _Discovery()
+    priority = _Priority()
+    result = await refresh_job_library(
+        _command("refresh-risk-review"),
+        profile_provider=_ProfileProvider(
+            PrivateHomeSearchProfileRepository(home)
+        ),
+        search_executor=executor,
+        public_job_reader=reader,
+        discovery=discovery,
+        priority_refresh=priority,
+        repository=PrivateHomeJobLibraryRefreshRunRepository(home),
+    )
+    assert result.status is JobLibraryRefreshStatus.COMPLETED
+    assert reader.calls == [url]
+    assert discovery.calls == []
+    assert result.run.discovery_summary.skipped == 1
+    assert result.run.discovery_summary.failed == 0
+    assert result.run.candidate_results[0].reason is CandidateRefreshReason.QUALITY_REVIEW_REQUIRED
+    assert "candidate_payment_request" in result.run.candidate_results[0].source_reason
