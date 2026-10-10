@@ -111,23 +111,52 @@ def import_job_history_csv(
 ) -> dict[str, Any]:
     if type(commit) is not bool:
         raise TypeError("commit must be a boolean")
-    rows, identities = _load_csv(Path(csv_path).expanduser())
+    rows, original_identities = _load_csv(Path(csv_path).expanduser())
     history = PrivateJobHistory(home)
+    # Both discovery-stage and historically imported URLs can be linked to
+    # the same independently verified employer requisition. Group by the ATS
+    # hash before reporting counts, checking conflicts, or writing a mark.
+    identities: dict[str, JobHistoryState] = {}
+    groups: dict[str, set[str]] = {}
+    for identity_hash, state in original_identities.items():
+        employer_hash, related = history.aliases.resolve_hash(identity_hash)
+        existing_in_input = identities.get(employer_hash)
+        if existing_in_input is not None and existing_in_input is not state:
+            raise ValueError(
+                "conflicting history statuses for one verified posting"
+            )
+        identities[employer_hash] = state
+        groups.setdefault(employer_hash, set()).update(related)
     path = history.path
     if path.is_symlink():
         raise ValueError("job history database cannot be a symlink")
+    def _existing_states(connection: sqlite3.Connection) -> dict[str, JobHistoryState]:
+        existing: dict[str, JobHistoryState] = {}
+        for identity, related in groups.items():
+            # A confirmed application anywhere in the linked group always wins.
+            connected = tuple(sorted(related))
+            states = {
+                JobHistoryState(row[0])
+                for row in connection.execute(
+                    "SELECT state FROM job_history WHERE identity_hash IN ("
+                    + ",".join("?" for _ in connected) + ")",
+                    connected,
+                ).fetchall()
+            }
+            if JobHistoryState.APPLIED_SELF_REPORTED in states:
+                existing[identity] = JobHistoryState.APPLIED_SELF_REPORTED
+            elif JobHistoryState.DISMISSED in states:
+                existing[identity] = JobHistoryState.DISMISSED
+        return existing
+
     if not commit:
         current: dict[str, JobHistoryState] = {}
         if path.is_file():
             # Query existing entries without initializing or writing anything.
-            with sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True) as conn:
-                for identity in identities:
-                    row = conn.execute(
-                        "SELECT state FROM job_history WHERE identity_hash = ?",
-                        (identity,),
-                    ).fetchone()
-                    if row is not None:
-                        current[identity] = JobHistoryState(row[0])
+            with sqlite3.connect(
+                path.resolve().as_uri() + "?mode=ro", uri=True
+            ) as conn:
+                current = _existing_states(conn)
         return _summary(identities, current, rows=rows, committed=False)
 
     # The collision check is repeated *inside* the write transaction; another
@@ -136,14 +165,7 @@ def import_job_history_csv(
 
     with history._connect() as connection:
         connection.execute("BEGIN IMMEDIATE")
-        existing: dict[str, JobHistoryState] = {}
-        for identity in identities:
-            row = connection.execute(
-                "SELECT state FROM job_history WHERE identity_hash = ?",
-                (identity,),
-            ).fetchone()
-            if row is not None:
-                existing[identity] = JobHistoryState(row[0])
+        existing = _existing_states(connection)
         result = _summary(identities, existing, rows=rows, committed=True)
         recorded_at = datetime.now(timezone.utc).isoformat()
         for identity, state in identities.items():
