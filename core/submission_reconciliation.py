@@ -69,12 +69,12 @@ def inspect_submission(
         "self_reported_state": history_state.value if history_state else None,
         "submission": None,
         "status": ReconciliationStatus.NEVER_SUBMITTED.value,
-        "automatic_retry_allowed": True,
+        "prior_submission_blocks_retry": False,
         "next_action": "No recorded submission; normal authorization still required.",
     }
     if intent is not None:
         result["submission"] = intent.to_safe_dict()
-        result["automatic_retry_allowed"] = False
+        result["prior_submission_blocks_retry"] = True
         if intent.status is SubmissionStatus.VERIFIED:
             result["status"] = ReconciliationStatus.VERIFIED.value
             result["next_action"] = "Already verified. Do not submit again."
@@ -86,11 +86,11 @@ def inspect_submission(
             )
     elif history_state is JobHistoryState.APPLIED_SELF_REPORTED:
         result["status"] = ReconciliationStatus.MANUALLY_REPORTED.value
-        result["automatic_retry_allowed"] = False
+        result["prior_submission_blocks_retry"] = True
         result["next_action"] = "Already reported applied. Do not submit again."
     elif history_state is JobHistoryState.DISMISSED:
         result["status"] = ReconciliationStatus.DISMISSED.value
-        result["automatic_retry_allowed"] = False
+        result["prior_submission_blocks_retry"] = True
         result["next_action"] = "Dismissed by user. Undo dismissal to reconsider."
     return result
 
