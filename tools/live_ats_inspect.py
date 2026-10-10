@@ -154,7 +154,10 @@ async def inspect(url: str) -> dict:
                             await route.abort()
                             return
                 await route.continue_()
-            await page.route("**/*", navigation_guard)
+            # BrowserContext routing also covers popups' first requests;
+            # page.route alone can miss them before page-level listeners run.
+            routing_context = getattr(page, "context", page)
+            await routing_context.route("**/*", navigation_guard)
             response = await page.goto(
                 url, wait_until="domcontentloaded", timeout=25000
             )
