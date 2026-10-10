@@ -116,3 +116,27 @@ def test_regenerated_queue_preserves_applied_and_review_rows(tmp_path: Path, mon
     assert saved[0]["status"] == "Applied"
     assert saved[1]["job_url"].endswith("/req-003")
     assert saved[1]["status"] == "Pending"
+
+
+def test_history_rejects_invalid_or_credential_bearing_urls(tmp_path: Path) -> None:
+    history = PrivateJobHistory(PrivateHome(tmp_path / "private"))
+    for url in ("not a url", "file:///tmp/job", "https://name:password@example.com/job"):
+        with pytest.raises(ValueError, match="URL|credentials"):
+            history.mark(url, JobHistoryState.APPLIED_SELF_REPORTED)
+
+
+def test_job_history_cli_is_explicit_and_non_submitting() -> None:
+    import jobctl
+
+    for command in ("mark-applied", "dismiss-job", "clear-job-mark", "job-history"):
+        args = jobctl.build_parser().parse_args([command, "--url", FIRST])
+        assert args.command == command
+        assert args.url == FIRST
+
+
+def test_intermediary_urls_cannot_enter_legacy_application_queue() -> None:
+    from jobpipe_queue import _runnable_url
+
+    for domain in ("jobgether.com", "lensa.com", "swooped.co", "jobright.ai"):
+        assert not _runnable_url(f"https://{domain}/jobs/synthetic")
+    assert _runnable_url(FIRST)
