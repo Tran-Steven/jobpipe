@@ -34,6 +34,7 @@ def test_preview_is_read_only_and_import_requires_explicit_commit(
     assert preview == {
         "committed": False,
         "input_rows": 3,
+        "unmatched_needs_review": 0,
         "unique_postings": 2,
         "unchanged": 0,
         "new_marks": 2,
