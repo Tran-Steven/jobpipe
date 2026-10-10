@@ -20,7 +20,7 @@ def normalize_company_name(value: str) -> str:
     if not isinstance(value, str):
         raise TypeError("company name must be a string")
     return " ".join(
-        re.findall(r"[^\\W_]+", unicodedata.normalize("NFKC", value).casefold())
+        re.findall(r"[^\W_]+", unicodedata.normalize("NFKC", value).casefold())
     )
 
 
