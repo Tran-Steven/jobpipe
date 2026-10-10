@@ -38,6 +38,11 @@ jobs:
         run: npm run check
       - name: Validate dashboard JavaScript syntax
         run: node --check dashboard/static/app.js
+      - name: Validate optional LinkedIn extension JavaScript and pure rules
+        run: |
+          node --check extensions/linkedin-hide/rules.js
+          node --check extensions/linkedin-hide/content.js
+          node --test tests/node/test_linkedin_hide_rules.cjs
       - name: Validate optional LinkedIn visual hide extension
         run: |
           node --check extensions/linkedin-hide/content.js
