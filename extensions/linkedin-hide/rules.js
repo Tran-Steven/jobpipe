@@ -14,7 +14,7 @@
     if (typeof value !== "string" || value.length > 2048) return "";
     let url;
     try { url = new URL(value, "https://www.linkedin.com/"); } catch { return ""; }
-    if (url.protocol !== "https:" || !["www.linkedin.com", "linkedin.com"].includes(url.hostname)) return "";
+    if (url.protocol !== "https:" || url.username || url.password || url.port || !["www.linkedin.com", "linkedin.com"].includes(url.hostname)) return "";
     const match = url.pathname.match(/^\/jobs\/view\/([0-9]{1,32})(?:\/|$)/);
     return normalizeId(match ? match[1] : url.searchParams.get("currentJobId"));
   }
