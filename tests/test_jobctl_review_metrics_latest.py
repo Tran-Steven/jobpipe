@@ -40,3 +40,15 @@ def test_adapterless_correction_preserves_identity_and_invalidates_review():
         event("a","NEEDS_USER",""),
     ])["supported_ats_review_arrival"]
     assert result=={"reached":0,"runs":1,"rate":0.0}
+
+
+def test_unclassified_event_ledger_review_metrics_cannot_claim_live_qualification():
+    result = _event_metrics([
+        event("synthetic", "REVIEW_READY", "greenhouse"),
+        event("unmeasured", "FAILED", "workday"),
+    ])
+    assert result["supported_ats_review_arrival"] == {
+        "reached": 1, "runs": 2, "rate": .5,
+    }
+    assert result["review_arrival_evidence_scope"] == "UNCLASSIFIED_FIXTURE_OR_LIVE"
+    assert result["attended_live_review_independently_verified"] is False
