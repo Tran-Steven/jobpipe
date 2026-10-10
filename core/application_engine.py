@@ -62,7 +62,9 @@ class JobApplicationEngine:
         leases: LeaseManager,
         permits: PermitService,
         registry: AdapterRegistry | Any | None = None,
+        history: Any | None = None,
     ) -> None:
+        self.history = history
         self.ledger = ledger
         self.leases = leases
         self.permits = permits
@@ -77,7 +79,10 @@ class JobApplicationEngine:
         registry: AdapterRegistry | Any | None = None,
     ) -> "JobApplicationEngine":
         paths = (home or PrivateHome.discover()).ensure()
-        ledger = EventLedger(paths.event_ledger)
+        from .verified_posting_aliases import VerifiedPostingAliases
+
+        posting_aliases = VerifiedPostingAliases(PrivateHome(paths.root))
+        ledger = EventLedger(paths.event_ledger, posting_aliases=posting_aliases)
         if registry is None:
             from adapters.generic_ai import GenericAIAdapter
             from adapters.generic_ai.cache import RecipeCache
@@ -94,11 +99,14 @@ class JobApplicationEngine:
                 f"keychain:{PERMIT_SECRET_SERVICE}:{PERMIT_SECRET_ACCOUNT}"
             ),
         )
+        from .job_history import PrivateJobHistory
+
         return cls(
             ledger=ledger,
             leases=LeaseManager(ledger),
             permits=permits,
             registry=registry,
+            history=PrivateJobHistory(PrivateHome(paths.root)),
         )
 
     def _ensure_run(self, bundle: ApplicationBundle) -> None:
@@ -152,6 +160,29 @@ class JobApplicationEngine:
         uncertain after a process interruption and are never retired
         automatically.  VERIFIED is a completed duplicate guard.
         """
+
+        if self.history is not None:
+            from .job_history import JobHistoryState
+
+            history_state = self.history.state_for(bundle.job.url)
+            if history_state is not None:
+                return ApplicationOutcome(
+                    run_id=bundle.run_id,
+                    job_id=bundle.job.job_id,
+                    status=OutcomeStatus.SKIPPED_POLICY,
+                    phase=OutcomePhase.QUEUE,
+                    reason_code=(
+                        ReasonCode.DUPLICATE_SUBMISSION
+                        if history_state is JobHistoryState.APPLIED_SELF_REPORTED
+                        else ReasonCode.POLICY_DENIED
+                    ),
+                    message=(
+                        "This posting was reported as already applied to."
+                        if history_state is JobHistoryState.APPLIED_SELF_REPORTED
+                        else "This posting was dismissed from job search."
+                    ),
+                    details={"history_state": history_state.value},
+                )
 
         intent = self.ledger.find_submission_intent_for_url(
             bundle.job.url,

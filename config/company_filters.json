@@ -1,0 +1,428 @@
+{
+  "schema_version": 1,
+  "blocked": [
+    {
+      "name": "Jobgether",
+      "aliases": [
+        "Job Gether"
+      ]
+    },
+    {
+      "name": "SynergisticIT",
+      "aliases": [
+        "Synergistic IT"
+      ]
+    },
+    {
+      "name": "Tata Consultancy Services",
+      "aliases": [
+        "TCS",
+        "Tata Consultancy Services Ltd",
+        "Tata Consultancy Services Limited"
+      ]
+    },
+    {
+      "name": "Lensa"
+    },
+    {
+      "name": "Talentify.io",
+      "aliases": [
+        "Talentify"
+      ]
+    },
+    {
+      "name": "beBee"
+    },
+    {
+      "name": "Swooped"
+    },
+    {
+      "name": "Jobright.ai"
+    },
+    {
+      "name": "JobLeads"
+    }
+  ],
+  "deprioritize": [
+    {
+      "name": "Wipro"
+    },
+    {
+      "name": "Infosys"
+    },
+    {
+      "name": "Cognizant"
+    },
+    {
+      "name": "HCLTech",
+      "aliases": [
+        "HCL Technologies"
+      ]
+    },
+    {
+      "name": "Tech Mahindra"
+    },
+    {
+      "name": "LTIMindtree"
+    },
+    {
+      "name": "Mphasis"
+    },
+    {
+      "name": "Capgemini"
+    },
+    {
+      "name": "Hexaware Technologies"
+    },
+    {
+      "name": "Birlasoft"
+    },
+    {
+      "name": "Revature"
+    },
+    {
+      "name": "FDM Group"
+    },
+    {
+      "name": "Dev10"
+    },
+    {
+      "name": "Genesis10"
+    },
+    {
+      "name": "SkillStorm"
+    },
+    {
+      "name": "Smoothstack"
+    },
+    {
+      "name": "Diverse Lynx"
+    },
+    {
+      "name": "eTeam"
+    },
+    {
+      "name": "Net2Source"
+    },
+    {
+      "name": "Mindlance"
+    },
+    {
+      "name": "LanceSoft"
+    },
+    {
+      "name": "US Tech Solutions"
+    },
+    {
+      "name": "Pyramid Consulting"
+    },
+    {
+      "name": "Intelliswift"
+    },
+    {
+      "name": "NLB Services"
+    },
+    {
+      "name": "Accion Labs"
+    },
+    {
+      "name": "AgreeYa Solutions"
+    },
+    {
+      "name": "Alois Staffing"
+    },
+    {
+      "name": "Ark Solutions"
+    },
+    {
+      "name": "Celerity"
+    },
+    {
+      "name": "Covetus"
+    },
+    {
+      "name": "Deegit"
+    },
+    {
+      "name": "E-Solutions"
+    },
+    {
+      "name": "First Tek"
+    },
+    {
+      "name": "Genpact"
+    },
+    {
+      "name": "Han Staffing"
+    },
+    {
+      "name": "IDC Technologies"
+    },
+    {
+      "name": "Insoursys"
+    },
+    {
+      "name": "Knowledge Momentum"
+    },
+    {
+      "name": "Pan Asia Resources"
+    },
+    {
+      "name": "Prolim"
+    },
+    {
+      "name": "Ramy Infotech"
+    },
+    {
+      "name": "Softpath System"
+    },
+    {
+      "name": "Tanisha Systems"
+    },
+    {
+      "name": "TechRakers"
+    },
+    {
+      "name": "Themesoft"
+    },
+    {
+      "name": "Vertigon Consulting"
+    },
+    {
+      "name": "Ztek Consulting"
+    },
+    {
+      "name": "Pacer Staffing"
+    },
+    {
+      "name": "TechWissen"
+    },
+    {
+      "name": "Maxonic"
+    },
+    {
+      "name": "Infotree Global Solutions"
+    },
+    {
+      "name": "LeadStack"
+    },
+    {
+      "name": "Rangam Consultants"
+    },
+    {
+      "name": "ICONMA"
+    },
+    {
+      "name": "Nesco Resource"
+    },
+    {
+      "name": "Tailored Management"
+    },
+    {
+      "name": "Compunnel"
+    },
+    {
+      "name": "Saxon Global"
+    },
+    {
+      "name": "V-Soft Consulting"
+    },
+    {
+      "name": "Tekfortune"
+    },
+    {
+      "name": "Lorven Technologies"
+    },
+    {
+      "name": "KPG99"
+    },
+    {
+      "name": "Avance Consulting"
+    },
+    {
+      "name": "ApTask"
+    },
+    {
+      "name": "Apolis"
+    },
+    {
+      "name": "Akraya"
+    },
+    {
+      "name": "Nityo Infotech"
+    },
+    {
+      "name": "TalentBurst"
+    },
+    {
+      "name": "USM Business Systems"
+    },
+    {
+      "name": "Eclaro"
+    },
+    {
+      "name": "Yochana IT Solutions"
+    },
+    {
+      "name": "Dunhill Staffing Systems"
+    }
+  ],
+  "review": [
+    {
+      "name": "Artech"
+    },
+    {
+      "name": "Collabera"
+    },
+    {
+      "name": "Rose International"
+    },
+    {
+      "name": "Aditi Consulting"
+    },
+    {
+      "name": "TEKsystems"
+    },
+    {
+      "name": "Apex Systems"
+    },
+    {
+      "name": "Insight Global"
+    },
+    {
+      "name": "Motion Recruitment"
+    },
+    {
+      "name": "Robert Half"
+    },
+    {
+      "name": "Kforce"
+    },
+    {
+      "name": "CyberCoders"
+    },
+    {
+      "name": "Jobot"
+    },
+    {
+      "name": "TieTalent"
+    },
+    {
+      "name": "Persistent Systems"
+    },
+    {
+      "name": "Accenture"
+    },
+    {
+      "name": "Atos"
+    },
+    {
+      "name": "DXC Technology"
+    },
+    {
+      "name": "CGI"
+    },
+    {
+      "name": "NTT DATA"
+    },
+    {
+      "name": "UST"
+    },
+    {
+      "name": "Sopra Steria"
+    },
+    {
+      "name": "EPAM Systems"
+    },
+    {
+      "name": "Virtusa"
+    },
+    {
+      "name": "Nagarro"
+    },
+    {
+      "name": "YASH Technologies"
+    },
+    {
+      "name": "Coforge"
+    },
+    {
+      "name": "Zensar Technologies"
+    },
+    {
+      "name": "Eviden"
+    },
+    {
+      "name": "Computacenter"
+    },
+    {
+      "name": "Globant"
+    },
+    {
+      "name": "Endava"
+    },
+    {
+      "name": "BairesDev"
+    },
+    {
+      "name": "Hays"
+    },
+    {
+      "name": "Randstad Digital"
+    },
+    {
+      "name": "Experis"
+    },
+    {
+      "name": "Mondo"
+    },
+    {
+      "name": "Beacon Hill Staffing Group"
+    },
+    {
+      "name": "Brooksource"
+    },
+    {
+      "name": "Vaco"
+    },
+    {
+      "name": "Actalent"
+    },
+    {
+      "name": "The Judge Group"
+    },
+    {
+      "name": "Harvey Nash"
+    },
+    {
+      "name": "Korn Ferry"
+    },
+    {
+      "name": "ManpowerGroup"
+    },
+    {
+      "name": "RippleMatch"
+    },
+    {
+      "name": "Dice"
+    },
+    {
+      "name": "Wellfound"
+    },
+    {
+      "name": "Hired"
+    },
+    {
+      "name": "Otta"
+    },
+    {
+      "name": "Jobcase"
+    },
+    {
+      "name": "FlexJobs"
+    },
+    {
+      "name": "Built In"
+    }
+  ]
+}

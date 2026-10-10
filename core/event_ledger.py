@@ -536,7 +536,11 @@ def _job_url_hash_candidates(url: str) -> tuple[str, ...]:
 class EventLedger:
     """SQLite-backed event stream and mutable state projections."""
 
-    def __init__(self, path: str | Path, *, timeout_seconds: float = 5.0):
+    def __init__(
+        self, path: str | Path, *, timeout_seconds: float = 5.0,
+        posting_aliases: Any | None = None,
+    ):
+        self.posting_aliases = posting_aliases
         self.path = Path(path).expanduser().resolve()
         self.timeout_seconds = timeout_seconds
         parent_existed = self.path.parent.exists()
@@ -910,6 +914,13 @@ class EventLedger:
             updated_at=row["updated_at"],
         )
 
+    def _posting_identity_hashes(self, url: str) -> tuple[str, ...]:
+        """Include only independently verified private posting aliases."""
+        values = set(_job_url_hash_candidates(url))
+        if self.posting_aliases is not None:
+            values.update(self.posting_aliases.identity_hashes(url))
+        return tuple(sorted(values))
+
     def create_submission_intent(
         self,
         *,
@@ -923,7 +934,7 @@ class EventLedger:
         allow_existing_same: bool = True,
     ) -> SubmissionIntent:
         url_hash = hash_job_url(job_url)
-        identity_hashes = _job_url_hash_candidates(job_url)
+        identity_hashes = self._posting_identity_hashes(job_url)
         # The canonical posting URL is the durable application identity.  Human-
         # editable company/title metadata and caller-provided job IDs must not
         # create a duplicate-submission escape hatch.
@@ -1032,7 +1043,7 @@ class EventLedger:
         if not normalized_statuses:
             return None
         placeholders = ", ".join("?" for _ in normalized_statuses)
-        identity_hashes = _job_url_hash_candidates(job_url)
+        identity_hashes = self._posting_identity_hashes(job_url)
         identity_placeholders = ", ".join("?" for _ in identity_hashes)
         parameters = (*identity_hashes, *(status.value for status in normalized_statuses))
         with self._connect() as connection:

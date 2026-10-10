@@ -1967,3 +1967,53 @@ preserves P1d2 order and performs no claim, save, preparation or execution.
   new Resume claim is accepted from the UI.
 - Each directive triggers at most one full P2b4 rerun. Defer/failure retains
   its directive and receipt; the service never loops or retries itself.
+
+
+### Company avoidance preferences
+
+- `config/company_filters.json` is a versioned, non-factual job-search preference registry, not a determination that any listed employer is fraudulent.
+- The `blocked` treatment uses normalized, exact company names and explicitly listed aliases. It never uses substring matching. Legacy discovery and triage also honor `preferences.exclude_companies` as explicit additional blocks.
+- `blocked` companies cannot enter the modern runnable application queue, even when an older priority decision qualified the job. The legacy discovery, triage, queue-builder and `apply-csv` selection paths also exclude them.
+- `deprioritize` subtracts 30 points only in the legacy deterministic triage path; it is not a universal prohibition or an implicit hard constraint in the modern priority policy.
+- `review` is informational in legacy triage and cannot exclude or implicitly approve a job. Staffing-agency names are not evidence of wrongdoing.
+- Approved `EXCLUDED_COMPANY` policy constraints remain independently authoritative for modern priority decisions. Company matching must not create or impersonate a user-approved prioritization policy.
+
+
+### Persistent job history and duplicate application prevention
+
+- The append-only submission ledger remains authoritative for jobpipe-executed submissions. `VERIFIED` prevents duplicate submission; `PENDING`, `SUBMITTING`, and `UNKNOWN` remain blocked until explicitly reconciled. Browser or DOM dismissal is not submission evidence.
+- `PrivateJobHistory` is a local, owner-only SQLite store for `APPLIED_SELF_REPORTED` (an external application the user reports) and `DISMISSED` (a negative browsing preference). Neither is represented as an ATS-verified submission.
+- An explicit `jobctl mark-applied --url <posting URL>` records user-reported application history; `dismiss-job` records a skipped posting; `job-history` reads a record and `clear-job-mark` reverses it. A dismissed record cannot replace a self-reported application without an explicit clear.
+- Exact conservative `hash_job_url` identities cover known native ATS host/route aliases and strip tracked parameters. Different URLs at unrelated sites are not silently treated as the same requisition. Similar employer/title strings may indicate possible duplicates but must not become definitive submission evidence.
+- The legacy queue preserves existing non-pending history, never reconstructs Pending rows with the same posting identity, and filters explicit dismissed or externally-applied identities. Company/title alone never merges two distinct posting IDs.
+- Every application preflight checks private history before launching a browser. The existing permit and submission ledger checks remain mandatory even when private history is empty.
+- Data-layer exclusion is authoritative. Hiding cards from LinkedIn's DOM may improve human-facing presentation, but LinkedIn's X/dismiss state does not establish applied status and must not be used as the sole safety gate.
+
+
+### Optional company filtering and posting-quality screening
+
+- Built-in company classifications are an optional preference, not an adjudication that named employers are illegitimate. Fresh private homes default to `enabled: false`; explicit `jobctl company-filters enable` activates it. `disable` turns off company filtering without deleting the list. `builtin-on` and `builtin-off` independently switch the shared registry while preserving personal lists.
+- Preferences are owner-only `state/company-preferences.json` outside the Git checkout, with atomic 0600 writes. `company-filters block "Company"`, `allow "Company"`, `clear "Company"`, and `list` operate on custom names. The custom allowlist wins over built-in and custom blocks; when filtering is disabled, none of those company preferences gate a job.
+- The public `config/company_filters.json` is an editable built-in registry. Custom names and history records must not be committed. Exact normalized company and known aliases are supported; no speculative substring or corporate-parent matching.
+- Deterministic `assess_job_quality` emits named, explainable signals. Direct candidate-payment requirements, off-platform messaging interviews, early collection of highly sensitive identity data, and training repayment terms require human review. They are risk signals, **not verified scam allegations**. Unspecified end clients or implausible no-experience pay claims are downgraded, not categorically blocked. Missing salary by itself is not a quality signal.
+- Legacy scoring excludes `REVIEW_REQUIRED` postings from automatic matching. Modern runnable queue blocks `REVIEW_REQUIRED` before application preparation. The quality guard is independent of the optional company blacklist. All existing submission permits and duplicate-application guards remain in force.
+- This iteration does not deliver a dashboard Block/Allow button, browser DOM removal, historical-import reconciliation, or modern tier-aware reprioritization. Track these as separate release-gated features and do not claim they shipped.
+
+
+### Imported external application history and human reconciliation (draft)
+
+- The `job-history-import --csv <path>` command performs a **read-only preview**. Add `--commit` to explicitly import. CSV requires `job_url,status`; optional `source,company,title` are informational and **never** used for identity matching. Accepted explicit statuses are `APPLIED`, `APPLIED_SELF_REPORTED`, and `DISMISSED`; labels such as `interested`, `clicked`, or `unknown` are rejected. Do not infer an application from a LinkedIn X/hide action.
+- CSV is size- and row-bounded, parsed in full before mutation, deduplicated using recognized native ATS requisition identities, and committed as one SQLite transaction. Contradictory rows or downgrades from `APPLIED_SELF_REPORTED` to `DISMISSED` fail the entire import. Preview and output contain counts/hashes, never raw URLs or profile data. This does **not** automatically parse arbitrary LinkedIn export schemas or guess across unrelated job domains.
+- Both legacy and modern application admission check manually reported `APPLIED_SELF_REPORTED` and `DISMISSED` entries. Modern jobs blocked by history never become preparation-ready, and the dashboard distinguishes `ALREADY_APPLIED` from a poor role match.
+- `submission-status --url <posting>` is a read-only audit of existing submission intent, verification status, and coded human review events. `submission-review --url <posting> --action {EVIDENCE_REQUESTED,AWAITING_EMPLOYER,ESCALATED,NO_CONFIRMATION_FOUND}` requires an unresolved intent and appends an event; it cannot add verification evidence, change submission status, issue a permit, or authorize a retry.
+- Confirmation evidence for an uncertain application must go through the pre-existing admissible-evidence ledger process. A human review note, imported `APPLIED`, screenshot title, or received-email subject never becomes `VERIFIED` by itself. These commands cannot submit a real job application.
+
+
+### Persisted, evidence-gated cross-platform posting identities
+
+- `VerifiedPostingAliases` keeps **hash-only** `source_hash -> employer_hash` links in the private state directory (`verified-posting-aliases.sqlite3`, mode 0600). No third-party raw URLs, company names, résumé content or applicant details are saved in this mapping. Lookup is read-only and never initializes the database on absence.
+- A new link is permitted **only** following an independently successful public Greenhouse or Lever employer posting read with matching supported native ATS posting identity, normalized company, and normalized title. Closed/not-found employer jobs, timeouts, conflicting titles/companies/identities and unsupported hosts cannot create links. Existing source-to-employer links may be read again idempotently but cannot silently point at a different employer requisition.
+- Within manual modern refresh, verified links are persisted **only when an explicit private home is supplied**; otherwise historical behavior is unchanged. The production composition injects its private home. Within a refresh duplicate candidates share the employer read; independent discovery runs can now reuse the persisted identity mapping.
+- `PrivateJobHistory.state_for`, mark/clear operations, CSV history importer, legacy queued-row preservation, and legacy matched-job dedup resolve verified posting groups. The importer groups source and ATS URLs before summary and writing and fails the entire operation for contradicting statuses. A known `APPLIED_SELF_REPORTED` anywhere in the group is never downgraded to `DISMISSED`.
+- `EventLedger` accepts an optional verified alias lookup, and the actual `JobApplicationEngine.from_private_home` injects it. The **same verified posting**, even if previously attempted through another URL, cannot obtain a second pending/unknown/verified submission intent through that path. The pre-browser guard still applies its existing `SUBMIT_UNKNOWN` / duplicate-submission policy. A reviewer may log a coded note through a verified alias but may not authorize a retry by doing so.
+- **Limitations:** Identical companies/titles never establish equivalence by themselves, and unverified cross-domain URLs remain separate. This verifier currently supports public Greenhouse and Lever URLs; other ATS families retain existing native URL dedup where supported but cannot create independently verified cross-site links from an unsupported public-reader surface. No real ATS submission is exercised by these tests.

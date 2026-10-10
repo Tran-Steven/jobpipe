@@ -15,12 +15,23 @@ from threading import RLock
 from typing import Any, Protocol
 
 from source_connectors.contract import (
+    ReadJobReason,
     ReadJobRequest,
     ReadJobResult,
     ReadJobStatus,
     SourceJobObservation,
 )
 
+from .company_filters import CompanyTreatment
+from .company_preferences import effective_company_treatment
+from .job_quality import assess_job_quality
+from .event_ledger import hash_job_url
+from .verified_posting_aliases import VerifiedPostingAliases
+from .posting_verification import (
+    PostingVerification,
+    supported_employer_identity,
+    verify_employer_observation,
+)
 from .accepted_job_intent import (
     AcceptedJobIntent,
     AcceptedJobIntentRepository,
@@ -175,6 +186,12 @@ class CandidateDiscoveryStatus(StrEnum):
 
 
 class CandidateRefreshReason(StrEnum):
+    BLOCKED_COMPANY = "BLOCKED_COMPANY"
+    QUALITY_REVIEW_REQUIRED = "QUALITY_REVIEW_REQUIRED"
+    POSTING_CLOSED = "POSTING_CLOSED"
+    POSTING_IDENTITY_CONFLICT = "POSTING_IDENTITY_CONFLICT"
+    POSTING_VERIFICATION_INCONCLUSIVE = "POSTING_VERIFICATION_INCONCLUSIVE"
+    DUPLICATE_VERIFIED_POSTING = "DUPLICATE_VERIFIED_POSTING"
     INVALID_CANDIDATE_URL = "INVALID_CANDIDATE_URL"
     PUBLIC_READ_FAILED = "PUBLIC_READ_FAILED"
     PUBLIC_READ_RESULT_INVALID = "PUBLIC_READ_RESULT_INVALID"
@@ -954,9 +971,21 @@ def _overall(
         for item in candidates
     )
     candidate_failures = sum(
-        item.discovery_status
-        in {CandidateDiscoveryStatus.SKIPPED, CandidateDiscoveryStatus.FAILED}
-        or item.membership_status is CandidateMembershipStatus.FAILED
+        (
+            item.discovery_status is CandidateDiscoveryStatus.FAILED
+            or (
+                item.discovery_status is CandidateDiscoveryStatus.SKIPPED
+                and item.reason not in {
+                    CandidateRefreshReason.BLOCKED_COMPANY,
+                    CandidateRefreshReason.QUALITY_REVIEW_REQUIRED,
+                    CandidateRefreshReason.POSTING_CLOSED,
+                    CandidateRefreshReason.POSTING_IDENTITY_CONFLICT,
+                    CandidateRefreshReason.POSTING_VERIFICATION_INCONCLUSIVE,
+                    CandidateRefreshReason.DUPLICATE_VERIFIED_POSTING,
+                }
+            )
+            or item.membership_status is CandidateMembershipStatus.FAILED
+        )
         for item in candidates
     )
     intent_failures = sum(
@@ -1608,6 +1637,7 @@ async def refresh_job_library(
     repository: JobLibraryRefreshRunRepository,
     intent_policy_provider: SearchProfileIntentPolicyProvider | None = None,
     accepted_intent_repository: AcceptedJobIntentRepository | None = None,
+    preferences_home: PrivateHome | None = None,
 ) -> ManualJobLibraryRefreshResult:
     """Run one manual refresh and apply only explicit profile intent policy."""
 
@@ -1726,8 +1756,42 @@ async def refresh_job_library(
                 existing_candidate[1].append(profile.profile_id)
 
     candidate_results: list[JobCandidateRefreshResult] = []
+    alias_store = (
+        VerifiedPostingAliases(preferences_home)
+        if preferences_home is not None else None
+    )
+    seen_verified_postings: set[str] = set()
+    ats_read_cache: dict[str, ReadJobResult] = {}
+
+    async def _read_once(url: str) -> ReadJobResult:
+        # Reuse independently verified ATS evidence within this refresh only.
+        # Never cache uncertain errors across invocations or equate arbitrary sites.
+        identity = supported_employer_identity(url)
+        if identity is not None and identity in ats_read_cache:
+            return ats_read_cache[identity]
+        result = await _resolve(public_job_reader(ReadJobRequest(url)))
+        if identity is not None and isinstance(result, ReadJobResult):
+            ats_read_cache[identity] = result
+        return result
+
     for candidate_url, (candidate, source_ids) in candidates_by_url.items():
         profile_ids = tuple(source_ids)
+        if effective_company_treatment(
+            candidate.company, subject_id=command.subject_id,
+            home=preferences_home,
+        ) is CompanyTreatment.BLOCK:
+            candidate_results.append(
+                _stopped_candidate(
+                    profile_ids=profile_ids,
+                    candidate=candidate,
+                    candidate_url=candidate_url,
+                    reader_status="SKIPPED",
+                    discovery_status=CandidateDiscoveryStatus.SKIPPED,
+                    reason=CandidateRefreshReason.BLOCKED_COMPANY,
+                    source_reason="COMPANY_BLOCKED",
+                )
+            )
+            continue
         try:
             canonical_url = normalized_job_url(candidate.source_url)
         except (TypeError, ValueError):
@@ -1744,9 +1808,7 @@ async def refresh_job_library(
             )
             continue
         try:
-            read_result = await _resolve(
-                public_job_reader(ReadJobRequest(canonical_url))
-            )
+            read_result = await _read_once(canonical_url)
         except (OSError, RuntimeError, TypeError, ValueError):
             candidate_results.append(
                 _stopped_candidate(
@@ -1777,22 +1839,141 @@ async def refresh_job_library(
             read_result.status is not ReadJobStatus.SUCCEEDED
             or read_result.observation is None
         ):
+            is_closed = read_result.reason_code in {
+                ReadJobReason.JOB_CLOSED,
+                ReadJobReason.JOB_NOT_FOUND,
+            }
             candidate_results.append(
                 _stopped_candidate(
                     profile_ids=profile_ids,
                     candidate=candidate,
                     candidate_url=canonical_url,
                     reader_status=read_result.status.value,
-                    discovery_status=CandidateDiscoveryStatus.FAILED,
-                    reason=CandidateRefreshReason.PUBLIC_READ_FAILED,
+                    discovery_status=(
+                        CandidateDiscoveryStatus.SKIPPED
+                        if is_closed else CandidateDiscoveryStatus.FAILED
+                    ),
+                    reason=(
+                        CandidateRefreshReason.POSTING_CLOSED
+                        if is_closed else CandidateRefreshReason.PUBLIC_READ_FAILED
+                    ),
                     source_reason=read_result.reason_code.value,
+                )
+            )
+            continue
+
+        observation = read_result.observation
+        # A third-party listing may claim an employer ATS URL. Read that hosted
+        # posting independently before accepting its cross-source identity.
+        source_native = supported_employer_identity(observation.source_url)
+        target_native = (
+            supported_employer_identity(observation.application_url)
+            if observation.application_url else None
+        )
+        if target_native is not None and target_native != source_native:
+            try:
+                employer_read = await _read_once(observation.application_url)
+            except (OSError, RuntimeError, TypeError, ValueError):
+                employer_read = None
+            verification = verify_employer_observation(
+                observation, observation.application_url, employer_read
+            )
+            if verification is not PostingVerification.VERIFIED:
+                reason = {
+                    PostingVerification.CLOSED: CandidateRefreshReason.POSTING_CLOSED,
+                    PostingVerification.CONFLICT: CandidateRefreshReason.POSTING_IDENTITY_CONFLICT,
+                    PostingVerification.INCONCLUSIVE: CandidateRefreshReason.POSTING_VERIFICATION_INCONCLUSIVE,
+                }[verification]
+                candidate_results.append(
+                    _stopped_candidate(
+                        profile_ids=profile_ids,
+                        candidate=candidate,
+                        candidate_url=canonical_url,
+                        reader_status=ReadJobStatus.SUCCEEDED.value,
+                        discovery_status=CandidateDiscoveryStatus.SKIPPED,
+                        reason=reason,
+                        source_reason=verification.value,
+                    )
+                )
+                continue
+            assert isinstance(employer_read, ReadJobResult)
+            assert employer_read.observation is not None
+            if alias_store is not None:
+                try:
+                    alias_store.record_verified(
+                        source=observation,
+                        employer_url=observation.application_url,
+                        employer_read=employer_read,
+                    )
+                except (OSError, TypeError, ValueError):
+                    candidate_results.append(
+                        _stopped_candidate(
+                            profile_ids=profile_ids,
+                            candidate=candidate,
+                            candidate_url=canonical_url,
+                            reader_status=ReadJobStatus.SUCCEEDED.value,
+                            discovery_status=CandidateDiscoveryStatus.SKIPPED,
+                            reason=CandidateRefreshReason.POSTING_VERIFICATION_INCONCLUSIVE,
+                            source_reason="VERIFIED_ALIAS_PERSISTENCE_FAILED",
+                        )
+                    )
+                    continue
+            observation = employer_read.observation
+
+        verified_identity = (
+            supported_employer_identity(observation.source_url)
+            or hash_job_url(observation.source_url)
+        )
+        if verified_identity in seen_verified_postings:
+            candidate_results.append(
+                _stopped_candidate(
+                    profile_ids=profile_ids,
+                    candidate=candidate,
+                    candidate_url=canonical_url,
+                    reader_status=ReadJobStatus.SUCCEEDED.value,
+                    discovery_status=CandidateDiscoveryStatus.SKIPPED,
+                    reason=CandidateRefreshReason.DUPLICATE_VERIFIED_POSTING,
+                    source_reason="DUPLICATE_VERIFIED_POSTING",
+                )
+            )
+            continue
+        seen_verified_postings.add(verified_identity)
+        if effective_company_treatment(
+            observation.company, subject_id=command.subject_id,
+            home=preferences_home,
+        ) is CompanyTreatment.BLOCK:
+            candidate_results.append(
+                _stopped_candidate(
+                    profile_ids=profile_ids,
+                    candidate=candidate,
+                    candidate_url=canonical_url,
+                    reader_status=ReadJobStatus.SUCCEEDED.value,
+                    discovery_status=CandidateDiscoveryStatus.SKIPPED,
+                    reason=CandidateRefreshReason.BLOCKED_COMPANY,
+                    source_reason="COMPANY_BLOCKED",
+                )
+            )
+            continue
+        quality = assess_job_quality(
+            observation.title, observation.description
+        )
+        if quality.requires_review:
+            candidate_results.append(
+                _stopped_candidate(
+                    profile_ids=profile_ids,
+                    candidate=candidate,
+                    candidate_url=canonical_url,
+                    reader_status=ReadJobStatus.SUCCEEDED.value,
+                    discovery_status=CandidateDiscoveryStatus.SKIPPED,
+                    reason=CandidateRefreshReason.QUALITY_REVIEW_REQUIRED,
+                    source_reason="QUALITY_REVIEW_REQUIRED:" + ",".join(quality.signals),
                 )
             )
             continue
         request = _discovery_request(
             command=command,
             candidate_url=canonical_url,
-            observation=read_result.observation,
+            observation=observation,
         )
         try:
             subject_result = await _resolve(

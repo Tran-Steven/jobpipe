@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from dataclasses import replace
 
 import pytest
 
@@ -16,6 +17,7 @@ from core.job_discovery import (
 )
 from core.job_library_refresh import (
     CandidateDiscoveryStatus,
+    CandidateRefreshReason,
     CandidateMembershipStatus,
     JobLibraryRefreshStatus,
     ManualJobLibraryRefreshCommand,
@@ -457,3 +459,286 @@ async def test_all_search_failure_is_failed_and_boundary_has_no_application_flow
         "EXPIRED",
     ):
         assert forbidden not in source
+
+
+@pytest.mark.asyncio
+async def test_blocked_employer_is_skipped_before_public_read(tmp_path, monkeypatch) -> None:
+    from core.company_preferences import CompanyPreferences, effective_company_treatment
+    import core.job_library_refresh as target_module
+
+    monkeypatch.setattr(
+        target_module,
+        "effective_company_treatment",
+        lambda company, **kwargs: effective_company_treatment(
+            company, preferences=CompanyPreferences(enabled=True), **kwargs
+        ),
+    )
+    home = PrivateHome(tmp_path)
+    profile = _profile(home, "Jobgether", "jobgether")
+    url = "https://job-boards.greenhouse.io/jobgether/jobs/1024"
+    executor = _SearchExecutor({
+        profile.profile_id: _search_result(
+            profile, (_candidate(profile, "blocked-1", url),)
+        ),
+    })
+    reader = _Reader()
+    discovery = _Discovery()
+    result = await refresh_job_library(
+        _command("refresh-company-blocked"),
+        profile_provider=_ProfileProvider(PrivateHomeSearchProfileRepository(home)),
+        search_executor=executor,
+        public_job_reader=reader,
+        discovery=discovery,
+        priority_refresh=_Priority(),
+        repository=PrivateHomeJobLibraryRefreshRunRepository(home),
+    )
+    assert result.status is JobLibraryRefreshStatus.COMPLETED
+    assert reader.calls == []
+    assert discovery.calls == []
+    assert result.run.candidate_results[0].reason is CandidateRefreshReason.BLOCKED_COMPANY
+    assert result.run.candidate_results[0].discovery_status is CandidateDiscoveryStatus.SKIPPED
+
+
+@pytest.mark.asyncio
+async def test_blocked_employer_from_public_read_is_not_imported(tmp_path, monkeypatch) -> None:
+    from core.company_preferences import CompanyPreferences, effective_company_treatment
+    import core.job_library_refresh as target_module
+
+    monkeypatch.setattr(
+        target_module,
+        "effective_company_treatment",
+        lambda company, **kwargs: effective_company_treatment(
+            company, preferences=CompanyPreferences(enabled=True), **kwargs
+        ),
+    )
+    home = PrivateHome(tmp_path)
+    profile = _profile(home, "Example Labs", "examplelabs")
+    url = "https://job-boards.greenhouse.io/examplelabs/jobs/1025"
+    executor = _SearchExecutor({
+        profile.profile_id: _search_result(
+            profile, (_candidate(profile, "blocked-2", url),)
+        ),
+    })
+
+    class _BlockedReader(_Reader):
+        async def __call__(self, request):
+            self.calls.append(request.url)
+            return ReadJobResult.succeeded(
+                replace(_observation(request.url), company="SynergisticIT")
+            )
+
+    reader = _BlockedReader()
+    discovery = _Discovery()
+    result = await refresh_job_library(
+        _command("refresh-source-company-blocked"),
+        profile_provider=_ProfileProvider(PrivateHomeSearchProfileRepository(home)),
+        search_executor=executor,
+        public_job_reader=reader,
+        discovery=discovery,
+        priority_refresh=_Priority(),
+        repository=PrivateHomeJobLibraryRefreshRunRepository(home),
+    )
+    assert result.status is JobLibraryRefreshStatus.COMPLETED
+    assert reader.calls == [url]
+    assert discovery.calls == []
+    assert result.run.candidate_results[0].reason is CandidateRefreshReason.BLOCKED_COMPANY
+
+
+@pytest.mark.asyncio
+async def test_risky_public_posting_requires_review_before_discovery(tmp_path) -> None:
+    home = PrivateHome(tmp_path)
+    profile = _profile(home, "Synthetic Company", "synthetic")
+    url = "https://job-boards.greenhouse.io/synthetic/jobs/10126"
+    executor = _SearchExecutor({
+        profile.profile_id: _search_result(
+            profile, (_candidate(profile, "risk-1", url),)
+        ),
+    })
+
+    class _RiskyReader(_Reader):
+        async def __call__(self, request):
+            self.calls.append(request.url)
+            return ReadJobResult.succeeded(
+                replace(
+                    _observation(request.url),
+                    description="Applicants must pay a $250 application fee.",
+                )
+            )
+
+    reader = _RiskyReader()
+    discovery = _Discovery()
+    priority = _Priority()
+    result = await refresh_job_library(
+        _command("refresh-risk-review"),
+        profile_provider=_ProfileProvider(
+            PrivateHomeSearchProfileRepository(home)
+        ),
+        search_executor=executor,
+        public_job_reader=reader,
+        discovery=discovery,
+        priority_refresh=priority,
+        repository=PrivateHomeJobLibraryRefreshRunRepository(home),
+    )
+    assert result.status is JobLibraryRefreshStatus.COMPLETED
+    assert reader.calls == [url]
+    assert discovery.calls == []
+    assert result.run.discovery_summary.skipped == 1
+    assert result.run.discovery_summary.failed == 0
+    assert result.run.candidate_results[0].reason is CandidateRefreshReason.QUALITY_REVIEW_REQUIRED
+    assert "candidate_payment_request" in result.run.candidate_results[0].source_reason
+
+
+@pytest.mark.asyncio
+async def test_definitively_closed_employer_posting_is_skipped_not_retried(
+    tmp_path,
+) -> None:
+    home = PrivateHome(tmp_path)
+    profile = _profile(home, "Example Labs", "examplelabs")
+    url = "https://job-boards.greenhouse.io/example/jobs/88881"
+    executor = _SearchExecutor({
+        profile.profile_id: _search_result(
+            profile, (_candidate(profile, "closed-1", url),)
+        ),
+    })
+
+    class _ClosedReader(_Reader):
+        async def __call__(self, request):
+            self.calls.append(request.url)
+            return ReadJobResult.failed(ReadJobReason.JOB_CLOSED)
+
+    reader = _ClosedReader()
+    discovery = _Discovery()
+    result = await refresh_job_library(
+        _command("refresh-closed"),
+        profile_provider=_ProfileProvider(PrivateHomeSearchProfileRepository(home)),
+        search_executor=executor,
+        public_job_reader=reader,
+        discovery=discovery,
+        priority_refresh=_Priority(),
+        repository=PrivateHomeJobLibraryRefreshRunRepository(home),
+    )
+    assert result.status is JobLibraryRefreshStatus.COMPLETED
+    assert reader.calls == [url]
+    assert discovery.calls == []
+    assert result.run.discovery_summary.skipped == 1
+    assert result.run.discovery_summary.failed == 0
+    assert result.run.candidate_results[0].reason is CandidateRefreshReason.POSTING_CLOSED
+
+
+@pytest.mark.asyncio
+async def test_cross_site_alias_requires_live_employer_read_and_only_one_discovery(
+    tmp_path,
+) -> None:
+    home = PrivateHome(tmp_path)
+    first = _profile(home, "One", "one")
+    second = _profile(home, "Two", "two")
+    external = "https://www.linkedin.com/jobs/view/1234567890"
+    employer = "https://job-boards.greenhouse.io/example/jobs/1001"
+    executor = _SearchExecutor({
+        first.profile_id: _search_result(
+            first, (_candidate(first, "linkedin-1", external),)
+        ),
+        second.profile_id: _search_result(
+            second, (_candidate(second, "greenhouse-1", employer),)
+        ),
+    })
+
+    class _AliasReader(_Reader):
+        async def __call__(self, request):
+            self.calls.append(request.url)
+            if request.url == external:
+                return ReadJobResult.succeeded(
+                    replace(
+                        _observation(external),
+                        source_platform=SourcePlatform.GENERIC_WEB,
+                        ats_type=AtsType.UNKNOWN,
+                        application_url=employer,
+                    )
+                )
+            return ReadJobResult.succeeded(_observation(employer))
+
+    reader = _AliasReader()
+    discovery = _Discovery()
+    result = await refresh_job_library(
+        _command("refresh-alias"),
+        profile_provider=_ProfileProvider(PrivateHomeSearchProfileRepository(home)),
+        search_executor=executor,
+        public_job_reader=reader,
+        discovery=discovery,
+        priority_refresh=_Priority(),
+        repository=PrivateHomeJobLibraryRefreshRunRepository(home),
+        preferences_home=home,
+    )
+    assert result.status is JobLibraryRefreshStatus.COMPLETED
+    assert reader.calls == [external, employer]  # employer evidence reused
+    assert len(discovery.calls) == 1
+    assert discovery.calls[0].request.proposal.resolved_candidate.source_url == employer
+    assert result.run.discovery_summary.skipped == 1
+    assert result.run.candidate_results[1].reason is CandidateRefreshReason.DUPLICATE_VERIFIED_POSTING
+    # Unlike an in-memory dedup table, this survives a new refresh/process.
+    from core.verified_posting_aliases import VerifiedPostingAliases
+    from core.event_ledger import hash_job_url
+    aliases = VerifiedPostingAliases(home)
+    assert hash_job_url(external) in aliases.identity_hashes(employer)
+    assert hash_job_url(employer) in aliases.identity_hashes(external)
+    assert aliases.path.stat().st_mode & 0o077 == 0
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "employer_state, expected_reason",
+    [
+        ("CLOSED", CandidateRefreshReason.POSTING_CLOSED),
+        ("UNAVAILABLE", CandidateRefreshReason.POSTING_VERIFICATION_INCONCLUSIVE),
+        ("MISMATCH", CandidateRefreshReason.POSTING_IDENTITY_CONFLICT),
+    ],
+)
+async def test_uncorroborated_external_links_never_enter_modern_discovery(
+    tmp_path, employer_state, expected_reason
+) -> None:
+    home = PrivateHome(tmp_path)
+    profile = _profile(home, "Example Labs", "examplelabs")
+    external = "https://www.linkedin.com/jobs/view/2233445566"
+    employer = "https://jobs.lever.co/example/job-5566"
+    executor = _SearchExecutor({
+        profile.profile_id: _search_result(
+            profile, (_candidate(profile, "external-1", external),)
+        ),
+    })
+
+    class _UncertainReader(_Reader):
+        async def __call__(self, request):
+            self.calls.append(request.url)
+            if request.url == external:
+                return ReadJobResult.succeeded(
+                    replace(
+                        _observation(external),
+                        source_platform=SourcePlatform.GENERIC_WEB,
+                        ats_type=AtsType.UNKNOWN,
+                        application_url=employer,
+                    )
+                )
+            if employer_state == "CLOSED":
+                return ReadJobResult.failed(ReadJobReason.JOB_NOT_FOUND)
+            if employer_state == "UNAVAILABLE":
+                return ReadJobResult.failed(ReadJobReason.SOURCE_UNAVAILABLE)
+            return ReadJobResult.succeeded(
+                replace(_observation(employer), title="Unrelated Title")
+            )
+
+    reader = _UncertainReader()
+    discovery = _Discovery()
+    result = await refresh_job_library(
+        _command(f"refresh-{employer_state.lower()}"),
+        profile_provider=_ProfileProvider(PrivateHomeSearchProfileRepository(home)),
+        search_executor=executor,
+        public_job_reader=reader,
+        discovery=discovery,
+        priority_refresh=_Priority(),
+        repository=PrivateHomeJobLibraryRefreshRunRepository(home),
+    )
+    assert result.status is JobLibraryRefreshStatus.COMPLETED
+    assert reader.calls == [external, employer]
+    assert discovery.calls == []
+    assert result.run.discovery_summary.failed == 0
+    assert result.run.candidate_results[0].reason is expected_reason

@@ -23,6 +23,13 @@ from auth import (
 )
 from auth.credentials import CredentialStore, MacOSSecurityCredentialStore
 from core.application_engine import JobApplicationEngine
+from core.company_filters import CompanyTreatment
+from core.company_preferences import effective_company_treatment, PrivateCompanyPreferences
+from core.job_history import JobHistoryState, PrivateJobHistory
+from core.job_history_import import import_job_history_csv
+from core.submission_reconciliation import (
+    inspect_submission, record_submission_review, ReviewAction,
+)
 from core.browser_broker import lease_browser_session
 from core.bundles import (
     ApplicationBundle,
@@ -615,7 +622,7 @@ async def cmd_apply_csv(args: argparse.Namespace) -> int:
         resume_dir,
         priorities=args.priorities,
         statuses=args.statuses,
-        limit=args.limit,
+        limit=0,
     )
     if args.preview:
         args.list = True
@@ -627,6 +634,20 @@ async def cmd_apply_csv(args: argparse.Namespace) -> int:
         if getattr(item, "row", {}).get("status", "").strip().casefold()
         != "registration uncertain"
     ]
+    history = PrivateJobHistory(home)
+    company_preferences = PrivateCompanyPreferences(home).read()
+    queue = [
+        item for item in queue
+        if effective_company_treatment(
+            getattr(item, "company", ""), preferences=company_preferences
+        ) is not CompanyTreatment.BLOCK
+        and (
+            not getattr(item, "url", "")
+            or history.state_for(item.url) is None
+        )
+    ]
+    if args.limit > 0:
+        queue = queue[:args.limit]
     if not queue:
         _json_print({"queue": str(csv_path), "selected": 0})
         return 0
@@ -981,12 +1002,131 @@ def cmd_invalidate_review(args: argparse.Namespace) -> int:
     return int(outcome.exit_code)
 
 
+def cmd_company_filters(args: argparse.Namespace) -> int:
+    home = (
+        PrivateHome(Path(args.home).expanduser().resolve())
+        if args.home else PrivateHome.discover()
+    )
+    store = PrivateCompanyPreferences(home)
+    if args.action == "enable":
+        prefs = store.set_enabled(True)
+    elif args.action == "disable":
+        prefs = store.set_enabled(False)
+    elif args.action in {"builtin-on", "builtin-off"}:
+        prefs = store.set_builtin_enabled(args.action == "builtin-on")
+    elif args.action in {"block", "allow", "clear"}:
+        if not args.company:
+            raise ValueError("a company name is required")
+        prefs = store.edit(args.action, args.company)
+    elif args.action == "list":
+        prefs = store.read()
+    else:
+        raise ValueError("unsupported company filter action")
+    _json_print(prefs.to_dict())
+    return 0
+
+
+def cmd_job_history_import(args: argparse.Namespace) -> int:
+    home = (
+        PrivateHome(Path(args.home).expanduser().resolve())
+        if args.home else PrivateHome.discover()
+    )
+    _json_print(import_job_history_csv(args.csv, home=home, commit=args.commit))
+    return 0
+
+
+def cmd_submission_review(args: argparse.Namespace) -> int:
+    home = (
+        PrivateHome(Path(args.home).expanduser().resolve())
+        if args.home else PrivateHome.discover()
+    )
+    _json_print(
+        record_submission_review(
+            args.url, action=ReviewAction(args.action), home=home
+        )
+    )
+    return 0
+
+
+def cmd_submission_inspect(args: argparse.Namespace) -> int:
+    """Report exactly what the private ledger and self-reported history prove."""
+    home = (
+        PrivateHome(Path(args.home).expanduser().resolve())
+        if args.home else PrivateHome.discover()
+    )
+    _json_print(inspect_submission(args.url, home=home))
+    return 0
+
+
+def cmd_job_history(args: argparse.Namespace) -> int:
+    home = (
+        PrivateHome(Path(args.home).expanduser().resolve())
+        if args.home else PrivateHome.discover()
+    )
+    history = PrivateJobHistory(home)
+    if args.command == "mark-applied":
+        state = history.mark(args.url, JobHistoryState.APPLIED_SELF_REPORTED)
+    elif args.command == "dismiss-job":
+        state = history.mark(args.url, JobHistoryState.DISMISSED)
+    elif args.command == "clear-job-mark":
+        history.clear(args.url)
+        state = history.state_for(args.url)
+    else:
+        state = history.state_for(args.url)
+    _json_print({
+        "state": state.value if state else None,
+        "posting_identity_hash": hash_job_url(args.url),
+    })
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--home", default="", help="Override jobpipe private home")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     subparsers.add_parser("init", help="Create Private Home and the Keychain permit key")
+
+    company_parser = subparsers.add_parser(
+        "company-filters", help="Manage private, opt-in company block/allow preferences"
+    )
+    company_parser.add_argument(
+        "action", choices=("enable", "disable", "builtin-on", "builtin-off", "list", "block", "allow", "clear")
+    )
+    company_parser.add_argument("company", nargs="?")
+
+    for action, description in (
+        ("mark-applied", "Record an externally submitted application"),
+        ("dismiss-job", "Hide a posting without claiming an application"),
+        ("clear-job-mark", "Remove a self-reported job history mark"),
+        ("job-history", "Check a posting's locally recorded history"),
+    ):
+        history_parser = subparsers.add_parser(action, help=description)
+        history_parser.add_argument("--url", required=True)
+
+
+    history_import = subparsers.add_parser(
+        "job-history-import",
+        help="Preview or explicitly import confirmed application history from CSV",
+    )
+    history_import.add_argument("--csv", required=True)
+    history_import.add_argument("--commit", action="store_true")
+
+    reconciliation = subparsers.add_parser(
+        "submission-status",
+        help="Read-only submission/uncertainty audit for one posting URL",
+    )
+    reconciliation.add_argument("--url", required=True)
+
+    review = subparsers.add_parser(
+        "submission-review",
+        help="Append a coded human review note to an unresolved intent; never resubmit",
+    )
+    review.add_argument("--url", required=True)
+    review.add_argument(
+        "--action", required=True,
+        choices=tuple(action.value for action in ReviewAction),
+    )
 
     migrate_parser = subparsers.add_parser("migrate", help="Import an ApplyPilot workflow privately")
     migrate_parser.add_argument("workflow")
@@ -1131,6 +1271,16 @@ def main() -> int:
     try:
         if args.command == "init":
             return cmd_init(args)
+        if args.command == "company-filters":
+            return cmd_company_filters(args)
+        if args.command in {"mark-applied", "dismiss-job", "clear-job-mark", "job-history"}:
+            return cmd_job_history(args)
+        if args.command == "submission-status":
+            return cmd_submission_inspect(args)
+        if args.command == "job-history-import":
+            return cmd_job_history_import(args)
+        if args.command == "submission-review":
+            return cmd_submission_review(args)
         if args.command == "migrate":
             return cmd_migrate(args)
         if args.command == "mailbox":

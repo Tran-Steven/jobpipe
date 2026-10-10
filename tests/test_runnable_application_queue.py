@@ -64,6 +64,7 @@ from core.prioritization_policy import (
 from core.runnable_application_queue import (
     RunnableApplicationQueueCommand,
     RunnableApplicationQueueReason,
+    RunnableApplicationReason,
     RunnableApplicationQueueStatus,
     RunnableApplicationStatus,
     build_runnable_application_queue,
@@ -783,3 +784,111 @@ def test_runnable_read_model_imports_no_write_or_execution_layers() -> None:
             "selectively_reprioritize_jobs",
         }
     )
+
+
+def test_explicit_company_block_overrides_runnable_priority(monkeypatch) -> None:
+    from core.company_preferences import CompanyPreferences, effective_company_treatment
+    import core.runnable_application_queue as target_module
+
+    monkeypatch.setattr(
+        target_module,
+        "effective_company_treatment",
+        lambda company, **kwargs: effective_company_treatment(
+            company, preferences=CompanyPreferences(enabled=True), **kwargs
+        ),
+    )
+    from core.runnable_application_queue import _classify
+
+    policy = _policy()
+    item = _queue_item("job-company-block", policy)
+    result = _classify(
+        subject_id=SUBJECT,
+        queue_status=CurrentPriorityItemStatus.CURRENT,
+        job=replace(item.job, company="Tata Consultancy Services"),
+        decision=item.decision,
+        intent=_intent(item.job.job_id),
+        admission=policy.preparation_admission,
+    )
+    assert result.runnable_status is RunnableApplicationStatus.BLOCKED_COMPANY
+    assert result.reasons == (RunnableApplicationReason.COMPANY_BLOCKED,)
+
+
+
+def test_suspicious_posting_requires_review_before_runnable_admission() -> None:
+    from core.runnable_application_queue import _classify
+
+    policy = _policy()
+    item = _queue_item("job-quality-review", policy)
+    result = _classify(
+        subject_id=SUBJECT,
+        queue_status=CurrentPriorityItemStatus.CURRENT,
+        job=replace(
+            item.job,
+            description="Applicants must pay a $150 application fee.",
+        ),
+        decision=item.decision,
+        intent=_intent(item.job.job_id),
+        admission=policy.preparation_admission,
+    )
+    assert result.runnable_status is RunnableApplicationStatus.BLOCKED_QUALITY_REVIEW
+    assert result.reasons == (RunnableApplicationReason.QUALITY_REVIEW_REQUIRED,)
+
+
+@pytest.mark.parametrize(
+    "history_state, expected_status, expected_reason",
+    [
+        ("APPLIED_SELF_REPORTED", "BLOCKED_PREVIOUSLY_APPLIED", "PREVIOUSLY_APPLIED"),
+        ("DISMISSED", "BLOCKED_DISMISSED", "DISMISSED_BY_USER"),
+    ],
+)
+def test_modern_queue_blocks_confirmed_manual_history_before_preparation(
+    tmp_path: Path, history_state, expected_status, expected_reason
+) -> None:
+    from core.job_history import JobHistoryState, PrivateJobHistory
+    from core.private_home import PrivateHome
+    from core.runnable_application_queue import _classify
+
+    home = PrivateHome(tmp_path / "private")
+    policy = _policy()
+    item = _queue_item("job-import-history", policy)
+    PrivateJobHistory(home).mark(
+        item.job.source_url, JobHistoryState(history_state)
+    )
+    result = _classify(
+        subject_id=SUBJECT,
+        queue_status=CurrentPriorityItemStatus.CURRENT,
+        job=item.job,
+        decision=item.decision,
+        intent=_intent(item.job.job_id),
+        admission=policy.preparation_admission,
+        preferences_home=home,
+    )
+    assert result.runnable_status is RunnableApplicationStatus(expected_status)
+    assert result.reasons == (RunnableApplicationReason(expected_reason),)
+    assert result.runnable_status is not RunnableApplicationStatus.RUNNABLE
+
+
+def test_modern_queue_checks_both_source_and_application_url_history(
+    tmp_path: Path
+) -> None:
+    from core.job_history import JobHistoryState, PrivateJobHistory
+    from core.private_home import PrivateHome
+    from core.runnable_application_queue import _classify
+
+    home = PrivateHome(tmp_path / "private")
+    policy = _policy()
+    item = _queue_item("job-multi-source-history", policy)
+    apply_url = "https://jobs.lever.co/synthetic/req-4321"
+    PrivateJobHistory(home).mark(
+        apply_url, JobHistoryState.APPLIED_SELF_REPORTED
+    )
+    result = _classify(
+        subject_id=SUBJECT,
+        queue_status=CurrentPriorityItemStatus.CURRENT,
+        job=replace(item.job, application_url=apply_url),
+        decision=item.decision,
+        intent=_intent(item.job.job_id),
+        admission=policy.preparation_admission,
+        preferences_home=home,
+    )
+    assert result.runnable_status is RunnableApplicationStatus.BLOCKED_PREVIOUSLY_APPLIED
