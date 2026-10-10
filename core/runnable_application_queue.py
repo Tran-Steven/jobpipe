@@ -8,6 +8,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
+from .company_filters import CompanyTreatment, company_treatment
 from .accepted_job_intent import (
     AcceptedJobIntent,
     AcceptedJobIntentReadResult,
@@ -58,6 +59,7 @@ class RunnableApplicationStatus(str, Enum):
     BLOCKED_NO_APPLICATION_INTENT = "BLOCKED_NO_APPLICATION_INTENT"
     BLOCKED_NEEDS_USER = "BLOCKED_NEEDS_USER"
     BLOCKED_EXCLUDED = "BLOCKED_EXCLUDED"
+    BLOCKED_COMPANY = "BLOCKED_COMPANY"
     BLOCKED_PRIORITY = "BLOCKED_PRIORITY"
     BLOCKED_PROMOTION_REQUIRED = "BLOCKED_PROMOTION_REQUIRED"
     BLOCKED_JOB_STATE = "BLOCKED_JOB_STATE"
@@ -68,6 +70,7 @@ class RunnableApplicationReason(str, Enum):
     NO_APPLICATION_INTENT = "NO_APPLICATION_INTENT"
     PRIORITY_NEEDS_USER = "PRIORITY_NEEDS_USER"
     PRIORITY_EXCLUDED = "PRIORITY_EXCLUDED"
+    COMPANY_BLOCKED = "COMPANY_BLOCKED"
     PRIORITY_NOT_ADMITTED = "PRIORITY_NOT_ADMITTED"
     EXPLICIT_PROMOTION_REQUIRED = "EXPLICIT_PROMOTION_REQUIRED"
     JOB_STATE_UNAVAILABLE = "JOB_STATE_UNAVAILABLE"
@@ -98,6 +101,9 @@ _STATUS_REASON = {
     ),
     RunnableApplicationStatus.BLOCKED_EXCLUDED: (
         RunnableApplicationReason.PRIORITY_EXCLUDED
+    ),
+    RunnableApplicationStatus.BLOCKED_COMPANY: (
+        RunnableApplicationReason.COMPANY_BLOCKED
     ),
     RunnableApplicationStatus.BLOCKED_PRIORITY: (
         RunnableApplicationReason.PRIORITY_NOT_ADMITTED
@@ -336,6 +342,15 @@ def _classify(
         )
     if not isinstance(decision, PriorityDecision):
         raise ValueError("CURRENT priority item has no decision")
+    if company_treatment(job.company) is CompanyTreatment.BLOCK:
+        return _blocked(
+            subject_id=subject_id,
+            job=job,
+            queue_status=queue_status,
+            status=RunnableApplicationStatus.BLOCKED_COMPANY,
+            decision=decision,
+            intent=intent,
+        )
     if decision.qualification is PriorityQualification.NEEDS_USER:
         return _blocked(
             subject_id=subject_id,
@@ -540,7 +555,7 @@ async def build_runnable_application_queue(
                     admission=policy.preparation_admission,
                 )
             )
-        except (AttributeError, TypeError, ValueError):
+        except (AttributeError, OSError, TypeError, ValueError):
             return _failure(
                 subject_id=subject_id,
                 now=now,
