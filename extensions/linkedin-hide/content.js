@@ -24,8 +24,9 @@
 
   async function persist(next) {
     const safe = rules.sanitizeState(next);
+    const previous = state;
     await storage.storage.local.set({ [KEY]: safe });
-    undoState = state;
+    undoState = previous;
     state = safe;
     lastSummary = "";
     refresh();
@@ -49,7 +50,13 @@
   }
 
   function controls(card) {
-    if (card.querySelector(":scope > .jobpipe-visual-hide-actions")) return;
+    const existing = card.querySelector(":scope > .jobpipe-visual-hide-actions");
+    if (existing) {
+      const buttons = existing.querySelectorAll("button");
+      if (buttons[0]) buttons[0].disabled = !rules.jobIdFromCard(card);
+      if (buttons[1]) buttons[1].disabled = !rules.companyFromCard(card);
+      return;
+    }
     const bar = document.createElement("div");
     bar.className = "jobpipe-visual-hide-actions";
     bar.setAttribute("aria-label", "jobpipe job visibility controls");
