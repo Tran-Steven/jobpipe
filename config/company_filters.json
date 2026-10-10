@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "blocked": [
+    {
+      "name": "Jobgether",
+      "aliases": [
+        "Job Gether"
+      ]
+    },
+    {
+      "name": "SynergisticIT",
+      "aliases": [
+        "Synergistic IT"
+      ]
+    },
+    {
+      "name": "Tata Consultancy Services",
+      "aliases": [
+        "TCS",
+        "Tata Consultancy Services Ltd",
+        "Tata Consultancy Services Limited"
+      ]
+    }
+  ],
+  "deprioritize": [
+    {
+      "name": "Wipro"
+    },
+    {
+      "name": "Infosys"
+    },
+    {
+      "name": "Cognizant"
+    },
+    {
+      "name": "HCLTech",
+      "aliases": [
+        "HCL Technologies"
+      ]
+    },
+    {
+      "name": "Tech Mahindra"
+    },
+    {
+      "name": "LTIMindtree"
+    },
+    {
+      "name": "Mphasis"
+    },
+    {
+      "name": "Capgemini"
+    },
+    {
+      "name": "Hexaware Technologies"
+    },
+    {
+      "name": "Birlasoft"
+    },
+    {
+      "name": "Revature"
+    },
+    {
+      "name": "FDM Group"
+    },
+    {
+      "name": "Dev10"
+    },
+    {
+      "name": "Genesis10"
+    },
+    {
+      "name": "SkillStorm"
+    },
+    {
+      "name": "Smoothstack"
+    },
+    {
+      "name": "Lensa"
+    },
+    {
+      "name": "Talentify.io",
+      "aliases": [
+        "Talentify"
+      ]
+    },
+    {
+      "name": "beBee"
+    },
+    {
+      "name": "Swooped"
+    },
+    {
+      "name": "Diverse Lynx"
+    },
+    {
+      "name": "eTeam"
+    },
+    {
+      "name": "Net2Source"
+    },
+    {
+      "name": "Mindlance"
+    },
+    {
+      "name": "LanceSoft"
+    },
+    {
+      "name": "US Tech Solutions"
+    },
+    {
+      "name": "Pyramid Consulting"
+    },
+    {
+      "name": "Intelliswift"
+    },
+    {
+      "name": "NLB Services"
+    }
+  ],
+  "review": [
+    {
+      "name": "Artech"
+    },
+    {
+      "name": "Collabera"
+    },
+    {
+      "name": "Rose International"
+    },
+    {
+      "name": "Aditi Consulting"
+    },
+    {
+      "name": "TEKsystems"
+    },
+    {
+      "name": "Apex Systems"
+    },
+    {
+      "name": "Insight Global"
+    },
+    {
+      "name": "Motion Recruitment"
+    },
+    {
+      "name": "Robert Half"
+    },
+    {
+      "name": "Kforce"
+    },
+    {
+      "name": "CyberCoders"
+    },
+    {
+      "name": "Jobot"
+    },
+    {
+      "name": "TieTalent"
+    },
+    {
+      "name": "Persistent Systems"
+    }
+  ]
+}
