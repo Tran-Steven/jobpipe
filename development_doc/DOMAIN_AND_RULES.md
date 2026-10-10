@@ -1977,3 +1977,14 @@ preserves P1d2 order and performs no claim, save, preparation or execution.
 - `deprioritize` subtracts 30 points only in the legacy deterministic triage path; it is not a universal prohibition or an implicit hard constraint in the modern priority policy.
 - `review` is informational in legacy triage and cannot exclude or implicitly approve a job. Staffing-agency names are not evidence of wrongdoing.
 - Approved `EXCLUDED_COMPANY` policy constraints remain independently authoritative for modern priority decisions. Company matching must not create or impersonate a user-approved prioritization policy.
+
+
+### Persistent job history and duplicate application prevention
+
+- The append-only submission ledger remains authoritative for jobpipe-executed submissions. `VERIFIED` prevents duplicate submission; `PENDING`, `SUBMITTING`, and `UNKNOWN` remain blocked until explicitly reconciled. Browser or DOM dismissal is not submission evidence.
+- `PrivateJobHistory` is a local, owner-only SQLite store for `APPLIED_SELF_REPORTED` (an external application the user reports) and `DISMISSED` (a negative browsing preference). Neither is represented as an ATS-verified submission.
+- An explicit `jobctl mark-applied --url <posting URL>` records user-reported application history; `dismiss-job` records a skipped posting; `job-history` reads a record and `clear-job-mark` reverses it. A dismissed record cannot replace a self-reported application without an explicit clear.
+- Exact conservative `hash_job_url` identities cover known native ATS host/route aliases and strip tracked parameters. Different URLs at unrelated sites are not silently treated as the same requisition. Similar employer/title strings may indicate possible duplicates but must not become definitive submission evidence.
+- The legacy queue preserves existing non-pending history, never reconstructs Pending rows with the same posting identity, and filters explicit dismissed or externally-applied identities. Company/title alone never merges two distinct posting IDs.
+- Every application preflight checks private history before launching a browser. The existing permit and submission ledger checks remain mandatory even when private history is empty.
+- Data-layer exclusion is authoritative. Hiding cards from LinkedIn's DOM may improve human-facing presentation, but LinkedIn's X/dismiss state does not establish applied status and must not be used as the sole safety gate.
