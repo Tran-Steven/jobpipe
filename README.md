@@ -46,11 +46,19 @@ The implementation now includes:
 - five thin Codex Skills: `job-orchestrate`, `job-materials`, `job-apply`, `job-profile`, and `job-status`;
 - sanitized HTML/Playwright contract fixtures and synthetic identities.
 
-The production automation composition root is not complete yet. The remaining
-blocking boundary is a server-owned, typed Browser runtime/lease provider for
-the P2c3/P2c6 execution ports. Consequently, the authenticated Refresh and
-Automation Dashboard routes retain their fail-closed unavailable behavior
-until that boundary and the final composition wiring are implemented.
+The production composition now includes a typed, server-owned Chromium
+runtime/lease provider and authenticated Dashboard composition. This is
+**implemented integration**, not qualified production operation: native macOS
+runtime ownership, current live ATS Review arrival, human handoff, crash
+recovery, and operational reliability remain to be measured separately.
+No live submission is authorized by installation, CI or search preferences.
+
+For the controlled next phase, see
+[Attended ATS Review qualification](development_doc/ATS_REVIEW_QUALIFICATION.md).
+It separates fixture checks, read-only public-page diagnostics and later
+operator-attested non-submitting Review measurements. The qualification
+scorecard is available through `jobctl.py ats-qualification-report` and never
+turns a fixture pass into a live-success claim.
 
 This is an early local release. Fixture success is not a claim of current
 production-site reliability; ATS markup changes and live account flows still

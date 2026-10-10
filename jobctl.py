@@ -188,6 +188,10 @@ def _event_metrics(events: list[Any]) -> dict[str, Any]:
         bool(outcome.get("evidence_refs")) for outcome in verified
     )
     return {
+        # Existing run metrics may combine local fixtures with actual attended
+        # browser sessions; never label this unclassified ledger as live proof.
+        "review_arrival_evidence_scope": "UNCLASSIFIED_FIXTURE_OR_LIVE",
+        "attended_live_review_independently_verified": False,
         "latest_outcomes": dict(
             Counter(str(outcome.get("status") or "UNKNOWN") for outcome in latest.values())
         ),
@@ -1204,6 +1208,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     subparsers.add_parser("readiness", help="Check whether ATS execution prerequisites are satisfied")
     subparsers.add_parser("ats-fixture-check", help="Run browser ATS fixture proof; never claims live readiness")
+    qualification_parser = subparsers.add_parser(
+        "ats-qualification-report",
+        help="Read external, sanitized attended evaluation receipts; never submits",
+    )
+    qualification_parser.add_argument("--input", required=True)
+    qualification_parser.add_argument(
+        "--minimum-per-ats", type=int, default=20,
+    )
     capture_review = subparsers.add_parser("ats-capture-review", help="Read-only ATS field capture and deduplicated private human review")
     capture_review.add_argument("--url", required=True)
     capture_review.add_argument("--output", required=True)
@@ -1329,6 +1341,15 @@ def main() -> int:
         if args.command == "ats-fixture-check":
             from tools.ats_readiness_report import main as ats_fixture_main
             return ats_fixture_main()
+        if args.command == "ats-qualification-report":
+            from tools.ats_qualification_report import (
+                assess as assess_qualification, read_receipts,
+            )
+            _json_print(assess_qualification(
+                read_receipts(Path(args.input)),
+                minimum_per_ats=args.minimum_per_ats,
+            ))
+            return 0
         if args.command == "readiness":
             readiness = jobpipe_application_readiness(args.home)
             jobpipe_print_json(readiness)
