@@ -462,7 +462,17 @@ async def test_all_search_failure_is_failed_and_boundary_has_no_application_flow
 
 
 @pytest.mark.asyncio
-async def test_blocked_employer_is_skipped_before_public_read(tmp_path) -> None:
+async def test_blocked_employer_is_skipped_before_public_read(tmp_path, monkeypatch) -> None:
+    from core.company_preferences import CompanyPreferences, effective_company_treatment
+    import core.job_library_refresh as target_module
+
+    monkeypatch.setattr(
+        target_module,
+        "effective_company_treatment",
+        lambda company, **kwargs: effective_company_treatment(
+            company, preferences=CompanyPreferences(enabled=True), **kwargs
+        ),
+    )
     home = PrivateHome(tmp_path)
     profile = _profile(home, "Jobgether", "jobgether")
     url = "https://job-boards.greenhouse.io/jobgether/jobs/1024"
@@ -490,7 +500,17 @@ async def test_blocked_employer_is_skipped_before_public_read(tmp_path) -> None:
 
 
 @pytest.mark.asyncio
-async def test_blocked_employer_from_public_read_is_not_imported(tmp_path) -> None:
+async def test_blocked_employer_from_public_read_is_not_imported(tmp_path, monkeypatch) -> None:
+    from core.company_preferences import CompanyPreferences, effective_company_treatment
+    import core.job_library_refresh as target_module
+
+    monkeypatch.setattr(
+        target_module,
+        "effective_company_treatment",
+        lambda company, **kwargs: effective_company_treatment(
+            company, preferences=CompanyPreferences(enabled=True), **kwargs
+        ),
+    )
     home = PrivateHome(tmp_path)
     profile = _profile(home, "Example Labs", "examplelabs")
     url = "https://job-boards.greenhouse.io/examplelabs/jobs/1025"
