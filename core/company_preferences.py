@@ -97,6 +97,13 @@ class PrivateCompanyPreferences:
         self.write(updated)
         return updated
 
+    def set_builtin_enabled(self, enabled: bool) -> CompanyPreferences:
+        from dataclasses import replace
+
+        updated = replace(self.read(), builtin_enabled=enabled)
+        self.write(updated)
+        return updated
+
     def edit(self, action: str, name: str) -> CompanyPreferences:
         from dataclasses import replace
 
