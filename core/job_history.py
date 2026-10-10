@@ -10,6 +10,7 @@ from urllib.parse import urlsplit
 
 from .event_ledger import hash_job_url
 from .private_home import PrivateHome
+from .verified_posting_aliases import VerifiedPostingAliases
 
 
 class JobHistoryState(StrEnum):
@@ -20,6 +21,7 @@ class JobHistoryState(StrEnum):
 class PrivateJobHistory:
     def __init__(self, home: PrivateHome | None = None) -> None:
         self.home = home or PrivateHome.discover()
+        self.aliases = VerifiedPostingAliases(self.home)
 
     @property
     def path(self) -> Path:
@@ -58,25 +60,36 @@ class PrivateJobHistory:
         return hash_job_url(url)
 
     def state_for(self, url: str) -> JobHistoryState | None:
-        identity = self._identity(url)
+        self._identity(url)
+        identities = self.aliases.identity_hashes(url)
         if not self.path.exists():
             return None
         with self._connect() as connection:
-            row = connection.execute(
-                "SELECT state FROM job_history WHERE identity_hash = ?", (identity,)
-            ).fetchone()
-        return JobHistoryState(row[0]) if row else None
+            rows = connection.execute(
+                "SELECT state FROM job_history WHERE identity_hash IN ("
+                + ",".join("?" for _ in identities) + ")", identities,
+            ).fetchall()
+        states = {JobHistoryState(row[0]) for row in rows}
+        if JobHistoryState.APPLIED_SELF_REPORTED in states:
+            return JobHistoryState.APPLIED_SELF_REPORTED
+        if JobHistoryState.DISMISSED in states:
+            return JobHistoryState.DISMISSED
+        return None
 
     def mark(self, url: str, state: JobHistoryState) -> JobHistoryState:
         identity = self._identity(url)
         state = JobHistoryState(state)
+        identities = self.aliases.identity_hashes(url)
         with self._connect() as connection:
-            previous = connection.execute(
-                "SELECT state FROM job_history WHERE identity_hash = ?", (identity,)
-            ).fetchone()
-            if previous and previous[0] == JobHistoryState.APPLIED_SELF_REPORTED.value:
-                if state is JobHistoryState.DISMISSED:
-                    raise ValueError("clear the self-reported application before dismissing")
+            prior = connection.execute(
+                "SELECT state FROM job_history WHERE identity_hash IN ("
+                + ",".join("?" for _ in identities) + ")", identities,
+            ).fetchall()
+            if state is JobHistoryState.DISMISSED and any(
+                row[0] == JobHistoryState.APPLIED_SELF_REPORTED.value
+                for row in prior
+            ):
+                raise ValueError("clear the self-reported application before dismissing")
             connection.execute(
                 "INSERT INTO job_history (identity_hash, state, recorded_at) "
                 "VALUES (?, ?, ?) "
@@ -87,10 +100,12 @@ class PrivateJobHistory:
         return state
 
     def clear(self, url: str) -> None:
-        identity = self._identity(url)
+        self._identity(url)
+        identities = self.aliases.identity_hashes(url)
         if not self.path.exists():
             return
         with self._connect() as connection:
             connection.execute(
-                "DELETE FROM job_history WHERE identity_hash = ?", (identity,)
+                "DELETE FROM job_history WHERE identity_hash IN ("
+                + ",".join("?" for _ in identities) + ")", identities,
             )
