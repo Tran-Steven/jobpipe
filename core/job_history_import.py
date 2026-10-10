@@ -24,7 +24,7 @@ _MAX_ROWS = 10_000
 _COLUMNS = frozenset({"job_url", "status"})
 _HASH_COLUMNS = frozenset({"identity_hash", "status"})
 _OPTIONAL_COLUMNS = frozenset({"source", "company", "title", "recorded_at"})
-_HASH_PATTERN = re.compile(r"[a-f0-9]{64}\\Z")
+_HASH_PATTERN = re.compile(r"[a-f0-9]{64}")
 _STATUS = {
     "APPLIED": JobHistoryState.APPLIED_SELF_REPORTED,
     "APPLIED_SELF_REPORTED": JobHistoryState.APPLIED_SELF_REPORTED,
