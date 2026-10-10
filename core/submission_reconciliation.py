@@ -20,6 +20,13 @@ from .job_history import JobHistoryState, PrivateJobHistory
 from .private_home import PrivateHome
 
 
+class ReviewAction(StrEnum):
+    EVIDENCE_REQUESTED = "EVIDENCE_REQUESTED"
+    AWAITING_EMPLOYER = "AWAITING_EMPLOYER"
+    ESCALATED = "ESCALATED"
+    NO_CONFIRMATION_FOUND = "NO_CONFIRMATION_FOUND"
+
+
 class ReconciliationStatus(StrEnum):
     NEVER_SUBMITTED = "NEVER_SUBMITTED"
     MANUALLY_REPORTED = "MANUALLY_REPORTED"
@@ -95,4 +102,55 @@ def inspect_submission(
     return result
 
 
-__all__ = ["ReconciliationStatus", "inspect_submission"]
+def record_submission_review(
+    url: str,
+    *,
+    action: ReviewAction,
+    home: PrivateHome | None = None,
+) -> dict[str, Any]:
+    """Append a coded review note; never modify submission state or evidence.
+
+    This is a human-review audit entry, NOT a verification or retry permit.
+    """
+    root = home or PrivateHome.discover()
+    PrivateJobHistory._identity(url)
+    action = ReviewAction(action)
+    path = root.paths.event_ledger
+    if path.is_symlink() or not path.is_file():
+        raise ValueError("an existing private submission ledger is required")
+    ledger = EventLedger(path)
+    hashed = _job_url_hash_candidates(url)
+    placeholders = ", ".join("?" for _ in hashed)
+    # Check and append under one transaction. Verification racing this review
+    # cannot cause an apparent new unresolved case after it was verified.
+    with ledger.transaction() as connection:
+        row = connection.execute(
+            f"SELECT * FROM submission_intents "
+            f"WHERE application_key IN ({placeholders}) "
+            f"AND status IN ('PENDING','SUBMITTING','UNKNOWN') "
+            f"ORDER BY created_at DESC, intent_id DESC LIMIT 1",
+            hashed,
+        ).fetchone()
+        if row is None:
+            raise ValueError("no unresolved submission intent exists for this job")
+        intent = EventLedger._intent_from_row(row)
+        record = ledger._insert_event(
+            connection,
+            run_id=intent.run_id,
+            job_id=intent.job_id,
+            event_type="SUBMISSION_REVIEW_NOTE",
+            payload={"intent_id": intent.intent_id, "review_action": action.value},
+        )
+    return {
+        "review_event_id": record.event_id,
+        "review_action": action.value,
+        "intent_id": intent.intent_id,
+        "submission_status": intent.status.value,
+        "prior_submission_blocks_retry": True,
+    }
+
+
+__all__ = [
+    "ReconciliationStatus", "ReviewAction",
+    "inspect_submission", "record_submission_review",
+]
