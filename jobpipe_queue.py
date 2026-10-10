@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Any
 
 from core.company_filters import CompanyTreatment, company_treatment
+from core.event_ledger import hash_job_url
+from core.job_history import PrivateJobHistory
 from core.private_home import PrivateHome
 from utils.tracker import get_all_jobs
 from utils.url_resolver import is_aggregator_url
@@ -61,11 +63,30 @@ def _role_key(company: str, title: str) -> tuple[str, str]:
 def enqueue_matched(csv_path: str = "", limit: int = 0) -> dict[str, Any]:
     home = PrivateHome.discover()
     paths = home.ensure()
+    history = PrivateJobHistory(home)
     target = Path(csv_path).expanduser().resolve() if csv_path else paths.job_queue
     target.parent.mkdir(parents=True, exist_ok=True)
 
-    jobs, _ = get_all_jobs(status="matched", sort_by="match_score", sort_order="desc", limit=limit or 10000)
-    current = {}
+    preserved: list[dict[str, str]] = []
+    protected_identities: set[str] = set()
+    if target.is_file() and target.stat().st_size:
+        with target.open(newline="", encoding="utf-8-sig") as handle:
+            reader = csv.DictReader(handle)
+            for row in reader:
+                if row.get("status", "").strip().casefold() == "pending":
+                    continue
+                preserved.append(dict(row))
+                url = str(row.get("job_url") or "").strip()
+                if url:
+                    protected_identities.add(hash_job_url(url))
+
+    jobs, _ = get_all_jobs(
+        status="matched",
+        sort_by="match_score",
+        sort_order="desc",
+        limit=limit or 10000,
+    )
+    current: dict[str, dict[str, str]] = {}
     for job in jobs:
         company = str(job.get("company") or "").strip()
         title = str(job.get("title") or "").strip()
@@ -74,7 +95,9 @@ def enqueue_matched(csv_path: str = "", limit: int = 0) -> dict[str, Any]:
             continue
         if company_treatment(company) is CompanyTreatment.BLOCK:
             continue
-        key = _role_key(company, title)
+        identity = hash_job_url(url)
+        if identity in protected_identities or history.state_for(url) is not None:
+            continue
         score = int(job.get("match_score") or 0)
         candidate = {
             "company": company,
@@ -87,19 +110,9 @@ def enqueue_matched(csv_path: str = "", limit: int = 0) -> dict[str, Any]:
             "match_score": str(score),
             "notes": str(job.get("reasoning") or ""),
         }
-        previous = current.get(key)
+        previous = current.get(identity)
         if previous is None or score > int(previous.get("match_score") or 0):
-            current[key] = candidate
-
-    preserved: list[dict[str, str]] = []
-    if target.is_file() and target.stat().st_size:
-        with target.open(newline="", encoding="utf-8-sig") as handle:
-            reader = csv.DictReader(handle)
-            for row in reader:
-                if company_treatment(str(row.get("company") or "")) is CompanyTreatment.BLOCK:
-                    continue
-                if row.get("status", "").strip().casefold() != "pending":
-                    preserved.append(dict(row))
+            current[identity] = candidate
 
     rows = preserved + list(current.values())
     with target.open("w", newline="", encoding="utf-8") as handle:
