@@ -27,7 +27,17 @@ def test_user_profile_can_add_explicit_blocks_without_substring_collisions() -> 
     assert company_treatment("example incorporated", additional_blocked=blocked) is CompanyTreatment.ALLOW
 
 
-def test_legacy_discovery_filters_exclusions_before_limit() -> None:
+def test_legacy_discovery_filters_exclusions_before_limit(monkeypatch) -> None:
+    import utils.discovery as discovery_module
+    from core.company_preferences import CompanyPreferences, effective_company_treatment
+
+    monkeypatch.setattr(
+        discovery_module,
+        "effective_company_treatment",
+        lambda company, **kwargs: effective_company_treatment(
+            company, preferences=CompanyPreferences(enabled=True), **kwargs
+        ),
+    )
     jobs = [
         Job("1", "Engineer", "TCS", "LA", "https://example.org/1", "https://example.org/1", "greenhouse"),
         Job("2", "Engineer", "Apex Systems", "LA", "https://example.org/2", "https://example.org/2", "greenhouse"),
