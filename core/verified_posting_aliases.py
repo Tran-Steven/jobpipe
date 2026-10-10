@@ -9,6 +9,7 @@ Private Home is the ownership boundary, like the existing job-history ledger.
 from __future__ import annotations
 
 import os
+import re
 import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timezone
@@ -113,6 +114,34 @@ class VerifiedPostingAliases:
             candidates.add(source_hash)
             candidates.add(employer_hash)
         return tuple(sorted(candidates))
+
+    def resolve_hash(self, identity_hash: str) -> tuple[str, tuple[str, ...]]:
+        """Resolve one validated posting hash to its verified employer group.
+
+        Used by privacy-preserving CSV imports where raw URLs have already
+        been discarded. The employer's hash is the durable group key; an
+        unrecognized posting remains its own group. Never mutate on read.
+        """
+        if not isinstance(identity_hash, str) or re.fullmatch(
+            r"[0-9a-f]{64}", identity_hash
+        ) is None:
+            raise ValueError("posting identity must be a SHA-256 hex digest")
+        path = self.path
+        if path.is_symlink():
+            raise ValueError("posting alias database cannot be a symlink")
+        if not path.is_file():
+            return identity_hash, (identity_hash,)
+        with sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True) as db:
+            original = db.execute(
+                "SELECT employer_hash FROM verified_aliases WHERE source_hash = ?",
+                (identity_hash,),
+            ).fetchone()
+            employer = original[0] if original is not None else identity_hash
+            rows = db.execute(
+                "SELECT source_hash FROM verified_aliases WHERE employer_hash = ?",
+                (employer,),
+            ).fetchall()
+        return employer, tuple(sorted({identity_hash, employer, *(r[0] for r in rows)}))
 
     def record_verified(
         self,
