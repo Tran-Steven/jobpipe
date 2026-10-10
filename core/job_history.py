@@ -64,7 +64,11 @@ class PrivateJobHistory:
         identities = self.aliases.identity_hashes(url)
         if not self.path.exists():
             return None
-        with self._connect() as connection:
+        if self.path.is_symlink():
+            raise ValueError("job history database cannot be a symlink")
+        with sqlite3.connect(
+            self.path.resolve().as_uri() + "?mode=ro", uri=True, timeout=5
+        ) as connection:
             rows = connection.execute(
                 "SELECT state FROM job_history WHERE identity_hash IN ("
                 + ",".join("?" for _ in identities) + ")", identities,
