@@ -23,7 +23,8 @@ from auth import (
 )
 from auth.credentials import CredentialStore, MacOSSecurityCredentialStore
 from core.application_engine import JobApplicationEngine
-from core.company_filters import CompanyTreatment, company_treatment
+from core.company_filters import CompanyTreatment
+from core.company_preferences import effective_company_treatment, PrivateCompanyPreferences
 from core.job_history import JobHistoryState, PrivateJobHistory
 from core.browser_broker import lease_browser_session
 from core.bundles import (
@@ -632,7 +633,7 @@ async def cmd_apply_csv(args: argparse.Namespace) -> int:
     history = PrivateJobHistory(home)
     queue = [
         item for item in queue
-        if company_treatment(getattr(item, "company", "")) is not CompanyTreatment.BLOCK
+        if effective_company_treatment(getattr(item, "company", "")) is not CompanyTreatment.BLOCK
         and (
             not getattr(item, "url", "")
             or history.state_for(item.url) is None
