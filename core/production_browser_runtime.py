@@ -366,6 +366,7 @@ class ProductionBrowserLeaseProvider:
                 context = runtime.context
                 held = runtime._suspended
                 if held is not None and runtime._monotonic() >= held.expires_at:
+                    runtime._cancel_suspension_expiry()
                     runtime._suspended = None
                     try:
                         await held.page.close()
@@ -389,6 +390,7 @@ class ProductionBrowserLeaseProvider:
                             BrowserRuntimeFailure.SESSION_RESUME_REJECTED
                         )
                     page = held.page
+                    runtime._cancel_suspension_expiry()
                     runtime._suspended = None
                     baseline = set(context.pages)
                 else:
@@ -422,13 +424,20 @@ class ProductionBrowserLeaseProvider:
                             BrowserRuntimeFailure.SESSION_RESUME_REJECTED
                         )
                     capability = secrets.token_urlsafe(32)
-                    runtime._suspended = _SuspendedPage(
+                    held_page = _SuspendedPage(
                         page=page,
                         owner=owner,
                         capability_digest=hashlib.sha256(
                             capability.encode("utf-8")
                         ).hexdigest(),
                         expires_at=runtime._monotonic() + ttl_seconds,
+                    )
+                    runtime._suspended = held_page
+                    runtime._suspend_timer = asyncio.get_running_loop().call_later(
+                        ttl_seconds,
+                        lambda: asyncio.create_task(
+                            runtime._expire_suspended_page(held_page)
+                        ),
                     )
                     return capability
                 try:
@@ -460,6 +469,7 @@ class ProductionBrowserLeaseProvider:
                         runtime._suspended is not None
                         and runtime._suspended.page is page
                     ):
+                        runtime._cancel_suspension_expiry()
                         runtime._suspended = None
                     # Resumed pages were part of baseline; they still need
                     # closing unless explicitly parked again. Popups opened by
@@ -517,10 +527,28 @@ class ProductionBrowserRuntime:
         self._idle.set()
         self._cleanup_failures = 0
         self._suspended: _SuspendedPage | None = None
+        self._suspend_timer: asyncio.TimerHandle | None = None
         self._monotonic: Callable[[], float] = time.monotonic
 
     def lease_provider(self) -> ProductionBrowserLeaseProvider:
         return self._provider
+
+    def _cancel_suspension_expiry(self) -> None:
+        timer = self._suspend_timer
+        self._suspend_timer = None
+        if timer is not None:
+            timer.cancel()
+
+    async def _expire_suspended_page(self, held: _SuspendedPage) -> None:
+        """Expire the parked page even when no subsequent browser lease arrives."""
+        if self._suspended is not held or self._monotonic() < held.expires_at:
+            return
+        self._suspend_timer = None
+        self._suspended = None
+        try:
+            await held.page.close()
+        except Exception:
+            self._cleanup_failures += 1
 
     @property
     def diagnostics(self) -> BrowserRuntimeDiagnostics:
@@ -583,6 +611,7 @@ class ProductionBrowserRuntime:
 
     async def _close_resources(self) -> None:
         context, playwright = self.context, self._playwright
+        self._cancel_suspension_expiry()
         self._suspended = None
         self.context = None
         self._playwright = None
