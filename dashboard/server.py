@@ -257,6 +257,10 @@ def configure_production_automation_ui(
         for controller, expected in optional_controllers
     ):
         raise TypeError("dashboard read controller is invalid")
+    if company_preferences_home is not None and not isinstance(
+        company_preferences_home, PrivateHome
+    ):
+        raise TypeError("company preferences home is invalid")
     application.state.job_library_refresh_controller = refresh_controller
     application.state.automation_cycle_controller = automation_controller
     application.state.authenticated_subject_dependency = authenticated_subject
@@ -273,10 +277,6 @@ def configure_production_automation_ui(
     application.state.dashboard_overview_controller = (
         dashboard_overview_controller
     )
-    if company_preferences_home is not None and not isinstance(
-        company_preferences_home, PrivateHome
-    ):
-        raise TypeError("company preferences home is invalid")
     application.state.company_preferences_home = company_preferences_home
     application.state.production_owned_resources = owned_resources
     application.state.production_composition_diagnostics = dict(
