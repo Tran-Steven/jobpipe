@@ -12,12 +12,14 @@ from urllib.parse import urlsplit
 class SourcePlatform(str, Enum):
     GREENHOUSE = "GREENHOUSE"
     LEVER = "LEVER"
+    ASHBY = "ASHBY"
     GENERIC_WEB = "GENERIC_WEB"
 
 
 class AtsType(str, Enum):
     GREENHOUSE = "GREENHOUSE"
     LEVER = "LEVER"
+    ASHBY = "ASHBY"
     UNKNOWN = "UNKNOWN"
 
 
