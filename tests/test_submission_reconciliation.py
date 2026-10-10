@@ -134,3 +134,88 @@ def test_submission_status_cli_is_read_only_and_explicit(
     result = json.loads(capsys.readouterr().out)
     assert result["status"] == ReconciliationStatus.NEVER_SUBMITTED.value
     assert not home.paths.event_ledger.exists()
+
+
+def test_human_review_note_is_append_only_and_never_unblocks_unknown(
+    tmp_path: Path,
+) -> None:
+    from core.submission_reconciliation import ReviewAction, record_submission_review
+
+    home = PrivateHome(tmp_path / "private")
+    home.ensure()
+    ledger = EventLedger(home.paths.event_ledger)
+    intent_id = _intent(ledger)
+    ledger.mark_submission_started(intent_id)
+    ledger.mark_submission_unknown(intent_id)
+    before = ledger.get_submission_intent(intent_id)
+    record = record_submission_review(
+        ALIAS, action=ReviewAction.NO_CONFIRMATION_FOUND, home=home
+    )
+    assert record["intent_id"] == intent_id
+    assert record["prior_submission_blocks_retry"] is True
+    assert ledger.get_submission_intent(intent_id) == before
+    assert ledger.list_submission_evidence(intent_id) == []
+    events = ledger.list_events(run_id="run-audit-1")
+    assert events[-1].event_type == "SUBMISSION_REVIEW_NOTE"
+    assert events[-1].payload == {
+        "intent_id": intent_id,
+        "review_action": ReviewAction.NO_CONFIRMATION_FOUND.value,
+    }
+    report = inspect_submission(URL, home=home)
+    assert report["status"] == ReconciliationStatus.UNRESOLVED.value
+    assert report["prior_submission_blocks_retry"] is True
+    assert len(report["review_actions"]) == 1
+    assert report["review_actions"][0]["action"] == "NO_CONFIRMATION_FOUND"
+
+
+def test_review_note_rejects_never_submitted_or_verified_without_mutation(
+    tmp_path: Path,
+) -> None:
+    from core.submission_reconciliation import ReviewAction, record_submission_review
+
+    home = PrivateHome(tmp_path / "private")
+    with pytest.raises(ValueError, match="existing private"):
+        record_submission_review(URL, action=ReviewAction.ESCALATED, home=home)
+    assert not home.paths.event_ledger.exists()
+    home.ensure()
+    ledger = EventLedger(home.paths.event_ledger)
+    intent_id = _intent(ledger)
+    ledger.mark_submission_started(intent_id)
+    ledger.mark_submission_verified(
+        intent_id=intent_id,
+        evidence=EvidenceRef(kind=EvidenceKind.CONFIRMATION_TEXT, sha256="b" * 64),
+    )
+    before = ledger.list_events(run_id="run-audit-1")
+    with pytest.raises(ValueError, match="no unresolved"):
+        record_submission_review(ALIAS, action=ReviewAction.ESCALATED, home=home)
+    with pytest.raises(ValueError):
+        record_submission_review(ALIAS, action="MARK_VERIFIED", home=home)
+    assert ledger.list_events(run_id="run-audit-1") == before
+
+
+def test_review_cli_requires_known_action(tmp_path: Path, capsys) -> None:
+    from argparse import Namespace
+    from jobctl import build_parser, cmd_submission_review
+
+    url = URL
+    args = build_parser().parse_args([
+        "submission-review", "--url", url, "--action", "EVIDENCE_REQUESTED"
+    ])
+    assert args.action == "EVIDENCE_REQUESTED"
+    with pytest.raises(SystemExit):
+        build_parser().parse_args([
+            "submission-review", "--url", url, "--action", "MARK_VERIFIED"
+        ])
+    home = PrivateHome(tmp_path / "private")
+    home.ensure()
+    ledger = EventLedger(home.paths.event_ledger)
+    intent_id = _intent(ledger)
+    ledger.mark_submission_started(intent_id)
+    ledger.mark_submission_unknown(intent_id)
+    assert cmd_submission_review(Namespace(
+        home=str(home.root), url=url, action=args.action
+    )) == 0
+    output = json.loads(capsys.readouterr().out)
+    assert output["intent_id"] == intent_id
+    assert output["submission_status"] == "UNKNOWN"
+    assert output["review_action"] == "EVIDENCE_REQUESTED"
