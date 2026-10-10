@@ -786,7 +786,17 @@ def test_runnable_read_model_imports_no_write_or_execution_layers() -> None:
     )
 
 
-def test_explicit_company_block_overrides_runnable_priority() -> None:
+def test_explicit_company_block_overrides_runnable_priority(monkeypatch) -> None:
+    from core.company_preferences import CompanyPreferences, effective_company_treatment
+    import core.runnable_application_queue as target_module
+
+    monkeypatch.setattr(
+        target_module,
+        "effective_company_treatment",
+        lambda company, **kwargs: effective_company_treatment(
+            company, preferences=CompanyPreferences(enabled=True), **kwargs
+        ),
+    )
     from core.runnable_application_queue import _classify
 
     policy = _policy()
