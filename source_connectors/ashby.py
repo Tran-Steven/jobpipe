@@ -21,7 +21,10 @@ from .contract import (
 )
 from .greenhouse import _plain_text, _normalize_source_timestamp, _rfc3339
 
-_PATH = re.compile(r"/(?P<board>[a-zA-Z0-9_-]{1,128})/(?P<job>[a-zA-Z0-9_-]{1,128})/?")
+_PATH = re.compile(
+    r"/(?P<board>[a-zA-Z0-9_-]{1,128})/(?P<job>[a-zA-Z0-9_-]{1,128})"
+    r"(?:/(?:application|apply))?/?"
+)
 _MAX_BYTES = 2_000_000
 _MAX_POSTINGS = 5000
 
