@@ -87,20 +87,15 @@ def _observation(
     if apply_url is not None:
         if not isinstance(apply_url, str):
             raise ValueError("Ashby applyUrl is invalid")
-        try:
-            parsed_apply = urlsplit(apply_url)
-            if (
-                parsed_apply.scheme.casefold() != "https"
-                or (parsed_apply.hostname or "").casefold() not in {
-                    "jobs.ashbyhq.com", "jobs.eu.ashbyhq.com"
-                }
-                or parsed_apply.username is not None
-                or parsed_apply.password is not None
-                or parsed_apply.port is not None
-            ):
-                raise ValueError("Ashby applyUrl is not hosted")
-        except ValueError as exc:
-            raise ValueError("Ashby applyUrl is invalid") from exc
+        parsed_apply = _parse_public_job_url(apply_url)
+        if (
+            isinstance(parsed_apply, ReadJobResult)
+            or not apply_url.startswith("https://")
+            or parsed_apply[1].casefold() != board.casefold()
+            or parsed_apply[2] != job
+            or parsed_apply[0].split("/")[2] != parsed[0].split("/")[2]
+        ):
+            raise ValueError("Ashby applyUrl does not target the same hosted posting")
     published = _normalize_source_timestamp(entry.get("publishedAt"))
     fields = (
         ("source_platform", ProvenanceSource.SYSTEM, "reader"),
