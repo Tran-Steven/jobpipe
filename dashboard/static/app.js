@@ -30,6 +30,7 @@ const labels = {
     HIGH_MATCH: "High match",
     READY_TO_PREPARE: "Ready to prepare",
     NEEDS_INPUT: "Needs input",
+    REVIEW_REQUIRED: "Safety review needed",
     NOT_A_MATCH: "Not a match",
     APPLICATION_CREATED: "Application created",
     SYSTEM_ISSUE: "System issue",
@@ -148,7 +149,7 @@ function failureState(title = "This section could not be loaded") {
 }
 function pill(status, text) {
   const tone = ["SUBMITTED", "READY", "READY_TO_PREPARE"].includes(status) ? "success"
-    : ["NEEDS_ATTENTION", "NEEDS_INPUT", "SUBMISSION_UNCERTAIN"].includes(status) ? "warning"
+    : ["NEEDS_ATTENTION", "NEEDS_INPUT", "REVIEW_REQUIRED", "SUBMISSION_UNCERTAIN"].includes(status) ? "warning"
     : status === "SYSTEM_ISSUE" ? "danger" : "neutral";
   return `<span class="status-pill ${tone}">${escapeHtml(text)}</span>`;
 }
