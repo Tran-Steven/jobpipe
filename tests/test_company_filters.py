@@ -29,9 +29,9 @@ def test_user_profile_can_add_explicit_blocks_without_substring_collisions() -> 
 
 def test_legacy_discovery_filters_exclusions_before_limit() -> None:
     jobs = [
-        Job("1", "Engineer", "TCS", "LA", "https://example.org/1", "https://example.org/1"),
-        Job("2", "Engineer", "Apex Systems", "LA", "https://example.org/2", "https://example.org/2"),
-        Job("3", "Engineer", "Example Inc", "LA", "https://example.org/3", "https://example.org/3"),
+        Job("1", "Engineer", "TCS", "LA", "https://example.org/1", "https://example.org/1", "greenhouse"),
+        Job("2", "Engineer", "Apex Systems", "LA", "https://example.org/2", "https://example.org/2", "greenhouse"),
+        Job("3", "Engineer", "Example Inc", "LA", "https://example.org/3", "https://example.org/3", "greenhouse"),
     ]
     profile = {"preferences": {"exclude_companies": ["Example Inc"]}}
     assert [job.company for job in filter_company_jobs(jobs, profile)] == ["Apex Systems"]
