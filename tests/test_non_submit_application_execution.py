@@ -293,6 +293,72 @@ async def test_runtime_required_sensitive_input_defers_and_records_controls(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "handoff_status",
+    [
+        OutcomeStatus.NEEDS_USER_CAPTCHA,
+        OutcomeStatus.NEEDS_USER_2FA,
+        OutcomeStatus.NEEDS_USER_SENSITIVE_ANSWER,
+    ],
+)
+async def test_replayed_human_checkpoint_remains_deferred_without_relaunch(
+    tmp_path: Path, handoff_status: OutcomeStatus,
+) -> None:
+    """A pre-existing human block cannot become UNCHANGED/Review by replay."""
+    parts, assembled, repository = _setup(tmp_path)
+    bundle = assembled.bundle
+    outcome = ApplicationOutcome.needs_user(
+        run_id=bundle.run_id,
+        job_id=bundle.job.job_id,
+        status=handoff_status,
+        phase=OutcomePhase.VALIDATE,
+        reason_code=ReasonCode.SENSITIVE_ANSWER_REQUIRED,
+        message="synthetic human challenge remains unresolved",
+        adapter="synthetic",
+        checkpoint="synthetic-attended-handoff",
+        details={"review": {"unresolved_required": ["user intervention"]}},
+    )
+    first, first_engine, first_browser = await _execute(
+        parts, assembled, repository, engine=_Engine(outcome),
+    )
+    assert first.status is (
+        NonSubmitApplicationExecutionStatus.DEFERRED_RUNTIME_INPUT_REQUIRED
+    )
+    assert first.record is not None
+    assert first_browser.calls == 1
+    assert len(first_engine.calls) == 1
+    second_engine = _Engine()
+    second_browser = _BrowserProvider()
+    second, _, _ = await _execute(
+        parts, assembled, repository,
+        engine=second_engine, browser=second_browser,
+    )
+    assert second.status is (
+        NonSubmitApplicationExecutionStatus.DEFERRED_RUNTIME_INPUT_REQUIRED
+    )
+    assert second.record == first.record
+    assert second.record.execution_state is (
+        NonSubmitExecutionRecordState.RUNTIME_INPUT_REQUIRED
+    )
+    assert second.outcome_status == handoff_status.value
+    assert "exact browser-session handoff" in second.message
+    assert second_browser.calls == 0
+    assert second_engine.calls == []
+    assert second.retryable is False
+
+    # Even a restarted repository cannot silently clear the blocker.
+    restarted = PrivateHomeNonSubmitApplicationExecutionRepository(parts["home"])
+    again, _, browser = await _execute(
+        parts, assembled, restarted,
+        engine=_Engine(), browser=_BrowserProvider(),
+    )
+    assert again.status is (
+        NonSubmitApplicationExecutionStatus.DEFERRED_RUNTIME_INPUT_REQUIRED
+    )
+    assert browser.calls == 0
+
+
+@pytest.mark.asyncio
 async def test_submission_evidence_from_engine_fails_closed(
     tmp_path: Path,
 ) -> None:
