@@ -11,6 +11,7 @@ from typing import Any
 from .company_filters import CompanyTreatment
 from .company_preferences import effective_company_treatment
 from .private_home import PrivateHome
+from .job_history import JobHistoryState, PrivateJobHistory
 from .job_quality import assess_job_quality
 from .accepted_job_intent import (
     AcceptedJobIntent,
@@ -64,6 +65,8 @@ class RunnableApplicationStatus(str, Enum):
     BLOCKED_EXCLUDED = "BLOCKED_EXCLUDED"
     BLOCKED_COMPANY = "BLOCKED_COMPANY"
     BLOCKED_QUALITY_REVIEW = "BLOCKED_QUALITY_REVIEW"
+    BLOCKED_PREVIOUSLY_APPLIED = "BLOCKED_PREVIOUSLY_APPLIED"
+    BLOCKED_DISMISSED = "BLOCKED_DISMISSED"
     BLOCKED_PRIORITY = "BLOCKED_PRIORITY"
     BLOCKED_PROMOTION_REQUIRED = "BLOCKED_PROMOTION_REQUIRED"
     BLOCKED_JOB_STATE = "BLOCKED_JOB_STATE"
@@ -76,6 +79,8 @@ class RunnableApplicationReason(str, Enum):
     PRIORITY_EXCLUDED = "PRIORITY_EXCLUDED"
     COMPANY_BLOCKED = "COMPANY_BLOCKED"
     QUALITY_REVIEW_REQUIRED = "QUALITY_REVIEW_REQUIRED"
+    PREVIOUSLY_APPLIED = "PREVIOUSLY_APPLIED"
+    DISMISSED_BY_USER = "DISMISSED_BY_USER"
     PRIORITY_NOT_ADMITTED = "PRIORITY_NOT_ADMITTED"
     EXPLICIT_PROMOTION_REQUIRED = "EXPLICIT_PROMOTION_REQUIRED"
     JOB_STATE_UNAVAILABLE = "JOB_STATE_UNAVAILABLE"
@@ -112,6 +117,12 @@ _STATUS_REASON = {
     ),
     RunnableApplicationStatus.BLOCKED_QUALITY_REVIEW: (
         RunnableApplicationReason.QUALITY_REVIEW_REQUIRED
+    ),
+    RunnableApplicationStatus.BLOCKED_PREVIOUSLY_APPLIED: (
+        RunnableApplicationReason.PREVIOUSLY_APPLIED
+    ),
+    RunnableApplicationStatus.BLOCKED_DISMISSED: (
+        RunnableApplicationReason.DISMISSED_BY_USER
     ),
     RunnableApplicationStatus.BLOCKED_PRIORITY: (
         RunnableApplicationReason.PRIORITY_NOT_ADMITTED
@@ -361,6 +372,24 @@ def _classify(
             status=RunnableApplicationStatus.BLOCKED_COMPANY,
             decision=decision,
             intent=intent,
+        )
+    history = PrivateJobHistory(preferences_home)
+    previous_marks = tuple(
+        history.state_for(url)
+        for url in (job.source_url, job.application_url)
+        if url
+    )
+    if JobHistoryState.APPLIED_SELF_REPORTED in previous_marks:
+        return _blocked(
+            subject_id=subject_id, job=job, queue_status=queue_status,
+            status=RunnableApplicationStatus.BLOCKED_PREVIOUSLY_APPLIED,
+            decision=decision, intent=intent,
+        )
+    if JobHistoryState.DISMISSED in previous_marks:
+        return _blocked(
+            subject_id=subject_id, job=job, queue_status=queue_status,
+            status=RunnableApplicationStatus.BLOCKED_DISMISSED,
+            decision=decision, intent=intent,
         )
     if assess_job_quality(job.title, job.description).requires_review:
         return _blocked(
