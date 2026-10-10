@@ -96,3 +96,33 @@ def assess_job_quality(title: str, description: str) -> QualityAssessment:
     if low:
         return QualityAssessment(QualityDisposition.DEPRIORITIZE, low)
     return QualityAssessment(QualityDisposition.PASS, ())
+
+
+# Evidence codes are deterministic, but pattern matches are not a verdict about
+# the employer. Do not output matched posting text, phone/email addresses or a
+# categorical accusation in the dashboard. Every label is a review prompt.
+_QUALITY_SIGNAL_EXPLANATIONS = {
+    "candidate_payment_request": "Review required: posting appears to ask candidates for upfront payment or purchases.",
+    "application_fee": "Review required: posting appears to mention an application or registration fee.",
+    "off_platform_messaging_interview": "Review required: interview instructions appear to direct applicants to an external messaging app.",
+    "upfront_sensitive_identity_request": "Review required: posting appears to request sensitive financial or identity details unusually early.",
+    "training_repayment_terms": "Review required: posting appears to include training repayment or bond terms.",
+    "undisclosed_end_client": "Lower-priority signal: recruiting intermediary does not identify the end client.",
+    "unusually_high_no_experience_claim": "Lower-priority signal: posting advertises unusually high hourly compensation without experience.",
+}
+
+
+def quality_signal_explanations(assessment: QualityAssessment) -> tuple[str, ...]:
+    """Stable, sanitized UI explanations for deterministic quality codes.
+
+    Unknown codes fail closed to generic review wording rather than exposing
+    raw text or silently discarding a new detection reason.
+    """
+    if not isinstance(assessment, QualityAssessment):
+        raise TypeError("quality assessment required")
+    return tuple(
+        _QUALITY_SIGNAL_EXPLANATIONS.get(
+            code, "Review required: an unrecognized posting quality signal was found."
+        )
+        for code in assessment.signals
+    )

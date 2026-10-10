@@ -38,6 +38,7 @@ from .human_attention_queue import (
     HumanAttentionQueueStatus,
 )
 from .job_prioritization import PriorityQualification
+from .job_quality import assess_job_quality, quality_signal_explanations
 from .runnable_application_queue import (
     RunnableApplicationQueueCommand,
     RunnableApplicationQueueStatus,
@@ -599,7 +600,14 @@ class DashboardJobsReader:
             elif source.runnable_status is RunnableApplicationStatus.BLOCKED_COMPANY:
                 reasons = ("Blocked by your company preferences",)
             elif source.runnable_status is RunnableApplicationStatus.BLOCKED_QUALITY_REVIEW:
-                reasons = ("Posting requires additional safety review",)
+                assessment = assess_job_quality(
+                    source.job.title, source.job.description
+                )
+                reasons = (
+                    quality_signal_explanations(assessment)
+                    if assessment.requires_review
+                    else ("Posting requires additional safety review",)
+                )
             item = DashboardJobItem(
                 job_id=source.job.job_id,
                 title=source.job.title,

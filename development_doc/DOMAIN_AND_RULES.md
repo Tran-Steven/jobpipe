@@ -2081,3 +2081,11 @@ The hash-only backup still exposes **private application history**. SHA-256
 URL hashes are not guaranteed anonymous against someone who knows candidate
 URLs; keep exports local and secret, never commit them to Git or upload them
 as diagnostics. Imported self-reported marks are not verified ATS receipts.
+
+### Verified answer collision safety and quality explanations
+
+- Reusable ATS answers must have explicit human verification, an active non-withdrawn/non-expired record, exact normalized question wording and either explicit global scope or exact employer scope. This reuse is only a **human-review candidate**; it does not authorize autofill, Review approval or submission.
+- If several active verified records match a given question and employer but disagree on the answer, including across global and employer scope, no candidate is selected. The browser/review UI must require a person to resolve the discrepancy instead of trusting record ordering.
+- For identical values, employer-specific provenance is preferred over global; unverified, revoked, withdrawn, malformed and expired records are ignored. Answer values remain in the private bank and never enter public review-match responses.
+- The bank must be a bounded v1 JSON document, reject malformed top-level schemas, directories and symlink files/directories, and write replacement files atomically with owner-only `0600` permissions. A successful write is not approval to submit.
+- Quality-review evidence is shown as deterministic, sanitized signal explanations (candidate payment requests, fees, suspiciously early identity requests, off-platform messaging and training repayment language) and is **not** a declaration that a company is fraudulent. Do not echo raw posting excerpts or inferred applicant data into the UI. A quality-review block remains a block; explaining it does not bypass any guard.
