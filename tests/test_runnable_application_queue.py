@@ -64,6 +64,7 @@ from core.prioritization_policy import (
 from core.runnable_application_queue import (
     RunnableApplicationQueueCommand,
     RunnableApplicationQueueReason,
+    RunnableApplicationReason,
     RunnableApplicationQueueStatus,
     RunnableApplicationStatus,
     build_runnable_application_queue,
@@ -799,4 +800,4 @@ def test_explicit_company_block_overrides_runnable_priority() -> None:
         admission=policy.preparation_admission,
     )
     assert result.runnable_status is RunnableApplicationStatus.BLOCKED_COMPANY
-    assert result.reasons == (RunnableApplicationQueueReason.COMPANY_BLOCKED,)
+    assert result.reasons == (RunnableApplicationReason.COMPANY_BLOCKED,)
