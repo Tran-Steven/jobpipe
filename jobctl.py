@@ -27,7 +27,9 @@ from core.company_filters import CompanyTreatment
 from core.company_preferences import effective_company_treatment, PrivateCompanyPreferences
 from core.job_history import JobHistoryState, PrivateJobHistory
 from core.job_history_import import import_job_history_csv
-from core.submission_reconciliation import inspect_submission
+from core.submission_reconciliation import (
+    inspect_submission, record_submission_review, ReviewAction,
+)
 from core.browser_broker import lease_browser_session
 from core.bundles import (
     ApplicationBundle,
@@ -1033,6 +1035,19 @@ def cmd_job_history_import(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_submission_review(args: argparse.Namespace) -> int:
+    home = (
+        PrivateHome(Path(args.home).expanduser().resolve())
+        if args.home else PrivateHome.discover()
+    )
+    _json_print(
+        record_submission_review(
+            args.url, action=ReviewAction(args.action), home=home
+        )
+    )
+    return 0
+
+
 def cmd_submission_inspect(args: argparse.Namespace) -> int:
     """Report exactly what the private ledger and self-reported history prove."""
     home = (
@@ -1102,6 +1117,16 @@ def build_parser() -> argparse.ArgumentParser:
         help="Read-only submission/uncertainty audit for one posting URL",
     )
     reconciliation.add_argument("--url", required=True)
+
+    review = subparsers.add_parser(
+        "submission-review",
+        help="Append a coded human review note to an unresolved intent; never resubmit",
+    )
+    review.add_argument("--url", required=True)
+    review.add_argument(
+        "--action", required=True,
+        choices=tuple(action.value for action in ReviewAction),
+    )
 
     migrate_parser = subparsers.add_parser("migrate", help="Import an ApplyPilot workflow privately")
     migrate_parser.add_argument("workflow")
@@ -1254,6 +1279,8 @@ def main() -> int:
             return cmd_submission_inspect(args)
         if args.command == "job-history-import":
             return cmd_job_history_import(args)
+        if args.command == "submission-review":
+            return cmd_submission_review(args)
         if args.command == "migrate":
             return cmd_migrate(args)
         if args.command == "mailbox":
