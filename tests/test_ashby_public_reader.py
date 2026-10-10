@@ -124,6 +124,8 @@ async def test_employer_corrob_supports_exact_ashby_identity_not_recruiter_guess
         title="Software Engineer", application_url=URL,
     )
     assert supported_employer_identity(URL) is not None
+    assert supported_employer_identity(URL + "/application") == supported_employer_identity(URL)
+    assert supported_employer_identity(URL + "/apply") == supported_employer_identity(URL)
     assert verify_employer_observation(
         external, URL, ReadJobResult.succeeded(employer),
     ) is PostingVerification.VERIFIED
@@ -179,3 +181,15 @@ async def test_api_payload_bounds_fail_closed():
     )
     result = await reader.read_job(ReadJobRequest(URL))
     assert result.reason_code is ReadJobReason.SOURCE_RESPONSE_INVALID
+
+
+@pytest.mark.asyncio
+async def test_ashby_application_url_can_be_read_without_promoting_unknown_paths():
+    application = URL + "/application"
+    record = await _reader(_payload(_job())).read_job(ReadJobRequest(application))
+    assert record.status is ReadJobStatus.SUCCEEDED
+    assert record.observation.source_url == URL
+    assert record.observation.source_job_id == URL.rsplit("/", 1)[-1]
+    bad = _parse_public_job_url(URL + "/application/details")
+    assert isinstance(bad, ReadJobResult)
+    assert bad.reason_code is ReadJobReason.UNSUPPORTED_URL
