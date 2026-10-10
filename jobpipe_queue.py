@@ -4,6 +4,7 @@ import csv
 from pathlib import Path
 from typing import Any
 
+from core.company_filters import CompanyTreatment, company_treatment
 from core.private_home import PrivateHome
 from utils.tracker import get_all_jobs
 from utils.url_resolver import is_aggregator_url
@@ -71,6 +72,8 @@ def enqueue_matched(csv_path: str = "", limit: int = 0) -> dict[str, Any]:
         url = str(job.get("apply_url") or job.get("url") or "").strip()
         if not company or company.casefold() == "unknown" or not title or not url or not _runnable_url(url):
             continue
+        if company_treatment(company) is CompanyTreatment.BLOCK:
+            continue
         key = _role_key(company, title)
         score = int(job.get("match_score") or 0)
         candidate = {
@@ -93,6 +96,8 @@ def enqueue_matched(csv_path: str = "", limit: int = 0) -> dict[str, Any]:
         with target.open(newline="", encoding="utf-8-sig") as handle:
             reader = csv.DictReader(handle)
             for row in reader:
+                if company_treatment(str(row.get("company") or "")) is CompanyTreatment.BLOCK:
+                    continue
                 if row.get("status", "").strip().casefold() != "pending":
                     preserved.append(dict(row))
 
