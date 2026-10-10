@@ -26,6 +26,7 @@ from .company_filters import CompanyTreatment
 from .company_preferences import effective_company_treatment
 from .job_quality import assess_job_quality
 from .event_ledger import hash_job_url
+from .verified_posting_aliases import VerifiedPostingAliases
 from .posting_verification import (
     PostingVerification,
     supported_employer_identity,
@@ -1755,6 +1756,10 @@ async def refresh_job_library(
                 existing_candidate[1].append(profile.profile_id)
 
     candidate_results: list[JobCandidateRefreshResult] = []
+    alias_store = (
+        VerifiedPostingAliases(preferences_home)
+        if preferences_home is not None else None
+    )
     seen_verified_postings: set[str] = set()
     ats_read_cache: dict[str, ReadJobResult] = {}
 
@@ -1893,6 +1898,26 @@ async def refresh_job_library(
                 continue
             assert isinstance(employer_read, ReadJobResult)
             assert employer_read.observation is not None
+            if alias_store is not None:
+                try:
+                    alias_store.record_verified(
+                        source=observation,
+                        employer_url=observation.application_url,
+                        employer_read=employer_read,
+                    )
+                except (OSError, TypeError, ValueError):
+                    candidate_results.append(
+                        _stopped_candidate(
+                            profile_ids=profile_ids,
+                            candidate=candidate,
+                            candidate_url=canonical_url,
+                            reader_status=ReadJobStatus.SUCCEEDED.value,
+                            discovery_status=CandidateDiscoveryStatus.SKIPPED,
+                            reason=CandidateRefreshReason.POSTING_VERIFICATION_INCONCLUSIVE,
+                            source_reason="VERIFIED_ALIAS_PERSISTENCE_FAILED",
+                        )
+                    )
+                    continue
             observation = employer_read.observation
 
         verified_identity = (
