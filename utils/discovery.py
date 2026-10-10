@@ -12,6 +12,7 @@ from typing import Optional
 from playwright.async_api import async_playwright, Page
 
 from core.company_filters import CompanyTreatment, company_treatment
+from core.event_ledger import hash_job_url
 
 
 @dataclass
@@ -41,11 +42,20 @@ def filter_company_jobs(jobs: list, profile: dict) -> list:
 
 
 def deduplicate_jobs(jobs: list) -> list:
-    """Deduplicate jobs by (title_lower, company_lower) to avoid cross-source duplicates."""
     seen = set()
     unique = []
     for job in jobs:
-        key = (job.title.lower().strip(), job.company.lower().strip())
+        url = str(job.apply_url or job.url or "").strip()
+        try:
+            key = ("posting", hash_job_url(url)) if url else (
+                "fallback", job.company.casefold().strip(),
+                job.title.casefold().strip(), job.location.casefold().strip(),
+            )
+        except ValueError:
+            key = (
+                "fallback", job.company.casefold().strip(),
+                job.title.casefold().strip(), job.location.casefold().strip(),
+            )
         if key not in seen:
             seen.add(key)
             unique.append(job)
