@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from .contract import ReadJobReason, ReadJobRequest, ReadJobResult
+from .ashby import AshbyPublicJobReader, _parse_public_job_url as _parse_ashby_url
 from .greenhouse import (
     GreenhousePublicJobReader,
     _parse_public_job_url as _parse_greenhouse_url,
@@ -30,6 +31,12 @@ async def read_public_job(request: ReadJobRequest) -> ReadJobResult:
         return await LeverPublicJobReader().read_job(request)
     if lever.reason_code is ReadJobReason.INVALID_URL:
         return lever
+
+    ashby = _parse_ashby_url(request.url)
+    if not isinstance(ashby, ReadJobResult):
+        return await AshbyPublicJobReader().read_job(request)
+    if ashby.reason_code is ReadJobReason.INVALID_URL:
+        return ashby
 
     return await GenericJsonLdJobReader().read_job(request)
 
