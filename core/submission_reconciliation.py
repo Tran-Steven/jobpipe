@@ -7,9 +7,15 @@ Unresolved submission intents remain blocked by the application's preflight.
 from __future__ import annotations
 
 from enum import StrEnum
+import sqlite3
 from typing import Any
 
-from .event_ledger import EventLedger, SubmissionStatus, hash_job_url
+from .event_ledger import (
+    EventLedger,
+    SubmissionStatus,
+    _job_url_hash_candidates,
+    hash_job_url,
+)
 from .job_history import JobHistoryState, PrivateJobHistory
 from .private_home import PrivateHome
 
@@ -37,16 +43,27 @@ def inspect_submission(
         raise ValueError("submission ledger cannot be a symlink")
     intent = None
     if ledger_path.is_file():
-        ledger = EventLedger(ledger_path)
-        intent = ledger.find_submission_intent_for_url(
-            url,
-            statuses=(
-                SubmissionStatus.PENDING,
-                SubmissionStatus.SUBMITTING,
-                SubmissionStatus.UNKNOWN,
-                SubmissionStatus.VERIFIED,
-            ),
+        # SQLite URI mode=ro prevents creating or modifying the event ledger.
+        # This command is an inspection only, never a reconciliation mutation.
+        hashes = _job_url_hash_candidates(url)
+        placeholders = ", ".join("?" for _ in hashes)
+        statuses = (
+            SubmissionStatus.PENDING.value,
+            SubmissionStatus.SUBMITTING.value,
+            SubmissionStatus.UNKNOWN.value,
+            SubmissionStatus.VERIFIED.value,
         )
+        uri = ledger_path.resolve().as_uri() + "?mode=ro"
+        with sqlite3.connect(uri, uri=True, timeout=5) as connection:
+            connection.row_factory = sqlite3.Row
+            row = connection.execute(
+                f"SELECT * FROM submission_intents "
+                f"WHERE application_key IN ({placeholders}) "
+                f"AND status IN (?, ?, ?, ?) "
+                f"ORDER BY created_at DESC, intent_id DESC LIMIT 1",
+                (*hashes, *statuses),
+            ).fetchone()
+        intent = EventLedger._intent_from_row(row) if row is not None else None
     result: dict[str, Any] = {
         "posting_identity_hash": identity,
         "self_reported_state": history_state.value if history_state else None,
