@@ -134,3 +134,48 @@ async def test_employer_corrob_supports_exact_ashby_identity_not_recruiter_guess
     assert verify_employer_observation(
         external, URL, ReadJobResult.succeeded(replace(employer, source_url=ANOTHER)),
     ) is PostingVerification.CONFLICT
+
+
+@pytest.mark.asyncio
+async def test_ashby_public_dispatch_and_verified_alias_persistence(monkeypatch, tmp_path):
+    from core.private_home import PrivateHome
+    from core.verified_posting_aliases import VerifiedPostingAliases
+    from core.event_ledger import hash_job_url
+    from source_connectors import public_reader
+
+    official = await _reader(_payload(_job())).read_job(ReadJobRequest(URL))
+    assert official.status is ReadJobStatus.SUCCEEDED
+
+    class FixedAshby:
+        async def read_job(self, request):
+            assert request.url == URL
+            return official
+
+    monkeypatch.setattr(public_reader, "AshbyPublicJobReader", FixedAshby)
+    dispatched = await public_reader.read_public_job(ReadJobRequest(URL))
+    assert dispatched == official
+
+    from dataclasses import replace
+    source = replace(
+        _external(),
+        company="Example",
+        title="Software Engineer",
+        application_url=URL,
+    )
+    home = PrivateHome(tmp_path / "private")
+    store = VerifiedPostingAliases(home)
+    assert store.record_verified(
+        source=source, employer_url=URL, employer_read=dispatched,
+    )
+    assert hash_job_url(source.source_url) in store.identity_hashes(URL)
+
+
+@pytest.mark.asyncio
+async def test_api_payload_bounds_fail_closed():
+    reader = AshbyPublicJobReader(
+        transport=httpx.MockTransport(
+            lambda request: httpx.Response(200, content=b"x" * 2_000_001)
+        )
+    )
+    result = await reader.read_job(ReadJobRequest(URL))
+    assert result.reason_code is ReadJobReason.SOURCE_RESPONSE_INVALID
