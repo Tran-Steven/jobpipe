@@ -150,6 +150,7 @@ async def test_public_dns_all_addresses_must_be_global():
 
 @pytest.mark.asyncio
 async def test_network_guard_aborts_nonpublic_iframe_and_subresource_before_fetch():
+    from types import SimpleNamespace
     from unittest.mock import AsyncMock, patch
     from tools.live_ats_inspect import inspect
 
@@ -170,9 +171,7 @@ async def test_network_guard_aborts_nonpublic_iframe_and_subresource_before_fetc
     class Page:
         url = "https://jobs.lever.co/acme/123"
         def __init__(self):
-            self.context = type("RoutingContext", (), {
-                "route": self.register_context_route,
-            })()
+            self.context = SimpleNamespace(route=self.register_context_route)
         def set_default_timeout(self, *_args): pass
         async def route(self, _pattern, _handler):
             raise AssertionError("page routing cannot guard popup initial requests")
