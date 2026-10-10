@@ -78,7 +78,10 @@ def enqueue_matched(csv_path: str = "", limit: int = 0) -> dict[str, Any]:
                 preserved.append(dict(row))
                 url = str(row.get("job_url") or "").strip()
                 if url:
-                    protected_identities.add(hash_job_url(url))
+                    try:
+                        protected_identities.add(hash_job_url(url))
+                    except ValueError:
+                        continue
 
     jobs, _ = get_all_jobs(
         status="matched",
