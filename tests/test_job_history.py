@@ -190,3 +190,81 @@ def test_queue_limit_counts_eligible_unique_jobs_after_filtering(
         rows = list(csv.DictReader(handle))
     assert len(rows) == 1
     assert rows[0]["job_url"].endswith("/eligible")
+
+
+def test_legacy_queue_collapses_persistently_verified_external_ats_aliases(
+    tmp_path: Path, monkeypatch
+) -> None:
+    from dataclasses import replace
+    from core.verified_posting_aliases import VerifiedPostingAliases
+    from source_connectors.contract import ReadJobResult
+    from tests.test_posting_verification import ATS, EXTERNAL, _external
+    from tests.test_job_library_refresh import _observation
+
+    home = PrivateHome(tmp_path / "private")
+    paths = home.ensure()
+    monkeypatch.setattr(jobpipe_queue.PrivateHome, "discover", lambda: home)
+    VerifiedPostingAliases(home).record_verified(
+        source=_external(), employer_url=ATS,
+        employer_read=ReadJobResult.succeeded(_observation(ATS)),
+    )
+    with paths.job_queue.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=jobpipe_queue.FIELDS)
+        writer.writeheader()
+        writer.writerow({
+            "company": "Example Labs",
+            "job_title": "Engineer",
+            "job_url": EXTERNAL,
+            "status": "Applied",
+            "priority": "High",
+        })
+    rows = [
+        {"id": "same-employer", "company": "Example Labs",
+         "title": "Engineer", "apply_url": ATS, "match_score": 98},
+        {"id": "other-requisition", "company": "Example Labs",
+         "title": "Engineer",
+         "apply_url": "https://job-boards.greenhouse.io/example/jobs/1002",
+         "match_score": 90},
+    ]
+    monkeypatch.setattr(jobpipe_queue, "get_all_jobs",
+                        lambda **kwargs: (rows, len(rows)))
+    result = jobpipe_queue.enqueue_matched()
+    assert result["pending_rows"] == 1
+    assert result["preserved_non_pending"] == 1
+    with paths.job_queue.open(newline="", encoding="utf-8") as handle:
+        saved = list(csv.DictReader(handle))
+    assert len(saved) == 2
+    assert saved[0]["status"] == "Applied"
+    assert saved[1]["job_url"].endswith("/1002")
+
+
+def test_legacy_queue_deduplicates_two_links_to_verified_employer(
+    tmp_path: Path, monkeypatch
+) -> None:
+    from dataclasses import replace
+    from core.verified_posting_aliases import VerifiedPostingAliases
+    from source_connectors.contract import ReadJobResult
+    from tests.test_posting_verification import ATS, EXTERNAL, _external
+    from tests.test_job_library_refresh import _observation
+
+    home = PrivateHome(tmp_path / "private")
+    home.ensure()
+    monkeypatch.setattr(jobpipe_queue.PrivateHome, "discover", lambda: home)
+    VerifiedPostingAliases(home).record_verified(
+        source=_external(), employer_url=ATS,
+        employer_read=ReadJobResult.succeeded(_observation(ATS)),
+    )
+    rows = [
+        {"id": "board", "company": "Example Labs", "title": "Engineer",
+         "apply_url": EXTERNAL, "match_score": 95},
+        {"id": "employer", "company": "Example Labs", "title": "Engineer",
+         "apply_url": ATS, "match_score": 97},
+    ]
+    monkeypatch.setattr(jobpipe_queue, "get_all_jobs",
+                        lambda **kwargs: (rows, len(rows)))
+    result = jobpipe_queue.enqueue_matched()
+    assert result["pending_rows"] == 1
+    with home.paths.job_queue.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    assert len(rows) == 1
+    assert rows[0]["job_url"] == ATS
