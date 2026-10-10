@@ -262,6 +262,7 @@ function applicationMarkup(item) {
   return `<article class="application-card">
     <div class="item-row"><div><h3>${escapeHtml(item.title)}</h3><div class="item-meta">${escapeHtml(item.company)} · ${escapeHtml(item.location || "Location not listed")}</div></div>${pill(item.product_status, labels.application[item.product_status] || "Unknown")}</div>
     <p>${escapeHtml(item.safe_status_detail)}</p>
+    ${item.product_status === "SUBMISSION_UNCERTAIN" ? `<div class="capability-note" role="note"><strong>Submission outcome unresolved · No automatic retry.</strong><p>Check your employer confirmation page or email before taking further action. A missing confirmation is not proof the application failed. Human review cannot authorize a second submission.</p></div>` : ""}
     <div class="progress" aria-label="Application progress">${progress}</div>
     ${attentionItem ? `<button class="button primary" data-attention-id="${escapeHtml(attentionItem.item_id)}">Review required action</button>` : ""}
     <details class="technical-details"><summary>Technical details</summary><div class="technical-panel">Plan: ${escapeHtml(item.application_plan_id)}<br>Job: ${escapeHtml(item.job_id)}</div></details>
@@ -284,6 +285,7 @@ function renderJobs() {
   countsNode.innerHTML = [
     ["All jobs", counts.total], ["High match", counts.high_match],
     ["Ready", counts.ready_to_prepare], ["Needs input", counts.needs_input],
+    ["Already applied", counts.already_applied], ["Safety review", counts.review_required],
   ].map(([label, value]) => `<div class="summary-item"><strong>${value ?? "—"}</strong><span>${label}</span></div>`).join("");
   document.querySelector("#jobs-refresh-detail").textContent = state.jobs.last_refreshed_at ? `Last refreshed ${new Date(state.jobs.last_refreshed_at).toLocaleString()}` : "Refresh history is not available from the current formal read contract.";
   const query = document.querySelector("#job-search").value.trim().toLowerCase();
@@ -306,7 +308,7 @@ function renderJobs() {
       <div data-label="Location">${escapeHtml(item.location || "Not listed")}</div>
       <div data-label="Why it fits">${escapeHtml((item.match_reasons || [])[0] || "No verified explanation")}</div>
       <div data-label="Status">${pill(item.application_status, labels.job[item.application_status] || "Unknown")}</div>
-      <div data-label="Next action"><a href="${escapeHtml(item.canonical_url)}" target="_blank" rel="noopener noreferrer">View job</a></div>
+      <div data-label="Next action">${item.application_status === "ALREADY_APPLIED" ? `<span class="item-meta">Recorded in application history</span>` : item.application_status === "REVIEW_REQUIRED" ? `<span class="item-meta">Verify employer posting before proceeding</span>` : `<a href="${escapeHtml(item.canonical_url)}" target="_blank" rel="noopener noreferrer">View job</a>`}</div>
     </div>`).join("");
 }
 
