@@ -38,6 +38,8 @@ HTML = """
 MOCK_STORAGE = """
 window.__localHistory = {};
 window.__storageListeners = [];
+window.__siteSubmitClicks = 0;
+document.querySelector("#site-submit").addEventListener("click", () => window.__siteSubmitClicks++);
 window.browser = {
   storage: {
     local: {
@@ -66,7 +68,7 @@ async def test_linkedin_extension_fixture_hide_block_undo_spa_and_no_submit():
         try:
             page = await browser.new_page()
             await page.set_content(HTML)
-            await page.evaluate(MOCK_STORAGE)
+            await page.add_script_tag(content=MOCK_STORAGE)
             await page.add_style_tag(path=str(ROOT / "style.css"))
             await page.add_script_tag(path=str(ROOT / "rules.js"))
             await page.add_script_tag(path=str(ROOT / "content.js"))
@@ -113,6 +115,7 @@ async def test_linkedin_extension_fixture_hide_block_undo_spa_and_no_submit():
             await page.evaluate("""() => {
               const cloned = document.querySelector('#job-101').cloneNode(true);
               cloned.id = 'job-101-spa';
+              cloned.classList.remove('jobpipe-visual-hidden');
               document.querySelector('#results').append(cloned);
             }""")
             await page.wait_for_function(
@@ -128,8 +131,6 @@ async def test_linkedin_extension_fixture_hide_block_undo_spa_and_no_submit():
             # The extension only manipulates local DOM visibility; it never
             # clicks a site's real submit/dismiss controls.
             assert await page.locator("#site-submit").is_visible()
-            assert await page.locator("#site-submit").evaluate(
-                "(element) => element.dataset.clicked || ''"
-            ) == ""
+            assert await page.evaluate("window.__siteSubmitClicks") == 0
         finally:
             await browser.close()
