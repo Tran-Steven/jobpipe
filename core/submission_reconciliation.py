@@ -7,6 +7,7 @@ Unresolved submission intents remain blocked by the application's preflight.
 from __future__ import annotations
 
 from enum import StrEnum
+import json
 import sqlite3
 from typing import Any
 
@@ -49,6 +50,7 @@ def inspect_submission(
     if ledger_path.is_symlink():
         raise ValueError("submission ledger cannot be a symlink")
     intent = None
+    review_actions: list[dict[str, str]] = []
     if ledger_path.is_file():
         # SQLite URI mode=ro prevents creating or modifying the event ledger.
         # This command is an inspection only, never a reconciliation mutation.
@@ -70,11 +72,31 @@ def inspect_submission(
                 f"ORDER BY created_at DESC, intent_id DESC LIMIT 1",
                 (*hashes, *statuses),
             ).fetchone()
+            if row is not None:
+                rows = connection.execute(
+                    "SELECT event_id, payload_json, created_at FROM events "
+                    "WHERE run_id = ? AND job_id = ? "
+                    "AND event_type = 'SUBMISSION_REVIEW_NOTE' "
+                    "ORDER BY sequence DESC LIMIT 50",
+                    (row["run_id"], row["job_id"]),
+                ).fetchall()
+                for entry in rows:
+                    payload = json.loads(entry["payload_json"])
+                    if (
+                        payload.get("intent_id") == row["intent_id"]
+                        and payload.get("review_action") in ReviewAction._value2member_map_
+                    ):
+                        review_actions.append({
+                            "event_id": entry["event_id"],
+                            "action": payload["review_action"],
+                            "recorded_at": entry["created_at"],
+                        })
         intent = EventLedger._intent_from_row(row) if row is not None else None
     result: dict[str, Any] = {
         "posting_identity_hash": identity,
         "self_reported_state": history_state.value if history_state else None,
         "submission": None,
+        "review_actions": review_actions,
         "status": ReconciliationStatus.NEVER_SUBMITTED.value,
         "prior_submission_blocks_retry": False,
         "next_action": "No recorded submission; normal authorization still required.",
