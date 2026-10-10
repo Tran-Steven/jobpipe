@@ -6,6 +6,9 @@ import asyncio
 import inspect
 import os
 import re
+import hashlib
+import secrets
+import time
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from enum import StrEnum
@@ -53,6 +56,9 @@ class BrowserRuntimeFailure(StrEnum):
     RELEASE_FAILED = "RELEASE_FAILED"
     RUNTIME_CLOSED = "RUNTIME_CLOSED"
     RUNTIME_NOT_STARTED = "RUNTIME_NOT_STARTED"
+    SESSION_SUSPENDED = "SESSION_SUSPENDED"
+    SESSION_RESUME_REJECTED = "SESSION_RESUME_REJECTED"
+    SESSION_EXPIRED = "SESSION_EXPIRED"
 
 
 class ProductionBrowserRuntimeError(RuntimeError):
@@ -137,6 +143,19 @@ class ProductionBrowserLease:
     page: Any
     lease_guard: RenewingLease
     provider_contract_version: str = BROWSER_LEASE_PROVIDER_CONTRACT_VERSION
+    _suspend_human: Callable[[int], str] | None = None
+
+    def suspend_for_human(self, *, ttl_seconds: int = 600) -> str:
+        """Park this exact page without authorization to submit or replay Gate A.
+
+        The opaque capability stays in memory. The holder must separately verify
+        the authenticated subject, run, application and Review bindings before
+        using the guarded provider resume operation. This is a lease primitive,
+        not a complete human handoff or a durable submission checkpoint.
+        """
+        if self._suspend_human is None:
+            raise ProductionBrowserRuntimeError(BrowserRuntimeFailure.SESSION_RESUME_REJECTED)
+        return self._suspend_human(ttl_seconds)
 
     @property
     def lease(self) -> Lease:
@@ -274,14 +293,44 @@ def _validate_profile_directory(
         )
 
 
+@dataclass(slots=True)
+class _SuspendedPage:
+    """Single in-process, expiring, opaque page hold; no URL or credential data."""
+
+    page: Any
+    owner: str
+    capability_digest: str
+    expires_at: float
+
+
+def _page_alive(page: Any, context: Any) -> bool:
+    if page not in context.pages:
+        return False
+    is_closed = getattr(page, "is_closed", None)
+    if callable(is_closed):
+        try:
+            return not bool(is_closed())
+        except Exception:
+            return False
+    return not bool(getattr(page, "closed", False))
+
+
 class ProductionBrowserLeaseProvider:
-    """The single structural BrowserLeaseProvider shared by P2c3 and P2c6."""
+    """Exclusive Playwright lease with optional same-process human page parking.
+
+    Suspended pages block *all* other owners and normal leases until explicitly
+    resumed or expired, preventing cookie/session contamination in the shared
+    persistent context. The lease itself is released during human interaction.
+    No automatic return to Review or submission is implied by a parked page.
+    """
 
     def __init__(self, runtime: "ProductionBrowserRuntime") -> None:
         self._runtime = runtime
 
     @asynccontextmanager
-    async def lease(self, *, owner: str) -> AsyncIterator[ProductionBrowserLease]:
+    async def lease(
+        self, *, owner: str, resume_token: str | None = None
+    ) -> AsyncIterator[ProductionBrowserLease]:
         if not isinstance(owner, str) or _OWNER_RE.fullmatch(owner.strip()) is None:
             raise ProductionBrowserRuntimeError(
                 BrowserRuntimeFailure.CONFIGURATION_ERROR
@@ -296,6 +345,13 @@ class ProductionBrowserLeaseProvider:
             raise ProductionBrowserRuntimeError(
                 BrowserRuntimeFailure.RUNTIME_NOT_STARTED
             )
+        if resume_token is not None and (
+            not isinstance(resume_token, str) or len(resume_token) > 128
+            or not resume_token
+        ):
+            raise ProductionBrowserRuntimeError(
+                BrowserRuntimeFailure.SESSION_RESUME_REJECTED
+            )
         try:
             lease_context = runtime.lease_manager.hold_renewing(
                 "browser:chromium",
@@ -308,16 +364,68 @@ class ProductionBrowserLeaseProvider:
                         BrowserRuntimeFailure.RUNTIME_CLOSED
                     )
                 context = runtime.context
-                baseline = set(context.pages)
-                try:
-                    page = await context.new_page()
-                except Exception:
+                held = runtime._suspended
+                if held is not None and runtime._monotonic() >= held.expires_at:
+                    runtime._suspended = None
+                    try:
+                        await held.page.close()
+                    except Exception:
+                        runtime._cleanup_failures += 1
                     raise ProductionBrowserRuntimeError(
-                        BrowserRuntimeFailure.PAGE_CREATION_FAILED
-                    ) from None
+                        BrowserRuntimeFailure.SESSION_EXPIRED
+                    )
+                if held is not None:
+                    if resume_token is None:
+                        raise ProductionBrowserRuntimeError(
+                            BrowserRuntimeFailure.SESSION_SUSPENDED
+                        )
+                    digest = hashlib.sha256(resume_token.encode("utf-8")).hexdigest()
+                    if (
+                        held.owner != owner
+                        or not secrets.compare_digest(digest, held.capability_digest)
+                        or not _page_alive(held.page, context)
+                    ):
+                        raise ProductionBrowserRuntimeError(
+                            BrowserRuntimeFailure.SESSION_RESUME_REJECTED
+                        )
+                    page = held.page
+                    runtime._suspended = None
+                    baseline = set(context.pages)
+                else:
+                    if resume_token is not None:
+                        raise ProductionBrowserRuntimeError(
+                            BrowserRuntimeFailure.SESSION_RESUME_REJECTED
+                        )
+                    baseline = set(context.pages)
+                    try:
+                        page = await context.new_page()
+                    except Exception:
+                        raise ProductionBrowserRuntimeError(
+                            BrowserRuntimeFailure.PAGE_CREATION_FAILED
+                        ) from None
                 runtime._active_pages.add(page)
                 runtime._active_count += 1
                 runtime._idle.clear()
+                clean_exit = False
+                def suspend_for_human(ttl_seconds: int) -> str:
+                    if type(ttl_seconds) is not int or not 1 <= ttl_seconds <= 1800:
+                        raise ProductionBrowserRuntimeError(
+                            BrowserRuntimeFailure.CONFIGURATION_ERROR
+                        )
+                    if runtime._suspended is not None or not _page_alive(page, context):
+                        raise ProductionBrowserRuntimeError(
+                            BrowserRuntimeFailure.SESSION_RESUME_REJECTED
+                        )
+                    capability = secrets.token_urlsafe(32)
+                    runtime._suspended = _SuspendedPage(
+                        page=page,
+                        owner=owner,
+                        capability_digest=hashlib.sha256(
+                            capability.encode("utf-8")
+                        ).hexdigest(),
+                        expires_at=runtime._monotonic() + ttl_seconds,
+                    )
+                    return capability
                 try:
                     try:
                         page.set_default_timeout(
@@ -334,14 +442,31 @@ class ProductionBrowserLeaseProvider:
                         context=context,
                         page=page,
                         lease_guard=guard,
+                        _suspend_human=suspend_for_human,
                     )
+                    clean_exit = True
                 finally:
-                    pages = tuple(
-                        candidate
-                        for candidate in context.pages
+                    retained = (
+                        clean_exit and runtime._suspended is not None
+                        and runtime._suspended.page is page
+                    )
+                    if not retained and (
+                        runtime._suspended is not None
+                        and runtime._suspended.page is page
+                    ):
+                        runtime._suspended = None
+                    # Resumed pages were part of baseline; they still need
+                    # closing unless explicitly parked again. Popups opened by
+                    # the adapter during the lease must also be closed.
+                    pages = set(
+                        candidate for candidate in context.pages
                         if candidate not in baseline
                     )
-                    for candidate in reversed(pages):
+                    if not retained:
+                        pages.add(page)
+                    for candidate in tuple(pages):
+                        if retained and candidate is page:
+                            continue
                         try:
                             await candidate.close()
                         except Exception:
@@ -385,6 +510,8 @@ class ProductionBrowserRuntime:
         self._idle = asyncio.Event()
         self._idle.set()
         self._cleanup_failures = 0
+        self._suspended: _SuspendedPage | None = None
+        self._monotonic: Callable[[], float] = time.monotonic
 
     def lease_provider(self) -> ProductionBrowserLeaseProvider:
         return self._provider
@@ -450,6 +577,7 @@ class ProductionBrowserRuntime:
 
     async def _close_resources(self) -> None:
         context, playwright = self.context, self._playwright
+        self._suspended = None
         self.context = None
         self._playwright = None
         if context is not None:
