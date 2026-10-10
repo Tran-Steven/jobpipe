@@ -188,6 +188,10 @@ def _event_metrics(events: list[Any]) -> dict[str, Any]:
         bool(outcome.get("evidence_refs")) for outcome in verified
     )
     return {
+        # Existing run metrics may combine local fixtures with actual attended
+        # browser sessions; never label this unclassified ledger as live proof.
+        "review_arrival_evidence_scope": "UNCLASSIFIED_FIXTURE_OR_LIVE",
+        "attended_live_review_independently_verified": False,
         "latest_outcomes": dict(
             Counter(str(outcome.get("status") or "UNKNOWN") for outcome in latest.values())
         ),
