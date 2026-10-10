@@ -374,6 +374,7 @@ def build_production_automation_composition(
             bootstrap, "search_profile_intent_policies"
         ),
         accepted_intent_repository=accepted_intent_repository,
+        preferences_home=bootstrap.private_home,
     )
 
     async def runnable_queue(command: Any) -> Any:
@@ -381,6 +382,7 @@ def build_production_automation_composition(
             command,
             priority_queue_reader=priority_queue,
             accepted_intent_repository=accepted_intent_repository,
+            preferences_home=bootstrap.private_home,
         )
 
     async def single_plan_creation(command: Any) -> Any:
