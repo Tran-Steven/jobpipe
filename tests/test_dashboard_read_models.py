@@ -447,3 +447,8 @@ async def test_blocked_and_risky_jobs_are_never_presented_as_high_matches() -> N
         assert result.counts["high_match"] == 0
         if expected is DashboardJobStatus.REVIEW_REQUIRED:
             assert result.counts["review_required"] == 1
+            # Deterministic evidence prompts, not a scam verdict or the raw
+            # sensitive posting text, are surfaced to the authenticated user.
+            assert any("fee" in reason or "payment" in reason for reason in item.match_reasons)
+            assert all("$200" not in reason for reason in item.match_reasons)
+            assert all("scam" not in reason.casefold() for reason in item.match_reasons)
