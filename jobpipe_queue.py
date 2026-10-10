@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from core.company_filters import CompanyTreatment
-from core.company_preferences import effective_company_treatment
+from core.company_preferences import PrivateCompanyPreferences, effective_company_treatment
 from core.event_ledger import hash_job_url
 from core.job_history import PrivateJobHistory
 from core.job_quality import assess_job_quality
@@ -66,6 +66,7 @@ def enqueue_matched(csv_path: str = "", limit: int = 0) -> dict[str, Any]:
     home = PrivateHome.discover()
     paths = home.ensure()
     history = PrivateJobHistory(home)
+    company_preferences = PrivateCompanyPreferences(home).read()
     target = Path(csv_path).expanduser().resolve() if csv_path else paths.job_queue
     target.parent.mkdir(parents=True, exist_ok=True)
 
@@ -98,7 +99,7 @@ def enqueue_matched(csv_path: str = "", limit: int = 0) -> dict[str, Any]:
         url = str(job.get("apply_url") or job.get("url") or "").strip()
         if not company or company.casefold() == "unknown" or not title or not url or not _runnable_url(url):
             continue
-        if effective_company_treatment(company) is CompanyTreatment.BLOCK:
+        if effective_company_treatment(company, preferences=company_preferences) is CompanyTreatment.BLOCK:
             continue
         if assess_job_quality(title, str(job.get("description") or "")).requires_review:
             continue
