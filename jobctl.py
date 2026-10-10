@@ -26,7 +26,9 @@ from core.application_engine import JobApplicationEngine
 from core.company_filters import CompanyTreatment
 from core.company_preferences import effective_company_treatment, PrivateCompanyPreferences
 from core.job_history import JobHistoryState, PrivateJobHistory
-from core.job_history_import import import_job_history_csv
+from core.job_history_import import (
+    import_job_history_csv, export_job_history_csv,
+)
 from core.submission_reconciliation import (
     inspect_submission, record_submission_review, ReviewAction,
 )
@@ -1039,6 +1041,15 @@ def cmd_job_history_import(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_job_history_export(args: argparse.Namespace) -> int:
+    home = (
+        PrivateHome(Path(args.home).expanduser().resolve())
+        if args.home else PrivateHome.discover()
+    )
+    _json_print(export_job_history_csv(args.csv, home=home))
+    return 0
+
+
 def cmd_submission_review(args: argparse.Namespace) -> int:
     home = (
         PrivateHome(Path(args.home).expanduser().resolve())
@@ -1115,6 +1126,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     history_import.add_argument("--csv", required=True)
     history_import.add_argument("--commit", action="store_true")
+
+    history_export = subparsers.add_parser(
+        "job-history-export",
+        help="Export private application history as hashes only, never raw URLs",
+    )
+    history_export.add_argument("--csv", required=True)
 
     reconciliation = subparsers.add_parser(
         "submission-status",
@@ -1291,6 +1308,8 @@ def main() -> int:
             return cmd_submission_inspect(args)
         if args.command == "job-history-import":
             return cmd_job_history_import(args)
+        if args.command == "job-history-export":
+            return cmd_job_history_export(args)
         if args.command == "submission-review":
             return cmd_submission_review(args)
         if args.command == "migrate":
