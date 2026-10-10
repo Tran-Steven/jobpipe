@@ -60,7 +60,7 @@ window.browser = {
 
 
 @pytest.mark.asyncio
-async def test_linkedin_extension_fixture_hide_block_undo_spa_and_no_submit():
+async def test_linkedin_extension_fixture_hide_block_undo_spa_and_no_submit(tmp_path: Path):
     from playwright.async_api import async_playwright
 
     async with async_playwright() as playwright:
@@ -128,8 +128,42 @@ async def test_linkedin_extension_fixture_hide_block_undo_spa_and_no_submit():
             assert not await page.locator("#job-101").is_visible()
             assert not await page.locator("#job-101-spa").is_visible()
 
-            # The extension only manipulates local DOM visibility; it never
-            # clicks a site's real submit/dismiss controls.
+            # No export occurs until a real user explicitly presses the
+            # extension button. Exported records mean DISMISSED, never APPLIED.
+            from core.job_history_import import import_job_history_csv
+            from core.job_history import PrivateJobHistory, JobHistoryState
+            from core.private_home import PrivateHome
+
+            export_button = panel.get_by_role("button", name="Export dismissals")
+            assert await export_button.is_enabled()
+            async with page.expect_download() as download_event:
+                await export_button.click()
+            downloaded = await download_event.value
+            assert downloaded.suggested_filename == "jobpipe-linkedin-dismissed.csv"
+            csv_file = tmp_path / "browser-dismissals.csv"
+            await downloaded.save_as(str(csv_file))
+            data = csv_file.read_text(encoding="utf-8")
+            assert "https://www.linkedin.com/jobs/view/101,DISMISSED" in data
+            assert "APPLIED" not in data
+            assert "acme" not in data.casefold()
+            assert "102," not in data
+
+            private = PrivateHome(tmp_path / "private-home")
+            preview = import_job_history_csv(csv_file, home=private)
+            assert preview["committed"] is False
+            assert preview["unique_postings"] == 1
+            assert not PrivateJobHistory(private).path.exists()
+            committed = import_job_history_csv(csv_file, home=private, commit=True)
+            assert committed["new_marks"] == 1
+            assert PrivateJobHistory(private).state_for(
+                "https://www.linkedin.com/jobs/view/101"
+            ) is JobHistoryState.DISMISSED
+            assert PrivateJobHistory(private).state_for(
+                "https://www.linkedin.com/jobs/view/102"
+            ) is None
+
+            # The extension only changes local visibility/downloads its own CSV;
+            # it never clicks a site's real submit/dismiss controls.
             assert await page.locator("#site-submit").is_visible()
             assert await page.evaluate("window.__siteSubmitClicks") == 0
         finally:
