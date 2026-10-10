@@ -79,7 +79,10 @@ class JobApplicationEngine:
         registry: AdapterRegistry | Any | None = None,
     ) -> "JobApplicationEngine":
         paths = (home or PrivateHome.discover()).ensure()
-        ledger = EventLedger(paths.event_ledger)
+        from .verified_posting_aliases import VerifiedPostingAliases
+
+        posting_aliases = VerifiedPostingAliases(PrivateHome(paths.root))
+        ledger = EventLedger(paths.event_ledger, posting_aliases=posting_aliases)
         if registry is None:
             from adapters.generic_ai import GenericAIAdapter
             from adapters.generic_ai.cache import RecipeCache
