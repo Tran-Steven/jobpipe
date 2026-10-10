@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import sqlite3
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from enum import StrEnum
 from pathlib import Path
@@ -24,21 +25,26 @@ class PrivateJobHistory:
     def path(self) -> Path:
         return self.home.paths.state / "job-history.sqlite3"
 
-    def _connect(self) -> sqlite3.Connection:
+    @contextmanager
+    def _connect(self):
         path = self.home.ensure().state / "job-history.sqlite3"
         if path.is_symlink():
             raise ValueError("job history database cannot be a symlink")
         connection = sqlite3.connect(path, timeout=5)
-        os.chmod(path, 0o600)
-        connection.execute("PRAGMA busy_timeout=5000")
-        connection.execute(
-            "CREATE TABLE IF NOT EXISTS job_history ("
-            "identity_hash TEXT PRIMARY KEY, "
-            "state TEXT NOT NULL CHECK (state IN ('APPLIED_SELF_REPORTED', 'DISMISSED')), "
-            "recorded_at TEXT NOT NULL)"
-        )
-        connection.commit()
-        return connection
+        try:
+            os.chmod(path, 0o600)
+            connection.execute("PRAGMA busy_timeout=5000")
+            connection.execute(
+                "CREATE TABLE IF NOT EXISTS job_history ("
+                "identity_hash TEXT PRIMARY KEY, "
+                "state TEXT NOT NULL CHECK (state IN ('APPLIED_SELF_REPORTED', 'DISMISSED')), "
+                "recorded_at TEXT NOT NULL)"
+            )
+            connection.commit()
+            with connection:
+                yield connection
+        finally:
+            connection.close()
 
     @staticmethod
     def _identity(url: str) -> str:
