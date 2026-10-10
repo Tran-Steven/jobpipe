@@ -1005,6 +1005,8 @@ def cmd_company_filters(args: argparse.Namespace) -> int:
         prefs = store.set_enabled(True)
     elif args.action == "disable":
         prefs = store.set_enabled(False)
+    elif args.action in {"builtin-on", "builtin-off"}:
+        prefs = store.set_builtin_enabled(args.action == "builtin-on")
     elif args.action in {"block", "allow", "clear"}:
         if not args.company:
             raise ValueError("a company name is required")
@@ -1050,7 +1052,7 @@ def build_parser() -> argparse.ArgumentParser:
         "company-filters", help="Manage private, opt-in company block/allow preferences"
     )
     company_parser.add_argument(
-        "action", choices=("enable", "disable", "list", "block", "allow", "clear")
+        "action", choices=("enable", "disable", "builtin-on", "builtin-off", "list", "block", "allow", "clear")
     )
     company_parser.add_argument("company", nargs="?")
 
