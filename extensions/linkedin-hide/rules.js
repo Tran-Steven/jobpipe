@@ -62,7 +62,18 @@
     if (id && state.hiddenPostingIds.includes(id)) return "dismissed-posting";
     return "";
   }
-  const api = Object.freeze({ normalizeCompany, normalizeId, jobIdFromUrl, jobIdFromCard, companyFromCard, sanitizeState, whyHidden });
+  function dismissedHistoryCsv(input) {
+    // User-triggered offline export only. Never infer APPLIED from Hide/X.
+    // Numeric IDs make CSV-injection and embedded credential data impossible.
+    // Company blocks are not dismissal events and are not exported.
+    const state = sanitizeState(input);
+    const lines = ["job_url,status"];
+    for (const id of state.hiddenPostingIds) {
+      lines.push("https://www.linkedin.com/jobs/view/" + id + ",DISMISSED");
+    }
+    return lines.join("\r\n") + "\r\n";
+  }
+  const api = Object.freeze({ normalizeCompany, normalizeId, jobIdFromUrl, jobIdFromCard, companyFromCard, sanitizeState, whyHidden, dismissedHistoryCsv });
   root.JobpipeLinkedInRules = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(typeof globalThis === "object" ? globalThis : this);

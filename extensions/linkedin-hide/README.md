@@ -20,6 +20,28 @@ storage*, not in the jobpipe private SQLite history. **Undo**, **Show matched**
 and **Review blocked** allow reversing changes. Unknown job IDs cannot be
 durably hidden, and ambiguous employer labels are not guessed.
 
+### Optional manual import of your hidden postings
+
+Use **Export dismissals** only when you want to transfer individual hidden
+LinkedIn postings into jobpipe. The browser downloads
+`jobpipe-linkedin-dismissed.csv` with the columns `job_url,status`.
+Every exported row is exactly `DISMISSED`, **never `APPLIED`**. Blocking
+a company does not create a dismissal row for all its jobs; neither does a
+LinkedIn X click that this extension did not explicitly observe.
+
+Preview the CSV locally before committing:
+
+```bash
+python jobctl.py job-history-import --csv ~/Downloads/jobpipe-linkedin-dismissed.csv
+# After reviewing counts, explicitly commit:
+python jobctl.py job-history-import --csv ~/Downloads/jobpipe-linkedin-dismissed.csv --commit
+```
+
+This is **not** automatic synchronization. The file contains LinkedIn
+posting URLs (sensitive browsing history) and may remain in Downloads.
+Keep it private and delete it there when no longer required. Import refuses
+to overwrite a previously applied posting with `DISMISSED`.
+
 ## Security and product boundaries
 
 - Permissions: extension-local storage only; a content script on LinkedIn job
@@ -33,6 +55,8 @@ durably hidden, and ambiguous employer labels are not guessed.
 - Site HTML/selector changes may break visual filtering; this is a pre-eval
   implementation, not a verified current LinkedIn integration.
 - The extension does **not** silently synchronize with jobpipe Private Home.
-  A separately authenticated, opt-in sync and real-site UX testing remain
-  in issue #6. The server's independent duplicate-submit checks remain
-  authoritative regardless of which cards are hidden in the browser.
+  Its explicit CSV handoff is user-initiated, local-only, previewable and
+  recorded as `DISMISSED`, not proof of submission. An authenticated opt-in
+  automatic sync and real-site UX testing remain in issue #6. The server's
+  independent duplicate-submit checks remain authoritative regardless of
+  which cards are hidden in the browser.
