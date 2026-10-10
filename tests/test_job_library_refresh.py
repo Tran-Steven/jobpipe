@@ -669,7 +669,7 @@ async def test_cross_site_alias_requires_live_employer_read_and_only_one_discove
         repository=PrivateHomeJobLibraryRefreshRunRepository(home),
     )
     assert result.status is JobLibraryRefreshStatus.COMPLETED
-    assert reader.calls == [external, employer, employer]
+    assert reader.calls == [external, employer]  # employer evidence reused
     assert len(discovery.calls) == 1
     assert discovery.calls[0].request.proposal.resolved_candidate.source_url == employer
     assert result.run.discovery_summary.skipped == 1
