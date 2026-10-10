@@ -406,6 +406,8 @@ async def test_blocked_and_risky_jobs_are_never_presented_as_high_matches() -> N
     for admission_status, expected in (
         (RunnableApplicationStatus.BLOCKED_COMPANY, DashboardJobStatus.NOT_A_MATCH),
         (RunnableApplicationStatus.BLOCKED_QUALITY_REVIEW, DashboardJobStatus.REVIEW_REQUIRED),
+        (RunnableApplicationStatus.BLOCKED_PREVIOUSLY_APPLIED, DashboardJobStatus.ALREADY_APPLIED),
+        (RunnableApplicationStatus.BLOCKED_DISMISSED, DashboardJobStatus.NOT_A_MATCH),
     ):
         queue = SimpleNamespace(
             status=RunnableApplicationQueueStatus.SUCCEEDED,
