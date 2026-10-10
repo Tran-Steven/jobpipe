@@ -1621,6 +1621,7 @@ async def refresh_job_library(
     repository: JobLibraryRefreshRunRepository,
     intent_policy_provider: SearchProfileIntentPolicyProvider | None = None,
     accepted_intent_repository: AcceptedJobIntentRepository | None = None,
+    preferences_home: PrivateHome | None = None,
 ) -> ManualJobLibraryRefreshResult:
     """Run one manual refresh and apply only explicit profile intent policy."""
 
@@ -1742,7 +1743,8 @@ async def refresh_job_library(
     for candidate_url, (candidate, source_ids) in candidates_by_url.items():
         profile_ids = tuple(source_ids)
         if effective_company_treatment(
-            candidate.company, subject_id=command.subject_id
+            candidate.company, subject_id=command.subject_id,
+            home=preferences_home,
         ) is CompanyTreatment.BLOCK:
             candidate_results.append(
                 _stopped_candidate(
@@ -1818,7 +1820,8 @@ async def refresh_job_library(
             )
             continue
         if effective_company_treatment(
-            read_result.observation.company, subject_id=command.subject_id
+            read_result.observation.company, subject_id=command.subject_id,
+            home=preferences_home,
         ) is CompanyTreatment.BLOCK:
             candidate_results.append(
                 _stopped_candidate(
