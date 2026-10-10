@@ -5,6 +5,7 @@ import sqlite3
 from datetime import datetime, timezone
 from enum import StrEnum
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from .event_ledger import hash_job_url
 from .private_home import PrivateHome
@@ -39,8 +40,19 @@ class PrivateJobHistory:
         connection.commit()
         return connection
 
+    @staticmethod
+    def _identity(url: str) -> str:
+        if not isinstance(url, str):
+            raise ValueError("posting URL must be an absolute HTTP(S) URL")
+        parsed = urlsplit(url.strip())
+        if parsed.scheme.casefold() not in {"http", "https"} or not parsed.hostname:
+            raise ValueError("posting URL must be an absolute HTTP(S) URL")
+        if parsed.username or parsed.password:
+            raise ValueError("posting URLs must not contain credentials")
+        return hash_job_url(url)
+
     def state_for(self, url: str) -> JobHistoryState | None:
-        identity = hash_job_url(url)
+        identity = self._identity(url)
         if not self.path.exists():
             return None
         with self._connect() as connection:
@@ -50,7 +62,7 @@ class PrivateJobHistory:
         return JobHistoryState(row[0]) if row else None
 
     def mark(self, url: str, state: JobHistoryState) -> JobHistoryState:
-        identity = hash_job_url(url)
+        identity = self._identity(url)
         state = JobHistoryState(state)
         with self._connect() as connection:
             previous = connection.execute(
@@ -69,7 +81,7 @@ class PrivateJobHistory:
         return state
 
     def clear(self, url: str) -> None:
-        identity = hash_job_url(url)
+        identity = self._identity(url)
         if not self.path.exists():
             return
         with self._connect() as connection:
