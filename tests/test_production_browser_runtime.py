@@ -253,3 +253,161 @@ async def test_shutdown_is_idempotent_and_blocks_new_leases(
         async with runtime.lease_provider().lease(owner="run-after-close"):
             pass
     assert closed.value.failure is BrowserRuntimeFailure.RUNTIME_CLOSED
+
+
+@pytest.mark.asyncio
+async def test_human_suspension_keeps_exact_page_and_releases_global_lease(
+    tmp_path: Path,
+) -> None:
+    _, playwright, _, runtime = _parts(tmp_path)
+    await runtime.start()
+    provider = runtime.lease_provider()
+    async with provider.lease(owner="run-one") as lease:
+        page = lease.page
+        capability = lease.suspend_for_human(ttl_seconds=120)
+        assert isinstance(capability, str) and len(capability) >= 32
+        assert not page.closed
+        with pytest.raises(ProductionBrowserRuntimeError) as double:
+            lease.suspend_for_human()
+        assert double.value.failure is BrowserRuntimeFailure.SESSION_RESUME_REJECTED
+
+    assert not page.closed
+    assert page in playwright.chromium.context.pages
+    assert runtime.lease_manager.get("browser:chromium") is None
+    assert runtime._active_count == 0
+    assert len(playwright.chromium.context.created) == 1
+    with pytest.raises(ProductionBrowserRuntimeError) as blocked:
+        async with provider.lease(owner="unrelated-run"):
+            pytest.fail("cannot enter while human challenge is suspended")
+    assert blocked.value.failure is BrowserRuntimeFailure.SESSION_SUSPENDED
+    assert len(playwright.chromium.context.created) == 1
+
+    async with provider.lease(owner="run-one", resume_token=capability) as resumed:
+        assert resumed.page is page
+        assert resumed.owner == "run-one"
+        assert resumed.page.closed is False
+    assert page.closed is True
+    assert len(playwright.chromium.context.created) == 1
+    assert runtime.lease_manager.get("browser:chromium") is None
+    await runtime.close()
+
+
+@pytest.mark.asyncio
+async def test_suspended_session_rejects_wrong_capability_owner_and_replay(
+    tmp_path: Path,
+) -> None:
+    _, _, _, runtime = _parts(tmp_path)
+    await runtime.start()
+    provider = runtime.lease_provider()
+    async with provider.lease(owner="original-run") as active:
+        token = active.suspend_for_human()
+    for owner, capability in (
+        ("wrong-run", token),
+        ("original-run", "forged-token"),
+    ):
+        with pytest.raises(ProductionBrowserRuntimeError) as denied:
+            async with provider.lease(owner=owner, resume_token=capability):
+                pytest.fail("invalid credential must not access held page")
+        assert denied.value.failure is BrowserRuntimeFailure.SESSION_RESUME_REJECTED
+        assert not active.page.closed
+    async with provider.lease(owner="original-run", resume_token=token):
+        pass
+    with pytest.raises(ProductionBrowserRuntimeError) as replay:
+        async with provider.lease(owner="original-run", resume_token=token):
+            pytest.fail("spent capability must never start a new page")
+    assert replay.value.failure is BrowserRuntimeFailure.SESSION_RESUME_REJECTED
+    assert runtime._suspended is None
+
+
+@pytest.mark.asyncio
+async def test_expiry_fails_closed_and_never_resurrects_old_challenge(
+    tmp_path: Path,
+) -> None:
+    _, playwright, _, runtime = _parts(tmp_path)
+    clock = [0.0]
+    runtime._monotonic = lambda: clock[0]
+    await runtime.start()
+    provider = runtime.lease_provider()
+    async with provider.lease(owner="expiring-run") as active:
+        page = active.page
+        token = active.suspend_for_human(ttl_seconds=3)
+    clock[0] = 3.0
+    with pytest.raises(ProductionBrowserRuntimeError) as expired:
+        async with provider.lease(owner="expiring-run", resume_token=token):
+            pytest.fail("expired challenge capability cannot resume")
+    assert expired.value.failure is BrowserRuntimeFailure.SESSION_EXPIRED
+    assert page.closed is True
+    assert runtime._suspended is None
+    assert runtime.lease_manager.get("browser:chromium") is None
+    assert len(playwright.chromium.context.created) == 1
+    with pytest.raises(ProductionBrowserRuntimeError) as replay:
+        async with provider.lease(owner="expiring-run", resume_token=token):
+            pass
+    assert replay.value.failure is BrowserRuntimeFailure.SESSION_RESUME_REJECTED
+
+
+@pytest.mark.asyncio
+async def test_suspension_on_fault_is_cancelled_and_lease_handle_is_revoked(
+    tmp_path: Path,
+) -> None:
+    _, _, _, runtime = _parts(tmp_path)
+    await runtime.start()
+    provider = runtime.lease_provider()
+    parked = None
+    with pytest.raises(RuntimeError, match="adapter crashed"):
+        async with provider.lease(owner="crash-run") as leased:
+            parked = leased
+            leased.suspend_for_human()
+            raise RuntimeError("adapter crashed")
+    assert runtime._suspended is None
+    assert parked.page.closed is True
+    assert runtime.lease_manager.get("browser:chromium") is None
+    with pytest.raises(ProductionBrowserRuntimeError) as stale:
+        parked.suspend_for_human()
+    assert stale.value.failure is BrowserRuntimeFailure.SESSION_RESUME_REJECTED
+    async with provider.lease(owner="other-run") as fresh:
+        assert fresh.page is not parked.page
+
+
+@pytest.mark.asyncio
+async def test_runtime_shutdown_invalidates_held_challenge_and_never_exposes_it(
+    tmp_path: Path,
+) -> None:
+    home, playwright, _, runtime = _parts(tmp_path)
+    await runtime.start()
+    async with runtime.lease_provider().lease(owner="shutdown-run") as leased:
+        page = leased.page
+        token = leased.suspend_for_human()
+    assert token not in repr(runtime.diagnostics)
+    assert str(home.root) not in repr(runtime.diagnostics)
+    await runtime.close()
+    assert page.closed is True
+    assert playwright.chromium.context.closed
+    assert runtime._suspended is None
+    with pytest.raises(ProductionBrowserRuntimeError) as closed:
+        async with runtime.lease_provider().lease(
+            owner="shutdown-run", resume_token=token
+        ):
+            pass
+    assert closed.value.failure is BrowserRuntimeFailure.RUNTIME_CLOSED
+
+
+@pytest.mark.asyncio
+async def test_suspension_ttl_policy_and_empty_token_do_not_modify_active_session(
+    tmp_path: Path,
+) -> None:
+    _, _, _, runtime = _parts(tmp_path)
+    await runtime.start()
+    provider = runtime.lease_provider()
+    async with provider.lease(owner="ttl-run") as leased:
+        for ttl in (0, -1, 1801, True, "600"):
+            with pytest.raises(ProductionBrowserRuntimeError) as invalid:
+                leased.suspend_for_human(ttl_seconds=ttl)
+            assert invalid.value.failure is BrowserRuntimeFailure.CONFIGURATION_ERROR
+        token = leased.suspend_for_human(ttl_seconds=60)
+    with pytest.raises(ProductionBrowserRuntimeError) as empty:
+        async with provider.lease(owner="ttl-run", resume_token=""):
+            pass
+    assert empty.value.failure is BrowserRuntimeFailure.SESSION_RESUME_REJECTED
+    async with provider.lease(owner="ttl-run", resume_token=token) as recovered:
+        assert recovered.page is leased.page
