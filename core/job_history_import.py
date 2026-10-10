@@ -149,7 +149,9 @@ def import_job_history_csv(
 ) -> dict[str, Any]:
     if type(commit) is not bool:
         raise TypeError("commit must be a boolean")
-    rows, original_identities, original_timestamps, unmatched = _load_csv(\n        Path(csv_path).expanduser()\n    )
+    rows, original_identities, original_timestamps, unmatched = _load_csv(
+        Path(csv_path).expanduser()
+    )
     history = PrivateJobHistory(home)
     # Both discovery-stage and historically imported URLs can be linked to
     # the same independently verified employer requisition. Group by the ATS
