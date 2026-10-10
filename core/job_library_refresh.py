@@ -1809,10 +1809,19 @@ async def refresh_job_library(
                 existing_candidate[1].append(profile.profile_id)
 
     if profile_results and all(
-        result.search_status is ProfileRefreshSearchStatus.SKIPPED
+        result.source_reason in {
+            "COMPANY_BLOCKED",
+            "COMPANY_PREFERENCES_UNAVAILABLE",
+        }
         for result in profile_results
     ):
-        # All explicitly blocked: no network, discovery, or prioritization.
+        # No eligible, safely configured profile remains. A corrupt preference
+        # must not be transformed into an ordinary no-op or cause priority
+        # agent work when every source decision is unavailable.
+        all_blocked = all(
+            result.search_status is ProfileRefreshSearchStatus.SKIPPED
+            for result in profile_results
+        )
         return _persist(
             run=JobLibraryRefreshRun.create(
                 command=command,
@@ -1821,7 +1830,10 @@ async def refresh_job_library(
                 candidate_results=(),
                 discovery_summary=_empty_discovery(),
                 priority_summary=None,
-                overall_status=JobLibraryRefreshStatus.NOOP,
+                overall_status=(
+                    JobLibraryRefreshStatus.NOOP
+                    if all_blocked else JobLibraryRefreshStatus.FAILED
+                ),
             ),
             repository=repository,
         )
