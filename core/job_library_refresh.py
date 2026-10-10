@@ -1736,7 +1736,9 @@ async def refresh_job_library(
     candidate_results: list[JobCandidateRefreshResult] = []
     for candidate_url, (candidate, source_ids) in candidates_by_url.items():
         profile_ids = tuple(source_ids)
-        if effective_company_treatment(candidate.company) is CompanyTreatment.BLOCK:
+        if effective_company_treatment(
+            candidate.company, subject_id=command.subject_id
+        ) is CompanyTreatment.BLOCK:
             candidate_results.append(
                 _stopped_candidate(
                     profile_ids=profile_ids,
@@ -1810,7 +1812,9 @@ async def refresh_job_library(
                 )
             )
             continue
-        if effective_company_treatment(read_result.observation.company) is CompanyTreatment.BLOCK:
+        if effective_company_treatment(
+            read_result.observation.company, subject_id=command.subject_id
+        ) is CompanyTreatment.BLOCK:
             candidate_results.append(
                 _stopped_candidate(
                     profile_ids=profile_ids,
