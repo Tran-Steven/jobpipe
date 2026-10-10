@@ -98,6 +98,7 @@
       lastSummary = summary;
     }
     panel.querySelector(".jobpipe-visual-hide-undo").disabled = !undoState;
+    panel.querySelector(".jobpipe-visual-hide-export").disabled = state.hiddenPostingIds.length === 0;
     panel.querySelector(".jobpipe-visual-hide-show").textContent =
       showHidden ? "Hide matched" : "Show matched";
   }
@@ -142,9 +143,10 @@
         <button type="button" class="jobpipe-visual-hide-show">Show matched</button>
         <button type="button" class="jobpipe-visual-hide-undo" disabled>Undo</button>
         <button type="button" class="jobpipe-visual-hide-review">Review blocked</button>
+        <button type="button" class="jobpipe-visual-hide-export" disabled>Export dismissals</button>
       </div>
       <section class="jobpipe-visual-hide-review-list" hidden></section>
-      <p class="jobpipe-visual-hide-note">Local browser visibility only. Does not apply to jobs or update jobpipe history.</p>`;
+      <p class="jobpipe-visual-hide-note">Browser-local visibility only. Explicit export downloads DISMISSED LinkedIn job URLs for manual jobpipe import. Hidden does not mean applied. No automatic history sync or job applications.</p>`;
     document.body.append(panel);
     panel.querySelector(".jobpipe-visual-hide-show").addEventListener("click", () => {
       showHidden = !showHidden;
@@ -157,6 +159,21 @@
       await persist(previous);
       undoState = null;
       refresh();
+    });
+    panel.querySelector(".jobpipe-visual-hide-export").addEventListener("click", () => {
+      // Explicit, user-triggered file download. Never upload or auto-import.
+      // The CSV intentionally omits company names, titles, and all profile data.
+      if (!state.hiddenPostingIds.length) return;
+      const contents = rules.dismissedHistoryCsv(state);
+      const blob = new Blob([contents], { type: "text/csv;charset=utf-8" });
+      const blobUrl = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.download = "jobpipe-linkedin-dismissed.csv";
+      anchor.href = blobUrl;
+      document.body.append(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(blobUrl), 15000);
     });
     panel.querySelector(".jobpipe-visual-hide-review").addEventListener("click", () => {
       const list = panel.querySelector(".jobpipe-visual-hide-review-list");
