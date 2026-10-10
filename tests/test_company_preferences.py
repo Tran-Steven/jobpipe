@@ -65,6 +65,8 @@ def test_private_company_preferences_can_toggle_edit_and_reload(tmp_path: Path) 
     store.edit("clear", "Example Agency")
     assert store.read().blocked == ()
     assert store.read().allowed == ("Jobgether",)
+    store.set_builtin_enabled(False)
+    assert not store.read().builtin_enabled
     store.set_enabled(False)
     assert not store.read().enabled
 
@@ -89,7 +91,7 @@ def test_private_store_rejects_ambiguous_settings(tmp_path: Path) -> None:
 def test_company_filter_cli_subcommands_are_explicit() -> None:
     import jobctl
 
-    for action in ("enable", "disable", "list", "block", "allow", "clear"):
+    for action in ("enable", "disable", "builtin-on", "builtin-off", "list", "block", "allow", "clear"):
         args = jobctl.build_parser().parse_args(
             ["company-filters", action, "Example Agency"]
         )
