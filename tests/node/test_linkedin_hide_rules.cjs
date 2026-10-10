@@ -77,3 +77,27 @@ test("malformed and oversize saved values are discarded and bounded", () => {
   assert.equal(long.blockedCompanies.length,500);
   assert.equal(long.hiddenPostingIds.length,2000);
 });
+
+
+test("explicit dismissal export contains only verified numeric job IDs, never inferred APPLIED", () => {
+  const csv = rules.dismissedHistoryCsv({
+    blockedCompanies: ["Secret Staffing Corp", "Private Employer"],
+    hiddenPostingIds: ["101", "102", "101", "=HYPERLINK(1)", "abc"]
+  });
+  assert.equal(csv,
+    "job_url,status\r\n" +
+    "https://www.linkedin.com/jobs/view/101,DISMISSED\r\n" +
+    "https://www.linkedin.com/jobs/view/102,DISMISSED\r\n");
+  assert.ok(!csv.includes("APPLIED"));
+  assert.ok(!csv.includes("Secret Staffing"));
+  assert.ok(!csv.includes("Private Employer"));
+  assert.ok(!csv.includes("=HYPERLINK"));
+});
+
+test("no individual dismissal exports only CSV headers, not whole blocked companies", () => {
+  assert.equal(
+    rules.dismissedHistoryCsv({ blockedCompanies: ["Sensitive Firm"], hiddenPostingIds: [] }),
+    "job_url,status\r\n"
+  );
+  assert.ok(!rules.dismissedHistoryCsv({hiddenPostingIds: ["0"]}).includes("www.linkedin.com.evil"));
+});
