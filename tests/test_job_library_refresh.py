@@ -667,6 +667,7 @@ async def test_cross_site_alias_requires_live_employer_read_and_only_one_discove
         discovery=discovery,
         priority_refresh=_Priority(),
         repository=PrivateHomeJobLibraryRefreshRunRepository(home),
+        preferences_home=home,
     )
     assert result.status is JobLibraryRefreshStatus.COMPLETED
     assert reader.calls == [external, employer]  # employer evidence reused
@@ -674,6 +675,13 @@ async def test_cross_site_alias_requires_live_employer_read_and_only_one_discove
     assert discovery.calls[0].request.proposal.resolved_candidate.source_url == employer
     assert result.run.discovery_summary.skipped == 1
     assert result.run.candidate_results[1].reason is CandidateRefreshReason.DUPLICATE_VERIFIED_POSTING
+    # Unlike an in-memory dedup table, this survives a new refresh/process.
+    from core.verified_posting_aliases import VerifiedPostingAliases
+    from core.event_ledger import hash_job_url
+    aliases = VerifiedPostingAliases(home)
+    assert hash_job_url(external) in aliases.identity_hashes(employer)
+    assert hash_job_url(employer) in aliases.identity_hashes(external)
+    assert aliases.path.stat().st_mode & 0o077 == 0
 
 
 @pytest.mark.asyncio
