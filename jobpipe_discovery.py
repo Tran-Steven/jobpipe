@@ -8,7 +8,8 @@ from typing import Any
 
 import yaml
 
-from core.company_filters import CompanyTreatment, company_treatment
+from core.company_filters import CompanyTreatment
+from core.company_preferences import effective_company_treatment
 from utils.discovery import discover_all_jobs
 from utils.tracker import get_all_jobs, is_already_seen, log_discovered
 
@@ -108,7 +109,7 @@ def _score_job(job: dict[str, Any], profile: dict[str, Any]) -> tuple[int, list[
     if not company or company.casefold() == "unknown":
         return 0, ["missing company identity"]
 
-    treatment = company_treatment(
+    treatment = effective_company_treatment(
         company, additional_blocked=prefs.get("exclude_companies", [])
     )
     if treatment is CompanyTreatment.BLOCK:
