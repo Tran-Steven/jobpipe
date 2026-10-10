@@ -381,3 +381,67 @@ async def test_overview_has_deterministic_next_step_and_reuses_attention() -> No
     assert response.status_code == 200
     assert response.json()["next_step"] == "COMPLETE_PROFILE"
     assert "overview_snapshot_hash" not in response.json()
+
+
+@pytest.mark.asyncio
+async def test_blocked_and_risky_jobs_are_never_presented_as_high_matches() -> None:
+    job = SimpleNamespace(
+        job_id="job-quality-gate",
+        revision=1,
+        content_hash="d" * 64,
+        title="Software Engineer",
+        company="Synthetic Firm",
+        description="Applicants must pay an application fee of $200.",
+        location="Remote",
+        application_url="https://jobs.lever.co/synthetic/quality-gate",
+        source_url="https://jobs.lever.co/synthetic/quality-gate",
+        observed_at="2026-10-10T10:00:00Z",
+    )
+    decision = SimpleNamespace(
+        decision_id="decision-quality-gate",
+        priority_level=SimpleNamespace(value="P0"),
+        qualification=PriorityQualification.QUALIFIED,
+        positive_signals=(SimpleNamespace(explanation="Relevant technology stack"),),
+    )
+    for admission_status, expected in (
+        (RunnableApplicationStatus.BLOCKED_COMPANY, DashboardJobStatus.NOT_A_MATCH),
+        (RunnableApplicationStatus.BLOCKED_QUALITY_REVIEW, DashboardJobStatus.REVIEW_REQUIRED),
+    ):
+        queue = SimpleNamespace(
+            status=RunnableApplicationQueueStatus.SUCCEEDED,
+            subject_id=SUBJECT,
+            items=(
+                SimpleNamespace(
+                    subject_id=SUBJECT,
+                    job=job,
+                    priority_queue_status=CurrentPriorityItemStatus.CURRENT,
+                    runnable_status=admission_status,
+                    priority_decision=decision,
+                    application_intent=None,
+                ),
+            ),
+            priority_queue_result=SimpleNamespace(
+                membership_snapshot_hash="a" * 64
+            ),
+        )
+
+        async def queue_reader(_command):
+            return queue
+
+        reader = DashboardJobsReader(
+            runnable_queue_reader=queue_reader,
+            application_plan_repository=SimpleNamespace(
+                list_for_subject=lambda _subject: SimpleNamespace(
+                    status=ApplicationPlanListStatus.SUCCEEDED, plans=()
+                )
+            ),
+        )
+        result = await reader.read(subject_id=SUBJECT, evaluated_at=NOW)
+        item = result.ordered_items[0]
+        assert item.application_status is expected
+        assert item.next_action != "CONTINUE_AUTOMATION"
+        assert item.match_reasons != ("Relevant technology stack",)
+        assert result.counts["ready_to_prepare"] == 0
+        assert result.counts["high_match"] == 0
+        if expected is DashboardJobStatus.REVIEW_REQUIRED:
+            assert result.counts["review_required"] == 1
