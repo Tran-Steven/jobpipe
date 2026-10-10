@@ -8,7 +8,8 @@ from datetime import datetime
 from enum import Enum
 from typing import Any
 
-from .company_filters import CompanyTreatment, company_treatment
+from .company_filters import CompanyTreatment
+from .company_preferences import effective_company_treatment
 from .accepted_job_intent import (
     AcceptedJobIntent,
     AcceptedJobIntentReadResult,
@@ -342,7 +343,7 @@ def _classify(
         )
     if not isinstance(decision, PriorityDecision):
         raise ValueError("CURRENT priority item has no decision")
-    if company_treatment(job.company) is CompanyTreatment.BLOCK:
+    if effective_company_treatment(job.company) is CompanyTreatment.BLOCK:
         return _blocked(
             subject_id=subject_id,
             job=job,
