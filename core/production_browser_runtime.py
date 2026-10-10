@@ -407,7 +407,12 @@ class ProductionBrowserLeaseProvider:
                 runtime._active_count += 1
                 runtime._idle.clear()
                 clean_exit = False
+                lease_active = True
                 def suspend_for_human(ttl_seconds: int) -> str:
+                    if not lease_active:
+                        raise ProductionBrowserRuntimeError(
+                            BrowserRuntimeFailure.SESSION_RESUME_REJECTED
+                        )
                     if type(ttl_seconds) is not int or not 1 <= ttl_seconds <= 1800:
                         raise ProductionBrowserRuntimeError(
                             BrowserRuntimeFailure.CONFIGURATION_ERROR
@@ -446,6 +451,7 @@ class ProductionBrowserLeaseProvider:
                     )
                     clean_exit = True
                 finally:
+                    lease_active = False
                     retained = (
                         clean_exit and runtime._suspended is not None
                         and runtime._suspended.page is page
