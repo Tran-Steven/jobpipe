@@ -10,6 +10,7 @@ from typing import Any
 
 from .company_filters import CompanyTreatment
 from .company_preferences import effective_company_treatment
+from .private_home import PrivateHome
 from .job_quality import assess_job_quality
 from .accepted_job_intent import (
     AcceptedJobIntent,
@@ -337,6 +338,7 @@ def _classify(
     decision: PriorityDecision | None,
     intent: AcceptedJobIntent | None,
     admission: PreparationAdmissionPolicy,
+    preferences_home: PrivateHome | None = None,
 ) -> RunnableApplicationQueueItem:
     if queue_status is not CurrentPriorityItemStatus.CURRENT:
         return _blocked(
@@ -350,7 +352,7 @@ def _classify(
     if not isinstance(decision, PriorityDecision):
         raise ValueError("CURRENT priority item has no decision")
     if effective_company_treatment(
-        job.company, subject_id=subject_id
+        job.company, subject_id=subject_id, home=preferences_home
     ) is CompanyTreatment.BLOCK:
         return _blocked(
             subject_id=subject_id,
@@ -448,6 +450,7 @@ async def build_runnable_application_queue(
     *,
     priority_queue_reader: _PriorityQueueReader,
     accepted_intent_repository: AcceptedJobIntentRepository,
+    preferences_home: PrivateHome | None = None,
 ) -> RunnableApplicationQueueResult:
     """Build one typed read model without claims, writes or reprioritization."""
 
@@ -571,6 +574,7 @@ async def build_runnable_application_queue(
                     decision=queue_item.decision,
                     intent=intent,
                     admission=policy.preparation_admission,
+                    preferences_home=preferences_home,
                 )
             )
         except (AttributeError, OSError, TypeError, ValueError):
