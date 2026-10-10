@@ -27,7 +27,7 @@ _OFFICIAL_HOSTS = frozenset({
 # Workday job pages use tenant.wdN.myworkdayjobs.com; never allow the
 # parent domain, nested/unbounded tenant subdomains, or lookalike suffixes.
 _WORKDAY_HOST = re.compile(
-    r"[a-z0-9][a-z0-9-]{0,62}\\.wd[1-9][0-9]{0,2}\\.myworkdayjobs\\.com\\Z"
+    r"[a-z0-9][a-z0-9-]{0,62}\.wd[1-9][0-9]{0,2}\.myworkdayjobs\.com\Z"
 )
 
 
