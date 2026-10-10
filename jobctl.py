@@ -631,9 +631,12 @@ async def cmd_apply_csv(args: argparse.Namespace) -> int:
         != "registration uncertain"
     ]
     history = PrivateJobHistory(home)
+    company_preferences = PrivateCompanyPreferences(home).read()
     queue = [
         item for item in queue
-        if effective_company_treatment(getattr(item, "company", "")) is not CompanyTreatment.BLOCK
+        if effective_company_treatment(
+            getattr(item, "company", ""), preferences=company_preferences
+        ) is not CompanyTreatment.BLOCK
         and (
             not getattr(item, "url", "")
             or history.state_for(item.url) is None
