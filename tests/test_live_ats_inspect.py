@@ -219,3 +219,26 @@ async def test_network_guard_aborts_nonpublic_iframe_and_subresource_before_fetc
     assert result["diagnostic_only"] is True
     assert result["live_review"] == "not_verified"
     assert result["submission"] == "not_attempted"
+
+
+@pytest.mark.parametrize("url", [
+    "https://acme.wd5.myworkdayjobs.com/en-US/Careers/job/Engineer_R123",
+    "https://example.wd1.myworkdayjobs.com/en-US/External/job/123",
+    "https://acme.wd100.myworkdayjobs.com/External/job/123",
+])
+def test_explicit_workday_tenant_urls_are_read_only_probe_eligible(url):
+    assert allowed_url(url)
+
+
+@pytest.mark.parametrize("url", [
+    "https://myworkdayjobs.com/External/job/1",
+    "https://wd5.myworkdayjobs.com/External/job/1",
+    "https://attacker.acme.wd5.myworkdayjobs.com/job/1",
+    "https://acme.wd5.myworkdayjobs.com.evil.invalid/job/1",
+    "https://acme.wd5.myworkdayjobs.com:443/job/1",
+    "http://acme.wd5.myworkdayjobs.com/job/1",
+    "https://acme.wd0.myworkdayjobs.com/job/1",
+    "https://acme.wd9999.myworkdayjobs.com/job/1",
+])
+def test_malformed_or_spoofed_workday_urls_are_not_trusted(url):
+    assert not allowed_url(url)
