@@ -20,6 +20,7 @@ from source_connectors.contract import (
 )
 from source_connectors.greenhouse import _parse_public_job_url as _greenhouse
 from source_connectors.lever import _parse_public_job_url as _lever
+from source_connectors.ashby import _parse_public_job_url as _ashby
 
 
 class PostingVerification(StrEnum):
@@ -33,7 +34,7 @@ def supported_employer_identity(url: str) -> str | None:
     """Recognize exact public hosted ATS posting URL shapes, not arbitrary domains."""
     if not isinstance(url, str):
         return None
-    for parser in (_greenhouse, _lever):
+    for parser in (_greenhouse, _lever, _ashby):
         try:
             parsed = parser(url)
         except (TypeError, ValueError):
