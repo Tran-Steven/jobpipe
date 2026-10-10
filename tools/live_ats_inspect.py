@@ -11,6 +11,7 @@ import argparse
 import asyncio
 import ipaddress
 import json
+import re
 import socket
 from urllib.parse import urlsplit
 
@@ -23,6 +24,17 @@ _OFFICIAL_HOSTS = frozenset({
     "jobs.ashbyhq.com", "jobs.eu.ashbyhq.com",
     "jobs.jobvite.com", "apply.jobvite.com",
 })
+# Workday job pages use tenant.wdN.myworkdayjobs.com; never allow the
+# parent domain, nested/unbounded tenant subdomains, or lookalike suffixes.
+_WORKDAY_HOST = re.compile(
+    r"[a-z0-9][a-z0-9-]{0,62}\\.wd[1-9][0-9]{0,2}\\.myworkdayjobs\\.com\\Z"
+)
+
+
+def _official_host(host: str) -> bool:
+    return host in _OFFICIAL_HOSTS or _WORKDAY_HOST.fullmatch(host) is not None
+
+
 _DENIED_HOSTS = frozenset({
     "localhost", "instance-data", "metadata.google.internal",
     "metadata.azure.internal",
@@ -60,9 +72,9 @@ def _parsed_https(url: str):
 
 
 def allowed_url(url: str) -> bool:
-    """Only official, exact hosted ATS web domains may be navigated to."""
+    """Only official hosted ATS domains and tenant-scoped Workday hosts."""
     parsed = _parsed_https(url)
-    return parsed is not None and parsed.hostname.casefold() in _OFFICIAL_HOSTS
+    return parsed is not None and _official_host(parsed.hostname.casefold())
 
 
 def allowed_resource_url(url: str) -> bool:
@@ -132,7 +144,7 @@ async def inspect(url: str) -> dict:
                         await route.abort()
                         return
                     host = urlsplit(requested).hostname.casefold()
-                    if host not in _OFFICIAL_HOSTS:
+                    if not _official_host(host):
                         permitted = allowed_hosts.get(host)
                         if permitted is None:
                             permitted = await _public_dns(host)
