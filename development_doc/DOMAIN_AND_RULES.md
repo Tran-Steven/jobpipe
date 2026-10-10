@@ -2024,3 +2024,31 @@ preserves P1d2 order and performs no claim, save, preparation or execution.
 - The entire response must be valid `apiVersion: "1"` published-job data with bounded size and at most 5,000 entries. Ambiguous or invalid entries fail closed; only absence from an otherwise valid complete board snapshot is treated as no longer published. Redirects and 5xx/timeouts are inconclusive, never proof of closure.
 - Ashby documents do not provide an independently authenticated legal-employer name. The board handle is mapped to `observation.company` with provenance `REQUEST:url.board`, **not** a verified legal-entity name. Third-party aliases are permitted only when the source company's normalized string matches that handle and the title and native hosted posting identity match the independently fetched posting. Brand/slug ambiguity is held rather than guessed.
 - Ashby work mode, location, posted time and description are taken from official public JSON. Unknown/unpublished/invalid records are not auto-admitted. This read-only verification adds no authorization to submit applications.
+
+
+### P0 browser-session human handoff foundation (issue #11)
+
+The server-owned `ProductionBrowserLeaseProvider` retains its exclusive,
+single-subject, persistent Chromium runtime. Its **opt-in** in-process
+`ProductionBrowserLease.suspend_for_human(ttl_seconds=600)` parks precisely the
+leased page behind a 256-bit opaque capability. The capability is returned only
+to the lease caller, not written to the repository or persisted in browser
+diagnostics; only a SHA-256 digest remains in memory. A parked page **blocks
+all ordinary and unrelated browser leases**, without keeping the underlying
+lease held or issuing a second browser page. A subsequent provider
+`lease(owner=same_run, resume_token=capability)` can recover the same page once
+in the **same running process**; wrong owner, token, replay, expired page and
+closed runtime all fail closed. Suspension expires after at most 30 minutes,
+including without another request, and shutdown closes the page. A lease
+exception discards the page, not the exclusive lease.
+
+**Scope limit:** This is a lower-level browser lifecycle primitive and
+regression suite, **not** a full human CAPTCHA/MFA/answer handoff. Production
+`execute_non_submit_application` does not yet call the primitive, and the
+Dashboard has no human resume action. No durable subject-bound checkpoint,
+approval, proof of solved challenge, same-job URL validation, resumed Gate A
+binding, or same-session return-to-Review execution is claimed. Those remain
+explicitly blocked until issue #11's next phases are implemented and qualified.
+Existing `RUNTIME_INPUT_REQUIRED` records still defer rather than retry.
+No permit changes, Gate B authorization, submission automation or production
+activation are added.
