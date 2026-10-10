@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import tempfile
@@ -42,12 +43,24 @@ class CompanyPreferences:
 
 
 class PrivateCompanyPreferences:
-    def __init__(self, home: PrivateHome | None = None) -> None:
+    def __init__(
+        self, home: PrivateHome | None = None, *, subject_id: str | None = None
+    ) -> None:
         self.home = home or PrivateHome.discover()
+        if subject_id is not None and (
+            not isinstance(subject_id, str)
+            or not subject_id.strip()
+            or len(subject_id) > 160
+        ):
+            raise ValueError("invalid company preferences subject")
+        self.subject_id = subject_id
 
     @property
     def path(self) -> Path:
-        return self.home.paths.state / "company-preferences.json"
+        if self.subject_id is None:
+            return self.home.paths.state / "company-preferences.json"
+        key = hashlib.sha256(self.subject_id.encode("utf-8")).hexdigest()
+        return self.home.paths.state / f"company-preferences-{key}.json"
 
     def read(self) -> CompanyPreferences:
         path = self.path
@@ -74,7 +87,8 @@ class PrivateCompanyPreferences:
     def write(self, prefs: CompanyPreferences) -> None:
         if not isinstance(prefs, CompanyPreferences):
             raise TypeError("expected CompanyPreferences")
-        path = self.home.ensure().state / "company-preferences.json"
+        self.home.ensure()
+        path = self.path
         if path.is_symlink():
             raise ValueError("company preferences cannot be a symlink")
         descriptor, name = tempfile.mkstemp(prefix=".company-preferences.", dir=path.parent)
@@ -129,8 +143,13 @@ def effective_company_treatment(
     *,
     additional_blocked: tuple[str, ...] | list[str] = (),
     preferences: CompanyPreferences | None = None,
+    subject_id: str | None = None,
 ) -> CompanyTreatment:
-    prefs = preferences if preferences is not None else PrivateCompanyPreferences().read()
+    prefs = (
+        preferences
+        if preferences is not None
+        else PrivateCompanyPreferences(subject_id=subject_id).read()
+    )
     if not prefs.enabled:
         return CompanyTreatment.ALLOW
     normalized = normalize_company_name(company)
