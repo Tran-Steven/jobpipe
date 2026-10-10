@@ -14,11 +14,11 @@ from typing import Any
 from .event_ledger import (
     EventLedger,
     SubmissionStatus,
-    _job_url_hash_candidates,
     hash_job_url,
 )
 from .job_history import JobHistoryState, PrivateJobHistory
 from .private_home import PrivateHome
+from .verified_posting_aliases import VerifiedPostingAliases
 
 
 class ReviewAction(StrEnum):
@@ -54,7 +54,7 @@ def inspect_submission(
     if ledger_path.is_file():
         # SQLite URI mode=ro prevents creating or modifying the event ledger.
         # This command is an inspection only, never a reconciliation mutation.
-        hashes = _job_url_hash_candidates(url)
+        hashes = VerifiedPostingAliases(root).identity_hashes(url)
         placeholders = ", ".join("?" for _ in hashes)
         statuses = (
             SubmissionStatus.PENDING.value,
@@ -140,8 +140,8 @@ def record_submission_review(
     path = root.paths.event_ledger
     if path.is_symlink() or not path.is_file():
         raise ValueError("an existing private submission ledger is required")
-    ledger = EventLedger(path)
-    hashed = _job_url_hash_candidates(url)
+    ledger = EventLedger(path, posting_aliases=VerifiedPostingAliases(root))
+    hashed = ledger._posting_identity_hashes(url)
     placeholders = ", ".join("?" for _ in hashed)
     # Check and append under one transaction. Verification racing this review
     # cannot cause an apparent new unresolved case after it was verified.
