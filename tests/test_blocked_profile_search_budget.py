@@ -139,6 +139,7 @@ async def test_unreadable_company_preferences_fail_closed_before_network(tmp_pat
     assert failed.search_status is ProfileRefreshSearchStatus.FAILED
     assert failed.source_reason == "COMPANY_PREFERENCES_UNAVAILABLE"
     assert not executor.calls and not reader.calls and not discovery.calls
+    assert not priority.calls
 
 
 @pytest.mark.asyncio
@@ -148,10 +149,11 @@ async def test_symlink_preferences_are_not_bypassed_for_search(tmp_path: Path):
     prefs = PrivateCompanyPreferences(home, subject_id=SUBJECT)
     prefs.path.symlink_to(tmp_path / "missing.json")
     executor = _SearchExecutor({})
+    priority = _Priority()
     result = await _refresh(
-        home, executor, _Reader(), _Discovery(), _Priority(),
+        home, executor, _Reader(), _Discovery(), priority,
         invocation="profile-symlink-guard",
     )
     assert result.status is JobLibraryRefreshStatus.FAILED
     assert result.run.profile_results[0].source_reason == "COMPANY_PREFERENCES_UNAVAILABLE"
-    assert not executor.calls
+    assert not executor.calls and not priority.calls
