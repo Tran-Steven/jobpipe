@@ -178,7 +178,9 @@ def test_verified_employer_submission_blocks_external_url_later(tmp_path: Path):
         home.paths.event_ledger,
         posting_aliases=VerifiedPostingAliases(home),
     )
-    assert guarded.find_submission_intent_for_url(EXTERNAL).intent_id == original.intent_id
+    assert guarded.find_submission_intent_for_url(
+        EXTERNAL, statuses=(SubmissionStatus.SUBMITTING,)
+    ).intent_id == original.intent_id
     with pytest.raises(DuplicateSubmissionError):
         _new_intent(guarded, EXTERNAL, run="run-again", job="job-again")
     assert guarded.get_submission_intent(original.intent_id).status is SubmissionStatus.SUBMITTING
