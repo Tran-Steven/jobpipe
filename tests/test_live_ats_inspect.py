@@ -154,15 +154,16 @@ async def test_network_guard_aborts_nonpublic_iframe_and_subresource_before_fetc
     from tools.live_ats_inspect import inspect
 
     class Request:
-        def __init__(self, url, navigate=False):
+        def __init__(self, url, navigate=False, method="GET"):
             self.url = url
             self._navigate = navigate
+            self.method = method
         def is_navigation_request(self):
             return self._navigate
 
     class Route:
-        def __init__(self, url, navigate=False):
-            self.request = Request(url, navigate=navigate)
+        def __init__(self, url, navigate=False, method="GET"):
+            self.request = Request(url, navigate=navigate, method=method)
             self.abort = AsyncMock()
             self.continue_ = AsyncMock()
 
@@ -181,6 +182,12 @@ async def test_network_guard_aborts_nonpublic_iframe_and_subresource_before_fetc
                 await self.guard(routed)
                 assert routed.abort.await_count == 1
                 assert routed.continue_.await_count == 0
+            mutation = Route(
+                "https://jobs.lever.co/acme/123/submit", method="POST"
+            )
+            await self.guard(mutation)
+            assert mutation.abort.await_count == 1
+            assert mutation.continue_.await_count == 0
             permitted = Route("https://jobs.lever.co/assets/style.css")
             await self.guard(permitted)
             assert permitted.continue_.await_count == 1
@@ -208,6 +215,7 @@ async def test_network_guard_aborts_nonpublic_iframe_and_subresource_before_fetc
     with patch("tools.live_ats_inspect.async_playwright", return_value=Context()):
         result = await inspect(Page.url)
     assert result["blocked_nonpublic_resources"] == 3
+    assert result["blocked_mutating_requests"] == 1
     assert result["diagnostic_only"] is True
     assert result["live_review"] == "not_verified"
     assert result["submission"] == "not_attempted"
