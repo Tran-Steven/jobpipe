@@ -995,6 +995,28 @@ def cmd_invalidate_review(args: argparse.Namespace) -> int:
     return int(outcome.exit_code)
 
 
+def cmd_company_filters(args: argparse.Namespace) -> int:
+    home = (
+        PrivateHome(Path(args.home).expanduser().resolve())
+        if args.home else PrivateHome.discover()
+    )
+    store = PrivateCompanyPreferences(home)
+    if args.action == "enable":
+        prefs = store.set_enabled(True)
+    elif args.action == "disable":
+        prefs = store.set_enabled(False)
+    elif args.action in {"block", "allow", "clear"}:
+        if not args.company:
+            raise ValueError("a company name is required")
+        prefs = store.edit(args.action, args.company)
+    elif args.action == "list":
+        prefs = store.read()
+    else:
+        raise ValueError("unsupported company filter action")
+    _json_print(prefs.to_dict())
+    return 0
+
+
 def cmd_job_history(args: argparse.Namespace) -> int:
     home = (
         PrivateHome(Path(args.home).expanduser().resolve())
@@ -1023,6 +1045,14 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     subparsers.add_parser("init", help="Create Private Home and the Keychain permit key")
+
+    company_parser = subparsers.add_parser(
+        "company-filters", help="Manage private, opt-in company block/allow preferences"
+    )
+    company_parser.add_argument(
+        "action", choices=("enable", "disable", "list", "block", "allow", "clear")
+    )
+    company_parser.add_argument("company", nargs="?")
 
     for action, description in (
         ("mark-applied", "Record an externally submitted application"),
@@ -1177,6 +1207,8 @@ def main() -> int:
     try:
         if args.command == "init":
             return cmd_init(args)
+        if args.command == "company-filters":
+            return cmd_company_filters(args)
         if args.command in {"mark-applied", "dismiss-job", "clear-job-mark", "job-history"}:
             return cmd_job_history(args)
         if args.command == "migrate":
