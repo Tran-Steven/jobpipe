@@ -8,6 +8,7 @@ from core.company_filters import CompanyTreatment
 from core.company_preferences import PrivateCompanyPreferences, effective_company_treatment
 from core.event_ledger import hash_job_url
 from core.job_history import PrivateJobHistory
+from core.verified_posting_aliases import VerifiedPostingAliases
 from core.job_quality import assess_job_quality
 from core.private_home import PrivateHome
 from utils.tracker import get_all_jobs
@@ -66,6 +67,7 @@ def enqueue_matched(csv_path: str = "", limit: int = 0) -> dict[str, Any]:
     home = PrivateHome.discover()
     paths = home.ensure()
     history = PrivateJobHistory(home)
+    aliases = VerifiedPostingAliases(home)
     company_preferences = PrivateCompanyPreferences(home).read()
     target = Path(csv_path).expanduser().resolve() if csv_path else paths.job_queue
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -82,7 +84,7 @@ def enqueue_matched(csv_path: str = "", limit: int = 0) -> dict[str, Any]:
                 url = str(row.get("job_url") or "").strip()
                 if url:
                     try:
-                        protected_identities.add(hash_job_url(url))
+                        protected_identities.add(aliases.resolve_hash(hash_job_url(url))[0])
                     except ValueError:
                         continue
 
@@ -103,7 +105,7 @@ def enqueue_matched(csv_path: str = "", limit: int = 0) -> dict[str, Any]:
             continue
         if assess_job_quality(title, str(job.get("description") or "")).requires_review:
             continue
-        identity = hash_job_url(url)
+        identity = aliases.resolve_hash(hash_job_url(url))[0]
         if identity in protected_identities or history.state_for(url) is not None:
             continue
         score = int(job.get("match_score") or 0)
