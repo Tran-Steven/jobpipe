@@ -166,11 +166,13 @@ class JobLibraryRefreshStatus(StrEnum):
 
 class ProfileRefreshSearchStatus(StrEnum):
     SUCCEEDED = "SUCCEEDED"
+    SKIPPED = "SKIPPED"
     FAILED = "FAILED"
     UNSUPPORTED = "UNSUPPORTED"
 
 
 class ProfileRefreshFailureReason(StrEnum):
+    COMPANY_BLOCKED = "COMPANY_BLOCKED"
     SEARCH_FAILED = "SEARCH_FAILED"
     SEARCH_UNSUPPORTED = "SEARCH_UNSUPPORTED"
     SEARCH_RESULT_INVALID = "SEARCH_RESULT_INVALID"
@@ -296,6 +298,13 @@ class SearchProfileRefreshResult:
         if self.search_status is ProfileRefreshSearchStatus.SUCCEEDED:
             if self.reason is not None or self.source_reason is not None:
                 raise ValueError("successful profile search is malformed")
+        elif self.search_status is ProfileRefreshSearchStatus.SKIPPED:
+            if (
+                self.reason is not ProfileRefreshFailureReason.COMPANY_BLOCKED
+                or self.source_reason != "COMPANY_BLOCKED"
+                or self.candidate_count != 0
+            ):
+                raise ValueError("skipped search must identify explicit company block")
         elif self.reason is None:
             raise ValueError("failed profile search requires a reason")
         if (
@@ -959,7 +968,18 @@ def _overall(
         item.search_status is ProfileRefreshSearchStatus.SUCCEEDED
         for item in profiles
     )
-    search_failures = len(profiles) - search_successes
+    search_failures = sum(
+        item.search_status not in {
+            ProfileRefreshSearchStatus.SUCCEEDED,
+            ProfileRefreshSearchStatus.SKIPPED,
+        }
+        for item in profiles
+    )
+    if profiles and all(
+        item.search_status is ProfileRefreshSearchStatus.SKIPPED
+        for item in profiles
+    ):
+        return JobLibraryRefreshStatus.NOOP
     if profiles and search_successes == 0:
         return JobLibraryRefreshStatus.FAILED
     candidate_successes = sum(
@@ -1724,6 +1744,39 @@ async def refresh_job_library(
         str, tuple[SearchCandidate, list[str]]
     ] = {}
     for profile in profiles:
+        if preferences_home is not None:
+            try:
+                treatment = effective_company_treatment(
+                    profile.search_request.company,
+                    subject_id=command.subject_id,
+                    home=preferences_home,
+                )
+            except (OSError, RuntimeError, TypeError, ValueError):
+                # Unsafe or unreadable settings must never silently permit
+                # network intake from a potentially blocked employer.
+                profile_results.append(SearchProfileRefreshResult.create(
+                    profile_id=profile.profile_id,
+                    profile_version=profile.profile_version,
+                    source=profile.source,
+                    search_status=ProfileRefreshSearchStatus.FAILED,
+                    candidate_count=0,
+                    reason=ProfileRefreshFailureReason.SEARCH_EXCEPTION,
+                    source_reason="COMPANY_PREFERENCES_UNAVAILABLE",
+                ))
+                continue
+            if treatment is CompanyTreatment.BLOCK:
+                # Skip before spending the bounded provider request; do not
+                # fabricate a successful search or an error for a user block.
+                profile_results.append(SearchProfileRefreshResult.create(
+                    profile_id=profile.profile_id,
+                    profile_version=profile.profile_version,
+                    source=profile.source,
+                    search_status=ProfileRefreshSearchStatus.SKIPPED,
+                    candidate_count=0,
+                    reason=ProfileRefreshFailureReason.COMPANY_BLOCKED,
+                    source_reason="COMPANY_BLOCKED",
+                ))
+                continue
         try:
             search_result = await _resolve(search_executor.search(profile))
             profile_result, candidates = _profile_result(
@@ -1754,6 +1807,24 @@ async def refresh_job_library(
                 )
             elif profile.profile_id not in existing_candidate[1]:
                 existing_candidate[1].append(profile.profile_id)
+
+    if profile_results and all(
+        result.search_status is ProfileRefreshSearchStatus.SKIPPED
+        for result in profile_results
+    ):
+        # All explicitly blocked: no network, discovery, or prioritization.
+        return _persist(
+            run=JobLibraryRefreshRun.create(
+                command=command,
+                profile_snapshot_hash=snapshot_hash,
+                profile_results=tuple(profile_results),
+                candidate_results=(),
+                discovery_summary=_empty_discovery(),
+                priority_summary=None,
+                overall_status=JobLibraryRefreshStatus.NOOP,
+            ),
+            repository=repository,
+        )
 
     candidate_results: list[JobCandidateRefreshResult] = []
     alias_store = (
