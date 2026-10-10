@@ -2052,3 +2052,32 @@ explicitly blocked until issue #11's next phases are implemented and qualified.
 Existing `RUNTIME_INPUT_REQUIRED` records still defer rather than retry.
 No permit changes, Gate B authorization, submission automation or production
 activation are added.
+
+### P1 privacy-preserving self-reported history portability
+
+Users may back up private `APPLIED_SELF_REPORTED` and `DISMISSED` marks
+without publishing raw employer/job URLs. The explicit
+`jobctl job-history-export --csv <new-output.csv>` action reads the
+private history SQLite database in read-only mode and atomically creates
+a **new**, mode-0600 CSV file with only
+`identity_hash,status,recorded_at`. The command refuses to overwrite existing
+files or follow an output symlink. It never calls a job board or ATS and cannot
+submit applications. `jobctl job-history-import --csv <backup.csv>` performs
+a read-only preview; a separate `--commit` is required for an atomic restore.
+The importer supports both original `job_url,status` and hash-only
+`identity_hash,status` formats, with strict type, SHA-256 and timezone
+validation. Source-domain aliases resolve only through previously corroborated
+employer posting identity, never through matching company/title. Existing
+applied marks cannot be downgraded by dismissals.
+
+A source CSV row with a missing `job_url` is reported as
+`unmatched_needs_review` in the preview but is **not** stored as proof of
+submission or guessed from title/company. An import with only unmatched rows
+cannot commit. For such rows the user must locate the actual posting URL and
+re-import explicitly. This preview is not a persisted unmatched-review queue;
+external histories without resolvable links remain a later #7 milestone.
+
+The hash-only backup still exposes **private application history**. SHA-256
+URL hashes are not guaranteed anonymous against someone who knows candidate
+URLs; keep exports local and secret, never commit them to Git or upload them
+as diagnostics. Imported self-reported marks are not verified ATS receipts.
