@@ -146,3 +146,79 @@ def test_import_cli_requires_explicit_commit_and_never_prints_urls(
     assert FIRST not in printed
     assert json.loads(printed)["committed"] is False
     assert not home.paths.state.exists()
+
+
+def test_verified_cross_site_import_is_one_posting_and_handles_existing_marks(
+    tmp_path: Path,
+) -> None:
+    from core.verified_posting_aliases import VerifiedPostingAliases
+    from source_connectors.contract import ReadJobResult
+    from tests.test_posting_verification import ATS, EXTERNAL, _external
+    from tests.test_job_library_refresh import _observation
+
+    home = PrivateHome(tmp_path / "private")
+    links = VerifiedPostingAliases(home)
+    links.record_verified(
+        source=_external(),
+        employer_url=ATS,
+        employer_read=ReadJobResult.succeeded(_observation(ATS)),
+    )
+    source = tmp_path / "history.csv"
+    _csv(source, [(EXTERNAL, "APPLIED"), (ATS, "APPLIED")])
+    preview = import_job_history_csv(source, home=home)
+    assert preview["input_rows"] == 2
+    assert preview["unique_postings"] == 1
+    assert preview["new_marks"] == 1
+    assert import_job_history_csv(source, home=home, commit=True)["new_marks"] == 1
+    assert PrivateJobHistory(home).state_for(EXTERNAL) is JobHistoryState.APPLIED_SELF_REPORTED
+    assert PrivateJobHistory(home).state_for(ATS) is JobHistoryState.APPLIED_SELF_REPORTED
+    assert import_job_history_csv(source, home=home)["unchanged"] == 1
+
+    _csv(source, [(EXTERNAL, "DISMISSED")])
+    with pytest.raises(ValueError, match="cannot be downgraded"):
+        import_job_history_csv(source, home=home, commit=True)
+    assert PrivateJobHistory(home).state_for(EXTERNAL) is JobHistoryState.APPLIED_SELF_REPORTED
+
+
+def test_verified_external_url_conflicts_fail_before_mutation(tmp_path: Path) -> None:
+    from core.verified_posting_aliases import VerifiedPostingAliases
+    from source_connectors.contract import ReadJobResult
+    from tests.test_posting_verification import ATS, EXTERNAL, _external
+    from tests.test_job_library_refresh import _observation
+
+    home = PrivateHome(tmp_path / "private")
+    links = VerifiedPostingAliases(home)
+    links.record_verified(
+        source=_external(), employer_url=ATS,
+        employer_read=ReadJobResult.succeeded(_observation(ATS)),
+    )
+    source = tmp_path / "history.csv"
+    _csv(source, [(EXTERNAL, "APPLIED"), (ATS, "DISMISSED")])
+    with pytest.raises(ValueError, match="conflicting history statuses"):
+        import_job_history_csv(source, home=home)
+    with pytest.raises(ValueError, match="conflicting history statuses"):
+        import_job_history_csv(source, home=home, commit=True)
+    assert not PrivateJobHistory(home).path.exists()
+
+
+def test_existing_external_application_prevents_import_downgrade_at_employer_url(
+    tmp_path: Path,
+) -> None:
+    from core.verified_posting_aliases import VerifiedPostingAliases
+    from source_connectors.contract import ReadJobResult
+    from tests.test_posting_verification import ATS, EXTERNAL, _external
+    from tests.test_job_library_refresh import _observation
+
+    home = PrivateHome(tmp_path / "private")
+    history = PrivateJobHistory(home)
+    history.mark(EXTERNAL, JobHistoryState.APPLIED_SELF_REPORTED)
+    VerifiedPostingAliases(home).record_verified(
+        source=_external(), employer_url=ATS,
+        employer_read=ReadJobResult.succeeded(_observation(ATS)),
+    )
+    source = tmp_path / "history.csv"
+    _csv(source, [(SECOND, "APPLIED"), (ATS, "DISMISSED")])
+    with pytest.raises(ValueError, match="cannot be downgraded"):
+        import_job_history_csv(source, home=home, commit=True)
+    assert history.state_for(EXTERNAL) is JobHistoryState.APPLIED_SELF_REPORTED
+    assert history.state_for(SECOND) is None
