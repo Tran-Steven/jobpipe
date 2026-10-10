@@ -111,11 +111,16 @@ async def inspect(url: str) -> dict:
             page.set_default_timeout(12000)
             blocked_navigations = []
             blocked_resources = 0
+            blocked_mutations = 0
             allowed_hosts = {}
             async def navigation_guard(route):
-                nonlocal blocked_resources
+                nonlocal blocked_resources, blocked_mutations
                 request = route.request
                 requested = request.url
+                if getattr(request, "method", "GET").upper() not in {"GET", "HEAD", "OPTIONS"}:
+                    blocked_mutations += 1
+                    await route.abort()
+                    return
                 if request.is_navigation_request():
                     if not allowed_url(requested):
                         blocked_navigations.append(True)
@@ -171,6 +176,7 @@ async def inspect(url: str) -> dict:
                 "input_count": input_count,
                 "button_count": await page.locator("button").count(),
                 "blocked_nonpublic_resources": blocked_resources,
+                "blocked_mutating_requests": blocked_mutations,
                 "live_review": "not_verified",
                 "submission": "not_attempted",
                 "auth": "not_attempted",
