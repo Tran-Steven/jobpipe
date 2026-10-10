@@ -80,6 +80,8 @@ async def test_missing_posting_definitively_closed_only_on_valid_complete_feed()
     _payload(_job(), _job()),  # duplicate matched posting identity
     _payload({**_job(), "descriptionPlain": "" , "descriptionHtml": ""}),
     _payload({**_job(), "applyUrl": "https://attacker.invalid/form"}),
+    _payload({**_job(), "applyUrl": ANOTHER + "/application"}),
+    _payload({**_job(), "applyUrl": "https://jobs.ashbyhq.com/Other/" + URL.rsplit("/", 1)[-1] + "/application"}),
     _payload({**_job(), "publishedAt": "not-a-date"}),
     _payload({**_job(), "jobUrl": "http://127.0.0.1/internal"}),
 ])
