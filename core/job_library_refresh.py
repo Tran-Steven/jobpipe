@@ -21,7 +21,8 @@ from source_connectors.contract import (
     SourceJobObservation,
 )
 
-from .company_filters import CompanyTreatment, company_treatment
+from .company_filters import CompanyTreatment
+from .company_preferences import effective_company_treatment
 from .accepted_job_intent import (
     AcceptedJobIntent,
     AcceptedJobIntentRepository,
@@ -1735,7 +1736,7 @@ async def refresh_job_library(
     candidate_results: list[JobCandidateRefreshResult] = []
     for candidate_url, (candidate, source_ids) in candidates_by_url.items():
         profile_ids = tuple(source_ids)
-        if company_treatment(candidate.company) is CompanyTreatment.BLOCK:
+        if effective_company_treatment(candidate.company) is CompanyTreatment.BLOCK:
             candidate_results.append(
                 _stopped_candidate(
                     profile_ids=profile_ids,
@@ -1809,7 +1810,7 @@ async def refresh_job_library(
                 )
             )
             continue
-        if company_treatment(read_result.observation.company) is CompanyTreatment.BLOCK:
+        if effective_company_treatment(read_result.observation.company) is CompanyTreatment.BLOCK:
             candidate_results.append(
                 _stopped_candidate(
                     profile_ids=profile_ids,
