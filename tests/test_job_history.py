@@ -1,0 +1,118 @@
+from __future__ import annotations
+
+import csv
+from pathlib import Path
+from types import SimpleNamespace
+
+import pytest
+
+import jobpipe_queue
+from core.application_engine import JobApplicationEngine
+from core.job_history import JobHistoryState, PrivateJobHistory
+from core.outcomes import OutcomeStatus, ReasonCode
+from core.private_home import PrivateHome
+from utils.discovery import Job, deduplicate_jobs
+
+
+FIRST = "https://jobs.lever.co/synthetic/req-001"
+FIRST_APPLY = "https://jobs.lever.co/synthetic/req-001/apply"
+SECOND = "https://jobs.lever.co/synthetic/req-002"
+
+
+def test_job_history_persists_and_recognizes_native_ats_aliases(tmp_path: Path) -> None:
+    home = PrivateHome(tmp_path / "private")
+    one = PrivateJobHistory(home)
+    assert one.state_for(FIRST) is None
+    assert one.mark(FIRST, JobHistoryState.APPLIED_SELF_REPORTED) is JobHistoryState.APPLIED_SELF_REPORTED
+    assert PrivateJobHistory(home).state_for(FIRST_APPLY) is JobHistoryState.APPLIED_SELF_REPORTED
+    assert one.state_for(SECOND) is None
+    assert one.path.stat().st_mode & 0o077 == 0
+    with pytest.raises(ValueError, match="clear"):
+        one.mark(FIRST_APPLY, JobHistoryState.DISMISSED)
+    one.clear(FIRST_APPLY)
+    assert one.state_for(FIRST) is None
+    assert one.mark(FIRST, JobHistoryState.DISMISSED) is JobHistoryState.DISMISSED
+
+
+def test_self_reported_application_never_reaches_submission_ledger(tmp_path: Path) -> None:
+    history = PrivateJobHistory(PrivateHome(tmp_path / "private"))
+    history.mark(FIRST, JobHistoryState.APPLIED_SELF_REPORTED)
+    engine = object.__new__(JobApplicationEngine)
+    engine.history = history
+
+    class _ForbiddenLedger:
+        def find_submission_intent_for_url(self, *args, **kwargs):
+            raise AssertionError("known application must stop before ledger or browser")
+
+    engine.ledger = _ForbiddenLedger()
+    bundle = SimpleNamespace(
+        run_id="run-synthetic",
+        job=SimpleNamespace(job_id="synthetic-job", url=FIRST_APPLY),
+    )
+    result = engine.submission_preflight(bundle)
+    assert result.status is OutcomeStatus.SKIPPED_POLICY
+    assert result.reason_code is ReasonCode.DUPLICATE_SUBMISSION
+    assert result.details["history_state"] == JobHistoryState.APPLIED_SELF_REPORTED.value
+
+
+def test_posting_dedup_keeps_distinct_requisitions() -> None:
+    def job(ident: str, url: str) -> Job:
+        return Job(ident, "Software Engineer", "Synthetic Co", "Remote", url, url, "lever")
+
+    jobs = [
+        job("1", FIRST),
+        job("2", FIRST_APPLY),
+        job("3", SECOND),
+    ]
+    assert [item.id for item in deduplicate_jobs(jobs)] == ["1", "3"]
+
+
+def test_regenerated_queue_preserves_applied_and_review_rows(tmp_path: Path, monkeypatch) -> None:
+    home = PrivateHome(tmp_path / "private")
+    paths = home.ensure()
+    monkeypatch.setattr(jobpipe_queue.PrivateHome, "discover", lambda: home)
+    PrivateJobHistory(home).mark(SECOND, JobHistoryState.DISMISSED)
+    with paths.job_queue.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=jobpipe_queue.FIELDS)
+        writer.writeheader()
+        writer.writerow({
+            "company": "Synthetic Co",
+            "job_title": "Software Engineer",
+            "job_url": FIRST,
+            "status": "Applied",
+            "priority": "High",
+        })
+
+    rows = [
+        {
+            "id": "repeat",
+            "company": "Synthetic Co",
+            "title": "Software Engineer",
+            "apply_url": FIRST_APPLY,
+            "match_score": 99,
+        },
+        {
+            "id": "dismissed",
+            "company": "Synthetic Co",
+            "title": "Software Engineer",
+            "apply_url": SECOND,
+            "match_score": 98,
+        },
+        {
+            "id": "distinct",
+            "company": "Synthetic Co",
+            "title": "Software Engineer",
+            "apply_url": "https://jobs.lever.co/synthetic/req-003",
+            "match_score": 93,
+        },
+    ]
+    monkeypatch.setattr(jobpipe_queue, "get_all_jobs", lambda **kwargs: (rows, len(rows)))
+    result = jobpipe_queue.enqueue_matched()
+    assert result["pending_rows"] == 1
+    assert result["preserved_non_pending"] == 1
+    with paths.job_queue.open(newline="", encoding="utf-8") as handle:
+        saved = list(csv.DictReader(handle))
+    assert len(saved) == 2
+    assert saved[0]["status"] == "Applied"
+    assert saved[1]["job_url"].endswith("/req-003")
+    assert saved[1]["status"] == "Pending"
