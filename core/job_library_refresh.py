@@ -1756,6 +1756,19 @@ async def refresh_job_library(
 
     candidate_results: list[JobCandidateRefreshResult] = []
     seen_verified_postings: set[str] = set()
+    ats_read_cache: dict[str, ReadJobResult] = {}
+
+    async def _read_once(url: str) -> ReadJobResult:
+        # Reuse independently verified ATS evidence within this refresh only.
+        # Never cache uncertain errors across invocations or equate arbitrary sites.
+        identity = supported_employer_identity(url)
+        if identity is not None and identity in ats_read_cache:
+            return ats_read_cache[identity]
+        result = await _resolve(public_job_reader(ReadJobRequest(url)))
+        if identity is not None and isinstance(result, ReadJobResult):
+            ats_read_cache[identity] = result
+        return result
+
     for candidate_url, (candidate, source_ids) in candidates_by_url.items():
         profile_ids = tuple(source_ids)
         if effective_company_treatment(
@@ -1790,9 +1803,7 @@ async def refresh_job_library(
             )
             continue
         try:
-            read_result = await _resolve(
-                public_job_reader(ReadJobRequest(canonical_url))
-            )
+            read_result = await _read_once(canonical_url)
         except (OSError, RuntimeError, TypeError, ValueError):
             candidate_results.append(
                 _stopped_candidate(
@@ -1856,9 +1867,7 @@ async def refresh_job_library(
         )
         if target_native is not None and target_native != source_native:
             try:
-                employer_read = await _resolve(
-                    public_job_reader(ReadJobRequest(observation.application_url))
-                )
+                employer_read = await _read_once(observation.application_url)
             except (OSError, RuntimeError, TypeError, ValueError):
                 employer_read = None
             verification = verify_employer_observation(
