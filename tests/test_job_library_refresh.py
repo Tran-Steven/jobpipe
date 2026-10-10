@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from dataclasses import replace
 
 import pytest
 
@@ -16,6 +17,7 @@ from core.job_discovery import (
 )
 from core.job_library_refresh import (
     CandidateDiscoveryStatus,
+    CandidateRefreshReason,
     CandidateMembershipStatus,
     JobLibraryRefreshStatus,
     ManualJobLibraryRefreshCommand,
@@ -457,3 +459,66 @@ async def test_all_search_failure_is_failed_and_boundary_has_no_application_flow
         "EXPIRED",
     ):
         assert forbidden not in source
+
+
+@pytest.mark.asyncio
+async def test_blocked_employer_is_skipped_before_public_read(tmp_path) -> None:
+    home = PrivateHome(tmp_path)
+    profile = _profile(home, "Jobgether", "jobgether")
+    url = "https://job-boards.greenhouse.io/jobgether/jobs/1024"
+    executor = _SearchExecutor({
+        profile.profile_id: _search_result(
+            profile, (_candidate(profile, "blocked-1", url),)
+        ),
+    })
+    reader = _Reader()
+    discovery = _Discovery()
+    result = await refresh_job_library(
+        _command("refresh-company-blocked"),
+        profile_provider=_ProfileProvider(PrivateHomeSearchProfileRepository(home)),
+        search_executor=executor,
+        public_job_reader=reader,
+        discovery=discovery,
+        priority_refresh=_Priority(),
+        repository=PrivateHomeJobLibraryRefreshRunRepository(home),
+    )
+    assert result.status is JobLibraryRefreshStatus.COMPLETED
+    assert reader.calls == []
+    assert discovery.calls == []
+    assert result.run.candidate_results[0].reason is CandidateRefreshReason.BLOCKED_COMPANY
+    assert result.run.candidate_results[0].discovery_status is CandidateDiscoveryStatus.SKIPPED
+
+
+@pytest.mark.asyncio
+async def test_blocked_employer_from_public_read_is_not_imported(tmp_path) -> None:
+    home = PrivateHome(tmp_path)
+    profile = _profile(home, "Example Labs", "examplelabs")
+    url = "https://job-boards.greenhouse.io/examplelabs/jobs/1025"
+    executor = _SearchExecutor({
+        profile.profile_id: _search_result(
+            profile, (_candidate(profile, "blocked-2", url),)
+        ),
+    })
+
+    class _BlockedReader(_Reader):
+        async def __call__(self, request):
+            self.calls.append(request.url)
+            return ReadJobResult.succeeded(
+                replace(_observation(request.url), company="SynergisticIT")
+            )
+
+    reader = _BlockedReader()
+    discovery = _Discovery()
+    result = await refresh_job_library(
+        _command("refresh-source-company-blocked"),
+        profile_provider=_ProfileProvider(PrivateHomeSearchProfileRepository(home)),
+        search_executor=executor,
+        public_job_reader=reader,
+        discovery=discovery,
+        priority_refresh=_Priority(),
+        repository=PrivateHomeJobLibraryRefreshRunRepository(home),
+    )
+    assert result.status is JobLibraryRefreshStatus.COMPLETED
+    assert reader.calls == [url]
+    assert discovery.calls == []
+    assert result.run.candidate_results[0].reason is CandidateRefreshReason.BLOCKED_COMPANY
