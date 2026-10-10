@@ -23,6 +23,7 @@ from auth import (
 )
 from auth.credentials import CredentialStore, MacOSSecurityCredentialStore
 from core.application_engine import JobApplicationEngine
+from core.company_filters import CompanyTreatment, company_treatment
 from core.browser_broker import lease_browser_session
 from core.bundles import (
     ApplicationBundle,
@@ -626,6 +627,10 @@ async def cmd_apply_csv(args: argparse.Namespace) -> int:
         item for item in queue
         if getattr(item, "row", {}).get("status", "").strip().casefold()
         != "registration uncertain"
+    ]
+    queue = [
+        item for item in queue
+        if company_treatment(item.company) is not CompanyTreatment.BLOCK
     ]
     if not queue:
         _json_print({"queue": str(csv_path), "selected": 0})
