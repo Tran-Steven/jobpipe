@@ -349,7 +349,9 @@ def _classify(
         )
     if not isinstance(decision, PriorityDecision):
         raise ValueError("CURRENT priority item has no decision")
-    if effective_company_treatment(job.company) is CompanyTreatment.BLOCK:
+    if effective_company_treatment(
+        job.company, subject_id=subject_id
+    ) is CompanyTreatment.BLOCK:
         return _blocked(
             subject_id=subject_id,
             job=job,
