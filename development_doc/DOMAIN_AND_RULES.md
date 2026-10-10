@@ -1988,3 +1988,13 @@ preserves P1d2 order and performs no claim, save, preparation or execution.
 - The legacy queue preserves existing non-pending history, never reconstructs Pending rows with the same posting identity, and filters explicit dismissed or externally-applied identities. Company/title alone never merges two distinct posting IDs.
 - Every application preflight checks private history before launching a browser. The existing permit and submission ledger checks remain mandatory even when private history is empty.
 - Data-layer exclusion is authoritative. Hiding cards from LinkedIn's DOM may improve human-facing presentation, but LinkedIn's X/dismiss state does not establish applied status and must not be used as the sole safety gate.
+
+
+### Optional company filtering and posting-quality screening
+
+- Built-in company classifications are an optional preference, not an adjudication that named employers are illegitimate. Fresh private homes default to `enabled: false`; explicit `jobctl company-filters enable` activates it. `disable` turns off company filtering without deleting the list.
+- Preferences are owner-only `state/company-preferences.json` outside the Git checkout, with atomic 0600 writes. `company-filters block "Company"`, `allow "Company"`, `clear "Company"`, and `list` operate on custom names. The custom allowlist wins over built-in and custom blocks; when filtering is disabled, none of those company preferences gate a job.
+- The public `config/company_filters.json` is an editable built-in registry. Custom names and history records must not be committed. Exact normalized company and known aliases are supported; no speculative substring or corporate-parent matching.
+- Deterministic `assess_job_quality` emits named, explainable signals. Direct candidate-payment requirements, off-platform messaging interviews, early collection of highly sensitive identity data, and training repayment terms require human review. They are risk signals, **not verified scam allegations**. Unspecified end clients or implausible no-experience pay claims are downgraded, not categorically blocked. Missing salary by itself is not a quality signal.
+- Legacy scoring excludes `REVIEW_REQUIRED` postings from automatic matching. Modern runnable queue blocks `REVIEW_REQUIRED` before application preparation. The quality guard is independent of the optional company blacklist. All existing submission permits and duplicate-application guards remain in force.
+- This iteration does not deliver a dashboard Block/Allow button, browser DOM removal, historical-import reconciliation, or modern tier-aware reprioritization. Track these as separate release-gated features and do not claim they shipped.
