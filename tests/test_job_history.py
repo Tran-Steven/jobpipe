@@ -250,13 +250,15 @@ def test_legacy_queue_deduplicates_two_links_to_verified_employer(
     home = PrivateHome(tmp_path / "private")
     home.ensure()
     monkeypatch.setattr(jobpipe_queue.PrivateHome, "discover", lambda: home)
+    external_careers = "https://careers.synthetic-employer.example/jobs/engineer-1001"
     VerifiedPostingAliases(home).record_verified(
-        source=_external(), employer_url=ATS,
+        source=replace(_external(), source_url=external_careers),
+        employer_url=ATS,
         employer_read=ReadJobResult.succeeded(_observation(ATS)),
     )
     rows = [
         {"id": "board", "company": "Example Labs", "title": "Engineer",
-         "apply_url": EXTERNAL, "match_score": 95},
+         "apply_url": external_careers, "match_score": 95},
         {"id": "employer", "company": "Example Labs", "title": "Engineer",
          "apply_url": ATS, "match_score": 97},
     ]
