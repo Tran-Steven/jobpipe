@@ -807,6 +807,83 @@ async def dashboard_applications_read_ui(
     )
 
 
+def _subject_company_preferences(
+    request: Request, context: AuthenticatedSubjectContext
+) -> PrivateCompanyPreferences:
+    home = getattr(request.app.state, "company_preferences_home", None)
+    if not isinstance(home, PrivateHome):
+        raise HTTPException(
+            status_code=503, detail="Company preferences are unavailable."
+        )
+    return PrivateCompanyPreferences(home, subject_id=context.subject_id)
+
+
+@app.get("/api/company-preferences")
+async def company_preferences_read_ui(
+    request: Request,
+    context: AuthenticatedSubjectContext = Depends(
+        _authenticated_dashboard_subject
+    ),
+) -> dict:
+    store = _subject_company_preferences(request, context)
+    try:
+        return store.read().to_dict()
+    except (OSError, TypeError, ValueError):
+        raise HTTPException(
+            status_code=503, detail="Company preferences could not be read safely."
+        ) from None
+
+
+@app.post("/api/company-preferences")
+async def company_preferences_edit_ui(
+    body: dict,
+    request: Request,
+    context: AuthenticatedSubjectContext = Depends(
+        _authenticated_dashboard_subject
+    ),
+) -> dict:
+    if request.headers.get("x-jobops-preferences-action") != "1":
+        raise HTTPException(
+            status_code=403, detail="Explicit same-origin action is required."
+        )
+    origin = request.headers.get("origin")
+    if origin is not None and origin.rstrip("/") != str(request.base_url).rstrip("/"):
+        raise HTTPException(status_code=403, detail="Cross-origin update rejected.")
+    if request.headers.get("sec-fetch-site") == "cross-site":
+        raise HTTPException(status_code=403, detail="Cross-site update rejected.")
+    if set(body) - {"action", "company"}:
+        raise HTTPException(status_code=422, detail="Unknown preference fields.")
+    action = body.get("action")
+    company = body.get("company")
+    if not isinstance(action, str) or action not in {
+        "enable", "disable", "builtin-on", "builtin-off",
+        "block", "allow", "clear",
+    }:
+        raise HTTPException(status_code=422, detail="Unsupported preference action.")
+    if action in {"block", "allow", "clear"}:
+        if (
+            not isinstance(company, str)
+            or not company.strip()
+            or len(company) > 160
+        ):
+            raise HTTPException(status_code=422, detail="Invalid company name.")
+    elif company is not None:
+        raise HTTPException(status_code=422, detail="Company is not applicable.")
+    store = _subject_company_preferences(request, context)
+    try:
+        if action in {"enable", "disable"}:
+            result = store.set_enabled(action == "enable")
+        elif action in {"builtin-on", "builtin-off"}:
+            result = store.set_builtin_enabled(action == "builtin-on")
+        else:
+            result = store.edit(action, company)
+    except (OSError, TypeError, ValueError):
+        raise HTTPException(
+            status_code=422, detail="Company preference change was rejected."
+        ) from None
+    return result.to_dict()
+
+
 @app.get("/api/dashboard/overview")
 async def dashboard_overview_read_ui(
     request: Request,
