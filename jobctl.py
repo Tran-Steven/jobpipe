@@ -24,6 +24,7 @@ from auth import (
 from auth.credentials import CredentialStore, MacOSSecurityCredentialStore
 from core.application_engine import JobApplicationEngine
 from core.company_filters import CompanyTreatment, company_treatment
+from core.job_history import JobHistoryState, PrivateJobHistory
 from core.browser_broker import lease_browser_session
 from core.bundles import (
     ApplicationBundle,
@@ -986,12 +987,44 @@ def cmd_invalidate_review(args: argparse.Namespace) -> int:
     return int(outcome.exit_code)
 
 
+def cmd_job_history(args: argparse.Namespace) -> int:
+    home = (
+        PrivateHome(Path(args.home).expanduser().resolve())
+        if args.home else PrivateHome.discover()
+    )
+    history = PrivateJobHistory(home)
+    if args.command == "mark-applied":
+        state = history.mark(args.url, JobHistoryState.APPLIED_SELF_REPORTED)
+    elif args.command == "dismiss-job":
+        state = history.mark(args.url, JobHistoryState.DISMISSED)
+    elif args.command == "clear-job-mark":
+        history.clear(args.url)
+        state = history.state_for(args.url)
+    else:
+        state = history.state_for(args.url)
+    _json_print({
+        "state": state.value if state else None,
+        "posting_identity_hash": hash_job_url(args.url),
+    })
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--home", default="", help="Override jobpipe private home")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     subparsers.add_parser("init", help="Create Private Home and the Keychain permit key")
+
+    for action, description in (
+        ("mark-applied", "Record an externally submitted application"),
+        ("dismiss-job", "Hide a posting without claiming an application"),
+        ("clear-job-mark", "Remove a self-reported job history mark"),
+        ("job-history", "Check a posting's locally recorded history"),
+    ):
+        history_parser = subparsers.add_parser(action, help=description)
+        history_parser.add_argument("--url", required=True)
+
 
     migrate_parser = subparsers.add_parser("migrate", help="Import an ApplyPilot workflow privately")
     migrate_parser.add_argument("workflow")
@@ -1136,6 +1169,8 @@ def main() -> int:
     try:
         if args.command == "init":
             return cmd_init(args)
+        if args.command in {"mark-applied", "dismiss-job", "clear-job-mark", "job-history"}:
+            return cmd_job_history(args)
         if args.command == "migrate":
             return cmd_migrate(args)
         if args.command == "mailbox":
