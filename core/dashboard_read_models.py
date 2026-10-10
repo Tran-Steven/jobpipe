@@ -549,6 +549,10 @@ class DashboardJobsReader:
                 CurrentPriorityItemStatus.STALE,
             }:
                 status = DashboardJobStatus.NOT_EVALUATED
+            elif source.runnable_status is RunnableApplicationStatus.BLOCKED_COMPANY:
+                status = DashboardJobStatus.NOT_A_MATCH
+            elif source.runnable_status is RunnableApplicationStatus.BLOCKED_QUALITY_REVIEW:
+                status = DashboardJobStatus.REVIEW_REQUIRED
             elif (
                 decision is not None
                 and decision.qualification is PriorityQualification.NEEDS_USER
@@ -559,10 +563,6 @@ class DashboardJobsReader:
                 and decision.qualification is PriorityQualification.EXCLUDED
             ):
                 status = DashboardJobStatus.NOT_A_MATCH
-            elif source.runnable_status is RunnableApplicationStatus.BLOCKED_COMPANY:
-                status = DashboardJobStatus.NOT_A_MATCH
-            elif source.runnable_status is RunnableApplicationStatus.BLOCKED_QUALITY_REVIEW:
-                status = DashboardJobStatus.REVIEW_REQUIRED
             elif source.runnable_status is RunnableApplicationStatus.RUNNABLE:
                 status = DashboardJobStatus.READY_TO_PREPARE
             elif (
