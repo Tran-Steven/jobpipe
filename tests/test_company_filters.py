@@ -37,7 +37,17 @@ def test_legacy_discovery_filters_exclusions_before_limit() -> None:
     assert [job.company for job in filter_company_jobs(jobs, profile)] == ["Apex Systems"]
 
 
-def test_triage_excludes_blocked_and_deprioritizes_watchlisted_companies() -> None:
+def test_triage_excludes_blocked_and_deprioritizes_watchlisted_companies(monkeypatch) -> None:
+    from core.company_preferences import CompanyPreferences, effective_company_treatment
+    import jobpipe_discovery as target_module
+
+    monkeypatch.setattr(
+        target_module,
+        "effective_company_treatment",
+        lambda company, **kwargs: effective_company_treatment(
+            company, preferences=CompanyPreferences(enabled=True), **kwargs
+        ),
+    )
     profile = {"preferences": {"roles": ["Software Engineer"], "keywords": [], "years_experience": 2}}
     def job(company: str) -> dict[str, str]:
         return {
