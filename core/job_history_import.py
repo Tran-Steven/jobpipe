@@ -169,7 +169,9 @@ def import_job_history_csv(
         identities[employer_hash] = state
         imported_at = original_timestamps.get(identity_hash)
         if imported_at is not None:
-            group_timestamps[employer_hash] = max(\n                group_timestamps.get(employer_hash, imported_at), imported_at\n            )
+            group_timestamps[employer_hash] = max(
+                group_timestamps.get(employer_hash, imported_at), imported_at
+            )
         groups.setdefault(employer_hash, set()).update(related)
     path = history.path
     if commit and not identities:
@@ -203,14 +205,18 @@ def import_job_history_csv(
                 path.resolve().as_uri() + "?mode=ro", uri=True
             ) as conn:
                 current = _existing_states(conn)
-        return _summary(\n            identities, current, rows=rows, committed=False, unmatched=unmatched\n        )
+        return _summary(
+            identities, current, rows=rows, committed=False, unmatched=unmatched
+        )
 
     # The collision check is repeated *inside* the write transaction; another
     # importer cannot race a check and overwrite a confirmed application.
     with history._connect() as connection:
         connection.execute("BEGIN IMMEDIATE")
         existing = _existing_states(connection)
-        result = _summary(\n            identities, existing, rows=rows, committed=True, unmatched=unmatched\n        )
+        result = _summary(
+            identities, existing, rows=rows, committed=True, unmatched=unmatched
+        )
         recorded_at = datetime.now(timezone.utc).isoformat()
         for identity, state in identities.items():
             if existing.get(identity) is state:
