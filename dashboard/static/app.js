@@ -8,6 +8,8 @@ const state = {
   jobs: null,
   applications: null,
   attention: null,
+  companyPreferences: null,
+  companyPreferencesUpdating: false,
   loading: true,
   refreshing: false,
   automating: false,
@@ -95,6 +97,7 @@ async function loadDashboard() {
     jobs: getJson("/api/dashboard/jobs"),
     applications: getJson("/api/dashboard/applications"),
     attention: getJson("/api/human-attention-inbox"),
+    companyPreferences: getJson("/api/company-preferences"),
   };
   const keys = Object.keys(requests);
   const results = await Promise.allSettled(Object.values(requests));
@@ -160,6 +163,7 @@ function renderAll() {
   renderJobs();
   renderApplications();
   renderProfile();
+  renderCompanyPreferences();
   bindDynamicActions();
 }
 
@@ -343,6 +347,99 @@ function renderProfile() {
     : `<p>${state.profile.review_summary?.pending_proposals ?? 0} proposals waiting for review.</p>`;
 }
 
+function renderCompanyPreferences() {
+  const node = document.querySelector("#company-preferences-panel");
+  const prefs = state.companyPreferences;
+  if (!node) return;
+  if (!prefs) {
+    node.innerHTML = state.loading
+      ? "<p>Loading company preferences…</p>"
+      : failureState("Company preferences are unavailable");
+    return;
+  }
+  const checked = (value) => value ? "checked" : "";
+  const disabled = state.companyPreferencesUpdating ? "disabled" : "";
+  const renderRules = (items, type) => items.length
+    ? `<ul class="stack">${items.map((name) => `
+        <li class="item-row">
+          <span>${escapeHtml(name)}</span>
+          <button type="button" class="button secondary" data-clear-company="${escapeHtml(name)}" ${disabled}>Remove</button>
+        </li>`).join("")}</ul>`
+    : "<p class=\"quiet\">None added.</p>";
+  node.innerHTML = `
+    <div class="stack">
+      <label><input id="company-filter-enabled" type="checkbox" ${checked(prefs.enabled)} ${disabled}>
+        Enable company filtering for this profile
+      </label>
+      <label><input id="company-filter-builtin" type="checkbox" ${checked(prefs.builtin_enabled)} ${disabled}>
+        Use the shared company watchlist
+      </label>
+      <p class="capability-note">Your allowed companies override shared blocks. Turning filtering off leaves your rules saved.</p>
+      <form id="company-filter-edit-form" class="stack">
+        <label for="company-filter-name">Company</label>
+        <input id="company-filter-name" name="company" type="text" required maxlength="160" placeholder="Company name" ${disabled}>
+        <label for="company-filter-action">Action</label>
+        <select id="company-filter-action" name="action" ${disabled}>
+          <option value="block">Block this company</option>
+          <option value="allow">Always allow this company</option>
+        </select>
+        <button class="button secondary" type="submit" ${disabled}>Save company rule</button>
+      </form>
+      <h3>My blocked companies</h3>
+      ${renderRules(prefs.blocked || [], "block")}
+      <h3>My allowed companies</h3>
+      ${renderRules(prefs.allowed || [], "allow")}
+      <p id="company-filter-update-status" role="status"></p>
+    </div>`;
+}
+
+async function changeCompanyPreference(action, company = null) {
+  if (state.companyPreferencesUpdating) return;
+  state.companyPreferencesUpdating = true;
+  renderCompanyPreferences();
+  bindCompanyPreferenceActions();
+  try {
+    const response = await fetch("/api/company-preferences", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-JobOps-Preferences-Action": "1",
+      },
+      body: JSON.stringify(company == null ? { action } : { action, company }),
+    });
+    if (!response.ok) throw new Error(`Preference update failed (${response.status})`);
+    state.companyPreferences = await response.json();
+    hideNotice();
+  } catch (error) {
+    showNotice(`Company preference change was not saved: ${error.message}`);
+  } finally {
+    state.companyPreferencesUpdating = false;
+    renderCompanyPreferences();
+    bindCompanyPreferenceActions();
+  }
+}
+
+function bindCompanyPreferenceActions() {
+  const enabled = document.querySelector("#company-filter-enabled");
+  if (!enabled) return;
+  enabled.addEventListener("change", () =>
+    changeCompanyPreference(enabled.checked ? "enable" : "disable"));
+  const builtin = document.querySelector("#company-filter-builtin");
+  builtin.addEventListener("change", () =>
+    changeCompanyPreference(builtin.checked ? "builtin-on" : "builtin-off"));
+  document.querySelector("#company-filter-edit-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const company = document.querySelector("#company-filter-name").value.trim();
+    const action = document.querySelector("#company-filter-action").value;
+    if (company && ["block", "allow"].includes(action)) {
+      changeCompanyPreference(action, company);
+    }
+  });
+  document.querySelectorAll("[data-clear-company]").forEach((node) =>
+    node.addEventListener("click", () => changeCompanyPreference("clear", node.dataset.clearCompany)));
+}
+
 async function refreshJobs() {
   if (state.refreshing) return;
   state.refreshing = true;
@@ -398,6 +495,7 @@ function bindDynamicActions() {
   document.querySelectorAll("[data-reload]").forEach((node) => node.onclick = loadDashboard);
   document.querySelectorAll("[data-action]").forEach((node) => node.onclick = () => performAction(node.dataset.action));
   document.querySelectorAll("[data-attention-id]").forEach((node) => node.onclick = () => openAttentionItem(node.dataset.attentionId));
+  bindCompanyPreferenceActions();
 }
 
 function openAttentionItem(itemId) {
