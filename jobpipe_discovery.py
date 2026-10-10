@@ -10,6 +10,7 @@ import yaml
 
 from core.company_filters import CompanyTreatment
 from core.company_preferences import effective_company_treatment
+from core.job_quality import QualityDisposition, assess_job_quality
 from utils.discovery import discover_all_jobs
 from utils.tracker import get_all_jobs, is_already_seen, log_discovered
 
@@ -115,8 +116,15 @@ def _score_job(job: dict[str, Any], profile: dict[str, Any]) -> tuple[int, list[
     if treatment is CompanyTreatment.BLOCK:
         return 0, ["company blocked by preference"]
 
+    quality = assess_job_quality(str(job.get("title") or ""), str(job.get("description") or ""))
+    if quality.requires_review:
+        return 0, ["posting requires manual risk review: " + ", ".join(quality.signals)]
+
     score = 45
     reasons: list[str] = []
+    if quality.disposition is QualityDisposition.DEPRIORITIZE:
+        score -= 20
+        reasons.append("low-quality posting signal: " + ", ".join(quality.signals))
     if treatment is CompanyTreatment.DEPRIORITIZE:
         score -= 30
         reasons.append("company deprioritized by preference")
