@@ -617,7 +617,7 @@ async def cmd_apply_csv(args: argparse.Namespace) -> int:
         resume_dir,
         priorities=args.priorities,
         statuses=args.statuses,
-        limit=args.limit,
+        limit=0,
     )
     if args.preview:
         args.list = True
@@ -629,10 +629,17 @@ async def cmd_apply_csv(args: argparse.Namespace) -> int:
         if getattr(item, "row", {}).get("status", "").strip().casefold()
         != "registration uncertain"
     ]
+    history = PrivateJobHistory(home)
     queue = [
         item for item in queue
         if company_treatment(getattr(item, "company", "")) is not CompanyTreatment.BLOCK
+        and (
+            not getattr(item, "url", "")
+            or history.state_for(item.url) is None
+        )
     ]
+    if args.limit > 0:
+        queue = queue[:args.limit]
     if not queue:
         _json_print({"queue": str(csv_path), "selected": 0})
         return 0
