@@ -38,7 +38,7 @@ def test_unseen_submission_does_not_initialize_or_mutate_private_state(
     home = PrivateHome(tmp_path / "private")
     result = inspect_submission(URL, home=home)
     assert result["status"] == ReconciliationStatus.NEVER_SUBMITTED.value
-    assert result["automatic_retry_allowed"] is True
+    assert result["prior_submission_blocks_retry"] is False
     assert result["submission"] is None
     assert not home.paths.event_ledger.exists()
     assert not PrivateJobHistory(home).path.exists()
@@ -52,11 +52,11 @@ def test_manual_history_dismissal_and_confirmed_submission_are_distinct(
     history.mark(URL, JobHistoryState.DISMISSED)
     dismissed = inspect_submission(ALIAS, home=home)
     assert dismissed["status"] == ReconciliationStatus.DISMISSED.value
-    assert dismissed["automatic_retry_allowed"] is False
+    assert dismissed["prior_submission_blocks_retry"] is True
     history.mark(URL, JobHistoryState.APPLIED_SELF_REPORTED)
     reported = inspect_submission(ALIAS, home=home)
     assert reported["status"] == ReconciliationStatus.MANUALLY_REPORTED.value
-    assert reported["automatic_retry_allowed"] is False
+    assert reported["prior_submission_blocks_retry"] is True
     assert not home.paths.event_ledger.exists()
 
 
@@ -73,7 +73,7 @@ def test_unknown_submission_requires_evidence_and_never_retries(
     events_before = ledger.list_events(run_id="run-audit-1")
     report = inspect_submission(ALIAS, home=home)
     assert report["status"] == ReconciliationStatus.UNRESOLVED.value
-    assert report["automatic_retry_allowed"] is False
+    assert report["prior_submission_blocks_retry"] is True
     assert report["submission"]["status"] == SubmissionStatus.UNKNOWN.value
     assert report["submission"]["intent_id"] == intent_id
     assert ledger.get_submission_intent(intent_id) == before
@@ -103,7 +103,7 @@ def test_confirmed_submission_is_reported_but_not_resubmitted(
     before = ledger.get_submission_intent(intent_id)
     report = inspect_submission(ALIAS, home=home)
     assert report["status"] == ReconciliationStatus.VERIFIED.value
-    assert report["automatic_retry_allowed"] is False
+    assert report["prior_submission_blocks_retry"] is True
     assert report["submission"]["status"] == "VERIFIED"
     assert ledger.get_submission_intent(intent_id) == before
     assert len(ledger.list_submission_evidence(intent_id)) == 1
