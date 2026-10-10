@@ -1967,3 +1967,13 @@ preserves P1d2 order and performs no claim, save, preparation or execution.
   new Resume claim is accepted from the UI.
 - Each directive triggers at most one full P2b4 rerun. Defer/failure retains
   its directive and receipt; the service never loops or retries itself.
+
+
+### Company avoidance preferences
+
+- `config/company_filters.json` is a versioned, non-factual job-search preference registry, not a determination that any listed employer is fraudulent.
+- The `blocked` treatment uses normalized, exact company names and explicitly listed aliases. It never uses substring matching. Legacy discovery and triage also honor `preferences.exclude_companies` as explicit additional blocks.
+- `blocked` companies cannot enter the modern runnable application queue, even when an older priority decision qualified the job. The legacy discovery, triage, queue-builder and `apply-csv` selection paths also exclude them.
+- `deprioritize` subtracts 30 points only in the legacy deterministic triage path; it is not a universal prohibition or an implicit hard constraint in the modern priority policy.
+- `review` is informational in legacy triage and cannot exclude or implicitly approve a job. Staffing-agency names are not evidence of wrongdoing.
+- Approved `EXCLUDED_COMPANY` policy constraints remain independently authoritative for modern priority decisions. Company matching must not create or impersonate a user-approved prioritization policy.
