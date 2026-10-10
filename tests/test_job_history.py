@@ -140,3 +140,53 @@ def test_intermediary_urls_cannot_enter_legacy_application_queue() -> None:
     for domain in ("jobgether.com", "lensa.com", "swooped.co", "jobright.ai"):
         assert not _runnable_url(f"https://{domain}/jobs/synthetic")
     assert _runnable_url(FIRST)
+
+
+def test_queue_limit_counts_eligible_unique_jobs_after_filtering(
+    tmp_path: Path, monkeypatch
+) -> None:
+    from core.company_preferences import PrivateCompanyPreferences
+
+    home = PrivateHome(tmp_path / "private")
+    monkeypatch.setattr(jobpipe_queue.PrivateHome, "discover", lambda: home)
+    prefs = PrivateCompanyPreferences(home)
+    prefs.set_enabled(True)
+    prefs.edit("block", "Blocked Firm")
+    PrivateJobHistory(home).mark(
+        "https://jobs.lever.co/synthetic/dismissed",
+        JobHistoryState.DISMISSED,
+    )
+    jobs = [
+        {
+            "company": "Blocked Firm",
+            "title": "Software Engineer",
+            "apply_url": "https://jobs.lever.co/synthetic/blocked",
+            "match_score": 99,
+        },
+        {
+            "company": "Synthetic Firm",
+            "title": "Software Engineer",
+            "apply_url": "https://jobs.lever.co/synthetic/dismissed",
+            "match_score": 98,
+        },
+        {
+            "company": "Synthetic Firm",
+            "title": "Software Engineer",
+            "apply_url": "https://jobs.lever.co/synthetic/eligible",
+            "match_score": 90,
+        },
+    ]
+    calls = []
+
+    def get_all_jobs(**kwargs):
+        calls.append(kwargs)
+        return jobs[:kwargs["limit"]], len(jobs)
+
+    monkeypatch.setattr(jobpipe_queue, "get_all_jobs", get_all_jobs)
+    result = jobpipe_queue.enqueue_matched(limit=1)
+    assert calls[0]["limit"] == 10000
+    assert result["pending_rows"] == 1
+    with home.paths.job_queue.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    assert len(rows) == 1
+    assert rows[0]["job_url"].endswith("/eligible")
