@@ -8,6 +8,7 @@ from core.company_filters import CompanyTreatment
 from core.company_preferences import effective_company_treatment
 from core.event_ledger import hash_job_url
 from core.job_history import PrivateJobHistory
+from core.job_quality import assess_job_quality
 from core.private_home import PrivateHome
 from utils.tracker import get_all_jobs
 from utils.url_resolver import is_aggregator_url
@@ -98,6 +99,8 @@ def enqueue_matched(csv_path: str = "", limit: int = 0) -> dict[str, Any]:
         if not company or company.casefold() == "unknown" or not title or not url or not _runnable_url(url):
             continue
         if effective_company_treatment(company) is CompanyTreatment.BLOCK:
+            continue
+        if assess_job_quality(title, str(job.get("description") or "")).requires_review:
             continue
         identity = hash_job_url(url)
         if identity in protected_identities or history.state_for(url) is not None:
