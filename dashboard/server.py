@@ -61,6 +61,8 @@ from utils.tracker import (
 )
 from utils.events import EventBus
 from core.authenticated_subject import AuthenticatedSubjectContext
+from core.company_preferences import PrivateCompanyPreferences
+from core.private_home import PrivateHome
 from dashboard.authentication import AuthenticatedSubjectDependency
 from dashboard.automation_cycle import (
     ContinueAutomationUICommand,
@@ -225,6 +227,7 @@ def configure_production_automation_ui(
         DashboardApplicationsController | None
     ) = None,
     dashboard_overview_controller: DashboardOverviewController | None = None,
+    company_preferences_home: PrivateHome | None = None,
 ) -> None:
     """Atomically install the complete P2c10c production UI boundary."""
 
@@ -270,6 +273,11 @@ def configure_production_automation_ui(
     application.state.dashboard_overview_controller = (
         dashboard_overview_controller
     )
+    if company_preferences_home is not None and not isinstance(
+        company_preferences_home, PrivateHome
+    ):
+        raise TypeError("company preferences home is invalid")
+    application.state.company_preferences_home = company_preferences_home
     application.state.production_owned_resources = owned_resources
     application.state.production_composition_diagnostics = dict(
         composition_diagnostics
