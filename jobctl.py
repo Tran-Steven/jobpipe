@@ -630,7 +630,7 @@ async def cmd_apply_csv(args: argparse.Namespace) -> int:
     ]
     queue = [
         item for item in queue
-        if company_treatment(item.company) is not CompanyTreatment.BLOCK
+        if company_treatment(getattr(item, "company", "")) is not CompanyTreatment.BLOCK
     ]
     if not queue:
         _json_print({"queue": str(csv_path), "selected": 0})
