@@ -90,7 +90,7 @@ def enqueue_matched(csv_path: str = "", limit: int = 0) -> dict[str, Any]:
         status="matched",
         sort_by="match_score",
         sort_order="desc",
-        limit=limit or 10000,
+        limit=10000,
     )
     current: dict[str, dict[str, str]] = {}
     for job in jobs:
@@ -121,6 +121,9 @@ def enqueue_matched(csv_path: str = "", limit: int = 0) -> dict[str, Any]:
         previous = current.get(identity)
         if previous is None or score > int(previous.get("match_score") or 0):
             current[identity] = candidate
+
+    if limit > 0:
+        current = dict(list(current.items())[:limit])
 
     rows = preserved + list(current.values())
     with target.open("w", newline="", encoding="utf-8") as handle:
