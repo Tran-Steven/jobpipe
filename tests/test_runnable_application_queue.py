@@ -811,3 +811,24 @@ def test_explicit_company_block_overrides_runnable_priority(monkeypatch) -> None
     )
     assert result.runnable_status is RunnableApplicationStatus.BLOCKED_COMPANY
     assert result.reasons == (RunnableApplicationReason.COMPANY_BLOCKED,)
+
+
+
+def test_suspicious_posting_requires_review_before_runnable_admission() -> None:
+    from core.runnable_application_queue import _classify
+
+    policy = _policy()
+    item = _queue_item("job-quality-review", policy)
+    result = _classify(
+        subject_id=SUBJECT,
+        queue_status=CurrentPriorityItemStatus.CURRENT,
+        job=replace(
+            item.job,
+            description="Applicants must pay a $150 application fee.",
+        ),
+        decision=item.decision,
+        intent=_intent(item.job.job_id),
+        admission=policy.preparation_admission,
+    )
+    assert result.runnable_status is RunnableApplicationStatus.BLOCKED_QUALITY_REVIEW
+    assert result.reasons == (RunnableApplicationReason.QUALITY_REVIEW_REQUIRED,)
