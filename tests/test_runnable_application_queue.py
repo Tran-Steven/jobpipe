@@ -783,3 +783,20 @@ def test_runnable_read_model_imports_no_write_or_execution_layers() -> None:
             "selectively_reprioritize_jobs",
         }
     )
+
+
+def test_explicit_company_block_overrides_runnable_priority() -> None:
+    from core.runnable_application_queue import _classify
+
+    policy = _policy()
+    item = _queue_item("job-company-block", policy)
+    result = _classify(
+        subject_id=SUBJECT,
+        queue_status=CurrentPriorityItemStatus.CURRENT,
+        job=replace(item.job, company="Tata Consultancy Services"),
+        decision=item.decision,
+        intent=_intent(item.job.job_id),
+        admission=policy.preparation_admission,
+    )
+    assert result.runnable_status is RunnableApplicationStatus.BLOCKED_COMPANY
+    assert result.reasons == (RunnableApplicationQueueReason.COMPANY_BLOCKED,)
