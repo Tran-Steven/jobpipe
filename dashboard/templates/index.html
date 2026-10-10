@@ -140,6 +140,8 @@
             <option value="READY_TO_PREPARE">Ready to prepare</option>
             <option value="HIGH_MATCH">High match</option>
             <option value="NEEDS_INPUT">Needs input</option>
+            <option value="REVIEW_REQUIRED">Safety review needed</option>
+            <option value="ALREADY_APPLIED">Already applied</option>
             <option value="APPLICATION_CREATED">Application created</option>
             <option value="NOT_A_MATCH">Not a match</option>
             <option value="SYSTEM_ISSUE">System issue</option>
@@ -239,6 +241,17 @@
         <section class="section-card"><h2>Automation Policy</h2><p>Cycle budgets, authorization, and submission safeguards come from versioned server policy.</p><span class="status-pill neutral">Server managed</span></section>
         <section class="section-card"><h2>Advanced / Dry Run</h2><p>Legacy dry-run controls are not part of the guided production workflow.</p><button class="button secondary" disabled>Dry run unavailable</button></section>
       </div>
+      <section class="section-card" aria-labelledby="company-preferences-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="company-preferences-title">Company filtering</h2>
+            <p>Optional employer preferences. Your custom blocks and allowed companies remain private.</p>
+          </div>
+        </div>
+        <div id="company-preferences-panel" aria-live="polite">
+          <p>Loading company preferences…</p>
+        </div>
+      </section>
       <section class="section-card danger-zone">
         <p class="eyebrow">Data &amp; Privacy</p>
         <h2>Delete local data</h2>

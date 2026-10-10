@@ -80,6 +80,8 @@ class DashboardJobStatus(StrEnum):
     HIGH_MATCH = "HIGH_MATCH"
     READY_TO_PREPARE = "READY_TO_PREPARE"
     NEEDS_INPUT = "NEEDS_INPUT"
+    REVIEW_REQUIRED = "REVIEW_REQUIRED"
+    ALREADY_APPLIED = "ALREADY_APPLIED"
     NOT_A_MATCH = "NOT_A_MATCH"
     APPLICATION_CREATED = "APPLICATION_CREATED"
     SYSTEM_ISSUE = "SYSTEM_ISSUE"
@@ -488,10 +490,12 @@ _JOB_STATUS_ORDER = {
     DashboardJobStatus.APPLICATION_CREATED: 1,
     DashboardJobStatus.HIGH_MATCH: 2,
     DashboardJobStatus.NEEDS_INPUT: 3,
-    DashboardJobStatus.NOT_EVALUATED: 4,
-    DashboardJobStatus.EVALUATING: 5,
-    DashboardJobStatus.NOT_A_MATCH: 6,
-    DashboardJobStatus.SYSTEM_ISSUE: 7,
+    DashboardJobStatus.REVIEW_REQUIRED: 4,
+    DashboardJobStatus.NOT_EVALUATED: 5,
+    DashboardJobStatus.EVALUATING: 6,
+    DashboardJobStatus.ALREADY_APPLIED: 7,
+    DashboardJobStatus.NOT_A_MATCH: 8,
+    DashboardJobStatus.SYSTEM_ISSUE: 9,
 }
 _PRIORITY_ORDER = {"P0": 0, "P1": 1, "P2": 2, "P3": 3, None: 4}
 
@@ -547,6 +551,14 @@ class DashboardJobsReader:
                 CurrentPriorityItemStatus.STALE,
             }:
                 status = DashboardJobStatus.NOT_EVALUATED
+            elif source.runnable_status is RunnableApplicationStatus.BLOCKED_PREVIOUSLY_APPLIED:
+                status = DashboardJobStatus.ALREADY_APPLIED
+            elif source.runnable_status is RunnableApplicationStatus.BLOCKED_DISMISSED:
+                status = DashboardJobStatus.NOT_A_MATCH
+            elif source.runnable_status is RunnableApplicationStatus.BLOCKED_COMPANY:
+                status = DashboardJobStatus.NOT_A_MATCH
+            elif source.runnable_status is RunnableApplicationStatus.BLOCKED_QUALITY_REVIEW:
+                status = DashboardJobStatus.REVIEW_REQUIRED
             elif (
                 decision is not None
                 and decision.qualification is PriorityQualification.NEEDS_USER
@@ -580,6 +592,14 @@ class DashboardJobsReader:
                 if decision is not None
                 else ()
             )
+            if source.runnable_status is RunnableApplicationStatus.BLOCKED_PREVIOUSLY_APPLIED:
+                reasons = ("Previously applied (self-reported history)",)
+            elif source.runnable_status is RunnableApplicationStatus.BLOCKED_DISMISSED:
+                reasons = ("Posting dismissed from your job history",)
+            elif source.runnable_status is RunnableApplicationStatus.BLOCKED_COMPANY:
+                reasons = ("Blocked by your company preferences",)
+            elif source.runnable_status is RunnableApplicationStatus.BLOCKED_QUALITY_REVIEW:
+                reasons = ("Posting requires additional safety review",)
             item = DashboardJobItem(
                 job_id=source.job.job_id,
                 title=source.job.title,
@@ -660,6 +680,14 @@ class DashboardJobsReader:
             ),
             "needs_input": sum(
                 item.application_status is DashboardJobStatus.NEEDS_INPUT
+                for item in ordered
+            ),
+            "review_required": sum(
+                item.application_status is DashboardJobStatus.REVIEW_REQUIRED
+                for item in ordered
+            ),
+            "already_applied": sum(
+                item.application_status is DashboardJobStatus.ALREADY_APPLIED
                 for item in ordered
             ),
             "excluded": sum(
@@ -1170,6 +1198,8 @@ class DashboardOverviewReader:
             if item.application_status
             not in {
                 DashboardJobStatus.NOT_A_MATCH,
+                DashboardJobStatus.REVIEW_REQUIRED,
+                DashboardJobStatus.ALREADY_APPLIED,
                 DashboardJobStatus.SYSTEM_ISSUE,
             }
         )[:5]

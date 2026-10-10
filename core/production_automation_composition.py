@@ -43,6 +43,7 @@ from core.human_attention_queue import build_current_human_attention_queue
 from core.subject_job_discovery import build_subject_job_discovery
 from core.subject_job_library import SubjectScopedJobPostingReader
 from core.job_discovery import build_production_job_discovery
+from core.private_home import PrivateHome
 from core.job_library_refresh import (
     ConfiguredSearchProfileExecutor,
     refresh_job_library,
@@ -174,6 +175,7 @@ class ProductionAutomationComposition:
     automation_cycle_callable: Callable[..., Any]
     owned_resources: tuple[object, ...]
     safe_diagnostics: Mapping[str, Any]
+    company_preferences_home: PrivateHome | None = None
     composition_contract_version: str = (
         PRODUCTION_AUTOMATION_COMPOSITION_CONTRACT_VERSION
     )
@@ -232,6 +234,7 @@ class ProductionAutomationComposition:
                 self.dashboard_applications_controller
             ),
             dashboard_overview_controller=self.dashboard_overview_controller,
+            company_preferences_home=self.company_preferences_home,
         )
 
 
@@ -371,6 +374,7 @@ def build_production_automation_composition(
             bootstrap, "search_profile_intent_policies"
         ),
         accepted_intent_repository=accepted_intent_repository,
+        preferences_home=bootstrap.private_home,
     )
 
     async def runnable_queue(command: Any) -> Any:
@@ -378,6 +382,7 @@ def build_production_automation_composition(
             command,
             priority_queue_reader=priority_queue,
             accepted_intent_repository=accepted_intent_repository,
+            preferences_home=bootstrap.private_home,
         )
 
     async def single_plan_creation(command: Any) -> Any:
@@ -763,6 +768,7 @@ def build_production_automation_composition(
         dashboard_applications_controller=applications_controller,
         dashboard_overview_controller=overview_controller,
         authenticated_subject_dependency=authenticated_subject,
+        company_preferences_home=bootstrap.private_home,
         production_job_search_ports=search_ports,
         production_priority_agent=priority_agent,
         priority_agent_metadata=priority_agent.metadata,

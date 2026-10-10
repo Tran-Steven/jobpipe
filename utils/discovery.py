@@ -11,6 +11,10 @@ from dataclasses import dataclass, asdict, field
 from typing import Optional
 from playwright.async_api import async_playwright, Page
 
+from core.company_filters import CompanyTreatment
+from core.company_preferences import effective_company_treatment
+from core.event_ledger import hash_job_url
+
 
 @dataclass
 class Job:
@@ -29,12 +33,30 @@ class Job:
         return asdict(self)
 
 
+def filter_company_jobs(jobs: list, profile: dict) -> list:
+    additional = profile.get("preferences", {}).get("exclude_companies", [])
+    return [
+        job for job in jobs
+        if effective_company_treatment(job.company, additional_blocked=additional)
+        is not CompanyTreatment.BLOCK
+    ]
+
+
 def deduplicate_jobs(jobs: list) -> list:
-    """Deduplicate jobs by (title_lower, company_lower) to avoid cross-source duplicates."""
     seen = set()
     unique = []
     for job in jobs:
-        key = (job.title.lower().strip(), job.company.lower().strip())
+        url = str(job.apply_url or job.url or "").strip()
+        try:
+            key = ("posting", hash_job_url(url)) if url else (
+                "fallback", job.company.casefold().strip(),
+                job.title.casefold().strip(), job.location.casefold().strip(),
+            )
+        except ValueError:
+            key = (
+                "fallback", job.company.casefold().strip(),
+                job.title.casefold().strip(), job.location.casefold().strip(),
+            )
         if key not in seen:
             seen.add(key)
             unique.append(job)
@@ -213,7 +235,7 @@ async def discover_all_jobs(profile: dict, limit: int = 0) -> list[Job]:
                 print(f"   ✅ {jobs[0].company}: {len(jobs)} matching jobs")
 
     if limit > 0:
-        unique = deduplicate_jobs(all_jobs)
+        unique = filter_company_jobs(deduplicate_jobs(all_jobs), profile)
         if len(unique) >= limit:
             print(f"\n📊 Total: {limit} matching jobs found")
             return unique[:limit]
@@ -229,7 +251,7 @@ async def discover_all_jobs(profile: dict, limit: int = 0) -> list[Job]:
             jobspy_jobs = discover_jobspy_jobs(profile, max_results=remaining)
             all_jobs.extend(jobspy_jobs)
             if limit > 0:
-                unique = deduplicate_jobs(all_jobs)
+                unique = filter_company_jobs(deduplicate_jobs(all_jobs), profile)
                 if len(unique) >= limit:
                     print(f"\n📊 Total: {limit} matching jobs found")
                     return unique[:limit]
@@ -276,7 +298,7 @@ async def discover_all_jobs(profile: dict, limit: int = 0) -> list[Job]:
 
     # Deduplicate across sources
     before = len(all_jobs)
-    all_jobs = deduplicate_jobs(all_jobs)
+    all_jobs = filter_company_jobs(deduplicate_jobs(all_jobs), profile)
     if before != len(all_jobs):
         print(f"\n🔄 Deduplicated: {before} -> {len(all_jobs)} unique jobs")
 
