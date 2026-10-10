@@ -59,6 +59,13 @@ AGGREGATOR_DOMAINS = {
     "monster.com",
     "dice.com",
     "simplyhired.com",
+    "jobgether.com",
+    "lensa.com",
+    "talentify.io",
+    "bebee.com",
+    "swooped.co",
+    "jobright.ai",
+    "jobleads.com",
     "careerbuilder.com",
     "google.com",  # Google Jobs links
 }
