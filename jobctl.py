@@ -26,6 +26,7 @@ from core.application_engine import JobApplicationEngine
 from core.company_filters import CompanyTreatment
 from core.company_preferences import effective_company_treatment, PrivateCompanyPreferences
 from core.job_history import JobHistoryState, PrivateJobHistory
+from core.job_history_import import import_job_history_csv
 from core.submission_reconciliation import inspect_submission
 from core.browser_broker import lease_browser_session
 from core.bundles import (
@@ -1023,6 +1024,15 @@ def cmd_company_filters(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_job_history_import(args: argparse.Namespace) -> int:
+    home = (
+        PrivateHome(Path(args.home).expanduser().resolve())
+        if args.home else PrivateHome.discover()
+    )
+    _json_print(import_job_history_csv(args.csv, home=home, commit=args.commit))
+    return 0
+
+
 def cmd_submission_inspect(args: argparse.Namespace) -> int:
     """Report exactly what the private ledger and self-reported history prove."""
     home = (
@@ -1079,6 +1089,13 @@ def build_parser() -> argparse.ArgumentParser:
         history_parser = subparsers.add_parser(action, help=description)
         history_parser.add_argument("--url", required=True)
 
+
+    history_import = subparsers.add_parser(
+        "job-history-import",
+        help="Preview or explicitly import confirmed application history from CSV",
+    )
+    history_import.add_argument("--csv", required=True)
+    history_import.add_argument("--commit", action="store_true")
 
     reconciliation = subparsers.add_parser(
         "submission-status",
@@ -1235,6 +1252,8 @@ def main() -> int:
             return cmd_job_history(args)
         if args.command == "submission-status":
             return cmd_submission_inspect(args)
+        if args.command == "job-history-import":
+            return cmd_job_history_import(args)
         if args.command == "migrate":
             return cmd_migrate(args)
         if args.command == "mailbox":
