@@ -939,3 +939,139 @@ async def test_legacy_malformed_review_event_cannot_be_reused_as_gate_b_proof(
     engine.record_outcome(malformed)
     assert engine.latest_review_outcome(bundle.run_id) is None
     assert engine.latest_review_hash(bundle.run_id) == ""
+
+
+class CrossBoundReviewRegistry:
+    def __init__(self, mismatch: str):
+        self.mismatch = mismatch
+        self.calls = 0
+
+    async def run(self, request: AdapterRunRequest):
+        self.calls += 1
+        if self.mismatch == "missing_result":
+            return None
+        return ApplicationOutcome.review_ready(
+            run_id=(
+                request.run_id + "-other"
+                if self.mismatch == "run" else request.run_id
+            ),
+            job_id=(
+                "other-requisition"
+                if self.mismatch == "job" else request.job_id
+            ),
+            adapter="untrusted",
+            details={"review_fingerprint": "a" * 64},
+        )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("mismatch", ["run", "job", "missing_result"])
+async def test_cross_bound_review_cannot_be_persisted_or_grant_gate_b(
+    tmp_path: Path, mismatch: str,
+) -> None:
+    registry = CrossBoundReviewRegistry(mismatch)
+    engine = _engine(tmp_path, registry)
+    bundle = _bundle(
+        tmp_path, run_id="run-cross-bound-review", tier=JobTier.LOW,
+        mode=AutonomyMode.LOW_RISK_AUTOPILOT,
+    )
+    result = await engine.execute(page=object(), bundle=bundle, request_submit=True)
+    assert result.status is OutcomeStatus.INTERNAL_ERROR
+    assert result.job_id == bundle.job.job_id
+    assert result.run_id == bundle.run_id
+    assert registry.calls == 1
+    assert engine.latest_review_hash(bundle.run_id) == ""
+    events = engine.ledger.list_events(run_id=bundle.run_id)
+    assert all(event.job_id == bundle.job.job_id for event in events)
+    assert not {"GATE_B_AUTHORIZED", "SUBMISSION_INTENT_CREATED"} & {
+        event.event_type for event in events
+    }
+
+
+class CrossBoundSubmitRegistry(FakeRegistry):
+    def __init__(self, *, mismatch: str, reserve: bool):
+        super().__init__()
+        self.mismatch = mismatch
+        self.reserve = reserve
+
+    async def run(self, request: AdapterRunRequest):
+        if not request.request_submit:
+            return await super().run(request)
+        if self.reserve:
+            approved = await request.gate_b_validator(
+                request.gate_b_permit,
+                job_id=request.job_id,
+                run_id=request.run_id,
+                review_fingerprint="a" * 64,
+            )
+            assert approved
+        if self.mismatch == "missing_result":
+            return None
+        return ApplicationOutcome.submitted_verified(
+            run_id=(
+                request.run_id + "-other" if self.mismatch == "run"
+                else request.run_id
+            ),
+            job_id=(
+                "other-requisition" if self.mismatch == "job"
+                else request.job_id
+            ),
+            adapter="untrusted",
+            evidence_refs=(EvidenceRef(
+                kind=EvidenceKind.CONFIRMATION_TEXT,
+                sha256="f" * 64,
+            ),),
+        )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("mismatch", ["run", "job", "missing_result"])
+@pytest.mark.parametrize("reserve", [False, True])
+async def test_unbound_submit_keeps_reserved_intent_uncertain_and_never_verified(
+    tmp_path: Path, mismatch: str, reserve: bool,
+) -> None:
+    registry = CrossBoundSubmitRegistry(mismatch=mismatch, reserve=reserve)
+    engine = _engine(tmp_path, registry)
+    bundle = _bundle(
+        tmp_path, run_id="run-cross-bound-submit", tier=JobTier.LOW,
+        mode=AutonomyMode.LOW_RISK_AUTOPILOT,
+    )
+    result = await engine.execute(page=object(), bundle=bundle, request_submit=True)
+    assert result.run_id == bundle.run_id
+    assert result.job_id == bundle.job.job_id
+    assert result.status is (
+        OutcomeStatus.SUBMIT_UNKNOWN if reserve else OutcomeStatus.INTERNAL_ERROR
+    )
+    events = engine.ledger.list_events(run_id=bundle.run_id)
+    assert not any(event.event_type == "SUBMISSION_VERIFIED" for event in events)
+    assert all(event.job_id == bundle.job.job_id for event in events)
+    intents = [
+        event.payload["intent_id"] for event in events
+        if event.event_type == "SUBMISSION_INTENT_CREATED"
+    ]
+    assert len(intents) == int(reserve)
+    if reserve:
+        assert engine.ledger.get_submission_intent(intents[0]).status is SubmissionStatus.UNKNOWN
+        assert result.details["do_not_retry_submit"] is True
+    else:
+        assert not result.retryable
+
+
+def test_record_outcome_rejects_cross_job_mutation_before_sqlite_write(
+    tmp_path: Path,
+) -> None:
+    engine = _engine(tmp_path, FakeRegistry())
+    bundle = _bundle(
+        tmp_path, run_id="run-immutable-binding", tier=JobTier.LOW,
+        mode=AutonomyMode.LOW_RISK_AUTOPILOT,
+    )
+    engine._ensure_run(bundle)
+    before = engine.ledger.get_run(bundle.run_id)
+    with pytest.raises(ValueError, match="immutable run binding"):
+        engine.record_outcome(ApplicationOutcome.review_ready(
+            run_id=bundle.run_id, job_id="wrong-job", adapter="untrusted",
+            details={"review_fingerprint": "a" * 64},
+        ))
+    after = engine.ledger.get_run(bundle.run_id)
+    assert after.state == before.state
+    assert after.state_version == before.state_version
