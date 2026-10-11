@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "request_id": "v1-offline-jobpipe-20261011-policy-smoke-1",
+  "operation": "scratch_script",
+  "args": {
+    "language": "python",
+    "content": "from core.company_filters import CompanyTreatment, company_treatment\nassert company_treatment('Synergistic-IT') is CompanyTreatment.BLOCK\nassert company_treatment('TCSystems') is CompanyTreatment.ALLOW\nassert company_treatment('Wipro') is CompanyTreatment.DEPRIORITIZE\nprint('JOBPIPE_COMPANY_FILTER_SOURCE_SMOKE_OK')\n"
+  },
+  "expected": {
+    "repo_head": "670ca713c468e7d735fae7e2d90c724e05b51319"
+  },
+  "limits": {
+    "timeout_seconds": 45
+  },
+  "issued_at_utc": "2026-10-11T22:20:47.773Z",
+  "expires_at_utc": "2026-10-11T22:35:47.773Z",
+  "continuation": {
+    "goal_id": "jobpipe-offline-v1-acceptance-20261011",
+    "goal_state": "in_progress",
+    "acknowledged_receipts": [
+      "v1-offline-jobpipe-20261011-exec-1"
+    ],
+    "summary": "Run read-only assertions against actual protected jobpipe company filtering code."
+  }
+}
