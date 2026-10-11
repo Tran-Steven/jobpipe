@@ -21,6 +21,22 @@
   let panel = null;
   let lastSummary = "";
   const MAX_CARDS_PER_UPDATE = 300;
+  let refreshGeneration = 0;
+  const digestCache = new Map();
+
+  function identityHashForPosting(id) {
+    const identity = rules.linkedInCanonicalIdentity(id);
+    if (!identity || !globalThis.crypto?.subtle) return Promise.resolve("");
+    let digest = digestCache.get(id);
+    if (!digest) {
+      digest = crypto.subtle.digest("SHA-256", new TextEncoder().encode(identity))
+        .then((buffer) => Array.from(new Uint8Array(buffer), (byte) => byte.toString(16).padStart(2, "0")).join(""))
+        .catch(() => "");
+      digestCache.set(id, digest);
+      if (digestCache.size > 1000) digestCache.delete(digestCache.keys().next().value);
+    }
+    return digest;
+  }
 
   async function persist(next) {
     const safe = rules.sanitizeState(next);
@@ -79,20 +95,25 @@
     return found.filter((node) => !found.some((other) => other !== node && other.contains(node)));
   }
 
-  function refresh() {
-    const cards = findCards();
+  async function refresh() {
+    const generation = ++refreshGeneration;
+    const cards = findCards().filter((card) => !card.closest("#jobpipe-visual-hide-panel"));
+    for (const card of cards) controls(card);
+    const hasPrivateHistory = state.historyAppliedHashes.length + state.historyDismissedHashes.length > 0;
+    const hashes = hasPrivateHistory
+      ? await Promise.all(cards.map((card) => identityHashForPosting(rules.jobIdFromCard(card))))
+      : [];
+    if (generation !== refreshGeneration) return;
     let hidden = 0;
-    for (const card of cards) {
-      if (card.closest("#jobpipe-visual-hide-panel")) continue;
-      controls(card);
-      const reason = rules.whyHidden(card, state);
+    for (const [index, card] of cards.entries()) {
+      const reason = rules.whyHidden(card, state, hashes[index] || "");
       if (reason) hidden += 1;
       card.classList.toggle("jobpipe-visual-hidden", Boolean(reason) && !showHidden);
       if (reason) card.dataset.jobpipeVisualHideReason = reason;
       else delete card.dataset.jobpipeVisualHideReason;
     }
     if (!panel) return;
-    const summary = `${hidden} hidden on this page · ${state.blockedCompanies.length} blocked employers · ${state.hiddenPostingIds.length} dismissed · ${state.appliedPostingIds.length} reported applied`;
+    const summary = `${hidden} hidden on this page · ${state.blockedCompanies.length} blocked employers · ${state.hiddenPostingIds.length} dismissed · ${state.appliedPostingIds.length} reported applied · ${state.historyAppliedHashes.length + state.historyDismissedHashes.length} backup hashes`;
     if (summary !== lastSummary) {
       panel.querySelector(".jobpipe-visual-hide-status").textContent = summary;
       lastSummary = summary;
@@ -135,6 +156,15 @@
       await persist({ ...state, appliedPostingIds: [] });
       renderRules();
     }, state.appliedPostingIds.length === 0));
+    const backupCount = document.createElement("p");
+    backupCount.textContent = "Private history hashes: " +
+      (state.historyAppliedHashes.length + state.historyDismissedHashes.length) +
+      " (browser-local, not submission verification)";
+    list.append(backupCount);
+    list.append(createButton("Clear Jobpipe backup", async () => {
+      await persist({ ...state, historyAppliedHashes: [], historyDismissedHashes: [] });
+      renderRules();
+    }, state.historyAppliedHashes.length + state.historyDismissedHashes.length === 0));
   }
 
   function mountPanel() {
@@ -152,9 +182,10 @@
         <button type="button" class="jobpipe-visual-hide-review">Review blocked</button>
         <button type="button" class="jobpipe-visual-hide-export" disabled>Export dismissals</button>
         <button type="button" class="jobpipe-visual-hide-import">Import applied CSV</button>
+        <button type="button" class="jobpipe-visual-hide-backup">Import Jobpipe backup</button>
       </div>
       <section class="jobpipe-visual-hide-review-list" hidden></section>
-      <p class="jobpipe-visual-hide-note">Browser-local visibility only. Import accepts explicitly user-reported APPLIED LinkedIn job URLs, not verified submissions. Export downloads DISMISSED URLs for manual jobpipe import. No automatic sync or applications.</p>`;
+      <p class="jobpipe-visual-hide-note">Browser-local visibility only. Import explicit APPLIED URLs or a private SHA-256 Jobpipe history export. Imported backup hashes remain local and can identify your job history. No verified submissions, automatic sync, or applications.</p>`;
     document.body.append(panel);
     const fileInput = document.createElement("input");
     fileInput.type = "file";
@@ -163,6 +194,28 @@
     fileInput.className = "jobpipe-visual-hide-import-input";
     panel.append(fileInput);
     panel.querySelector(".jobpipe-visual-hide-import").addEventListener("click", () => fileInput.click());
+    const backupInput = document.createElement("input");
+    backupInput.type = "file";
+    backupInput.accept = ".csv,text/csv";
+    backupInput.hidden = true;
+    backupInput.className = "jobpipe-visual-hide-backup-input";
+    panel.append(backupInput);
+    panel.querySelector(".jobpipe-visual-hide-backup").addEventListener("click", () => backupInput.click());
+    backupInput.addEventListener("change", async () => {
+      const file = backupInput.files?.[0];
+      backupInput.value = "";
+      if (!file) return;
+      try {
+        if (file.size > 2000000 || !globalThis.crypto?.subtle) throw new Error("Private hash validation unavailable");
+        const hashes = rules.parsePrivateHistoryCsv(await file.text());
+        await persist({ ...state, ...hashes });
+        panel.querySelector(".jobpipe-visual-hide-status").textContent =
+          "Imported Jobpipe hash backup locally. User-reported history only.";
+      } catch {
+        panel.querySelector(".jobpipe-visual-hide-status").textContent =
+          "Jobpipe backup rejected. Use exact identity_hash,status,recorded_at export.";
+      }
+    });
     fileInput.addEventListener("change", async () => {
       const file = fileInput.files?.[0];
       fileInput.value = "";
