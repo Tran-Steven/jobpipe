@@ -166,7 +166,7 @@ async def test_linkedin_extension_fixture_hide_block_undo_spa_and_no_submit(tmp_
             # it never clicks a site's real submit/dismiss controls.
             applied_csv = tmp_path / "self-reported-applied.csv"
             applied_csv.write_text(
-                "job_url,status\\nhttps://www.linkedin.com/jobs/view/102,APPLIED\\n",
+                "job_url,status\nhttps://www.linkedin.com/jobs/view/102,APPLIED\n",
                 encoding="utf-8",
             )
             async with page.expect_file_chooser() as chooser:
@@ -183,7 +183,7 @@ async def test_linkedin_extension_fixture_hide_block_undo_spa_and_no_submit(tmp_
             ) is None
 
             applied_csv.write_text(
-                "job_url,status\\nhttps://evil.test/jobs/view/102,APPLIED\\n",
+                "job_url,status\nhttps://evil.test/jobs/view/102,APPLIED\n",
                 encoding="utf-8",
             )
             async with page.expect_file_chooser() as chooser:
