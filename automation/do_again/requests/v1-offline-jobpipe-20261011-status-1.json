@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "request_id": "v1-offline-jobpipe-20261011-status-1",
+  "operation": "status",
+  "args": {},
+  "expected": {},
+  "limits": {
+    "timeout_seconds": 30
+  },
+  "issued_at_utc": "2026-10-11T22:15:38.188Z",
+  "expires_at_utc": "2026-10-11T22:30:38.188Z",
+  "continuation": {
+    "goal_id": "jobpipe-offline-v1-acceptance-20261011",
+    "goal_state": "in_progress",
+    "summary": "Read-only first live request following sealed offline worker startup; no real applications."
+  }
+}
