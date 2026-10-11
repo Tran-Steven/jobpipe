@@ -201,6 +201,48 @@ async def test_linkedin_extension_fixture_hide_block_undo_spa_and_no_submit(tmp_
             assert cleared["appliedPostingIds"] == []
             assert cleared["hiddenPostingIds"] == ["101"]
 
+            from core.job_history_import import export_job_history_csv
+            PrivateJobHistory(private).mark(
+                "https://www.linkedin.com/jobs/view/102",
+                JobHistoryState.APPLIED_SELF_REPORTED,
+            )
+            backup_file = tmp_path / "jobpipe-private-backup.csv"
+            export_job_history_csv(backup_file, home=private)
+            backup_text = backup_file.read_text(encoding="utf-8")
+            assert "identity_hash,status,recorded_at" in backup_text
+            assert "https://www.linkedin.com" not in backup_text
+            async with page.expect_file_chooser() as chooser:
+                await panel.get_by_role("button", name="Import Jobpipe backup").click()
+            await (await chooser.value).set_files(str(backup_file))
+            await page.wait_for_function(
+                "() => document.querySelector('#job-102').dataset.jobpipeVisualHideReason === 'private-history-applied'"
+            )
+            imported_hashes = await page.evaluate("window.__localHistory['jobpipe.linkedin.hide.v1']")
+            assert len(imported_hashes["historyAppliedHashes"]) == 1
+            assert len(imported_hashes["historyDismissedHashes"]) == 1
+            assert imported_hashes["appliedPostingIds"] == []
+            assert imported_hashes["hiddenPostingIds"] == ["101"]
+
+            bad_backup = tmp_path / "bad-private-backup.csv"
+            bad_backup.write_text(
+                backup_text.replace("APPLIED_SELF_REPORTED", "SUBMITTED_VERIFIED"),
+                encoding="utf-8",
+            )
+            async with page.expect_file_chooser() as chooser:
+                await panel.get_by_role("button", name="Import Jobpipe backup").click()
+            await (await chooser.value).set_files(str(bad_backup))
+            await panel.get_by_text("Jobpipe backup rejected.", exact=False).wait_for()
+            after_bad = await page.evaluate("window.__localHistory['jobpipe.linkedin.hide.v1']")
+            assert after_bad == imported_hashes
+
+            await panel.get_by_role("button", name="Clear Jobpipe backup").click()
+            await page.wait_for_function(
+                "() => !document.querySelector('#job-102').classList.contains('jobpipe-visual-hidden')"
+            )
+            assert PrivateJobHistory(private).state_for(
+                "https://www.linkedin.com/jobs/view/102"
+            ) is JobHistoryState.APPLIED_SELF_REPORTED
+
             assert await page.locator("#site-submit").is_visible()
             assert await page.evaluate("window.__siteSubmitClicks") == 0
         finally:
