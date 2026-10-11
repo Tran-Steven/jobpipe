@@ -20,6 +20,29 @@ storage*, not in the jobpipe private SQLite history. **Undo**, **Show matched**
 and **Review blocked** allow reversing changes. Unknown job IDs cannot be
 durably hidden, and ambiguous employer labels are not guessed.
 
+### Hide user-reported applied postings
+
+Click **Import applied CSV** in the extension and select a local UTF-8 file with
+the exact `job_url,status` header and rows like:
+
+```csv
+job_url,status
+https://www.linkedin.com/jobs/view/123456789,APPLIED
+```
+
+Every row must contain the explicit `APPLIED` state and an official LinkedIn
+`/jobs/view/{numeric-id}` URL. Invalid rows, mixed statuses, ambiguous IDs,
+oversized files, or malformed headers reject the **whole file**. A file may
+contain at most 2,000 rows and 256 KB of text. Only numeric posting IDs are
+retained in extension-local storage, never the original URLs or CSV text.
+
+The extension hides these cards as **user-reported applied**, not verified
+ATS submissions. Use **Review blocked** to clear applied imports separately
+from dismissed postings, or temporarily **Show matched**. The extension cannot
+derive posting URLs from Jobpipe's hash-only private history exports. Prepare
+this CSV only from applications you personally confirm, keep it private, and
+delete the local copy when it is no longer required. This import does not
+update Jobpipe's private submission ledger or authorize an application.
 ### Optional manual import of your hidden postings
 
 Use **Export dismissals** only when you want to transfer individual hidden
@@ -52,6 +75,8 @@ to overwrite a previously applied posting with `DISMISSED`.
   names are stored by the extension. These values may still be sensitive local
   history and must not be logged or uploaded.
 - Company/title similarity alone never marks a job as already applied.
+- Conflicting job identities, contradictory employer labels, and overlong employer
+  names fail closed rather than hiding potentially unrelated job cards.
 - Site HTML/selector changes may break visual filtering; this is a pre-eval
   implementation, not a verified current LinkedIn integration.
 - The extension does **not** silently synchronize with jobpipe Private Home.
