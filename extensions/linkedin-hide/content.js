@@ -92,7 +92,7 @@
       else delete card.dataset.jobpipeVisualHideReason;
     }
     if (!panel) return;
-    const summary = `${hidden} hidden on this page · ${state.blockedCompanies.length} blocked employers · ${state.hiddenPostingIds.length} hidden postings`;
+    const summary = `${hidden} hidden on this page · ${state.blockedCompanies.length} blocked employers · ${state.hiddenPostingIds.length} dismissed · ${state.appliedPostingIds.length} reported applied`;
     if (summary !== lastSummary) {
       panel.querySelector(".jobpipe-visual-hide-status").textContent = summary;
       lastSummary = summary;
@@ -128,6 +128,13 @@
       await persist({ ...state, hiddenPostingIds: [] });
       renderRules();
     }, state.hiddenPostingIds.length === 0));
+    const countApplied = document.createElement("p");
+    countApplied.textContent = "User-reported applied postings: " + state.appliedPostingIds.length + " (not ATS-verified)";
+    list.append(countApplied);
+    list.append(createButton("Clear applied imports", async () => {
+      await persist({ ...state, appliedPostingIds: [] });
+      renderRules();
+    }, state.appliedPostingIds.length === 0));
   }
 
   function mountPanel() {
@@ -144,10 +151,35 @@
         <button type="button" class="jobpipe-visual-hide-undo" disabled>Undo</button>
         <button type="button" class="jobpipe-visual-hide-review">Review blocked</button>
         <button type="button" class="jobpipe-visual-hide-export" disabled>Export dismissals</button>
+        <button type="button" class="jobpipe-visual-hide-import">Import applied CSV</button>
       </div>
       <section class="jobpipe-visual-hide-review-list" hidden></section>
-      <p class="jobpipe-visual-hide-note">Browser-local visibility only. Explicit export downloads DISMISSED LinkedIn job URLs for manual jobpipe import. Hidden does not mean applied. No automatic history sync or job applications.</p>`;
+      <p class="jobpipe-visual-hide-note">Browser-local visibility only. Import accepts explicitly user-reported APPLIED LinkedIn job URLs, not verified submissions. Export downloads DISMISSED URLs for manual jobpipe import. No automatic sync or applications.</p>`;
     document.body.append(panel);
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".csv,text/csv";
+    fileInput.hidden = true;
+    fileInput.className = "jobpipe-visual-hide-import-input";
+    panel.append(fileInput);
+    panel.querySelector(".jobpipe-visual-hide-import").addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", async () => {
+      const file = fileInput.files?.[0];
+      fileInput.value = "";
+      if (!file) return;
+      try {
+        if (file.size > 256000) throw new Error("CSV exceeds local limit");
+        const ids = rules.parseAppliedHistoryCsv(await file.text());
+        const merged = Array.from(new Set([...state.appliedPostingIds, ...ids]));
+        if (merged.length > 2000) throw new Error("Too many applied postings");
+        await persist({ ...state, appliedPostingIds: merged });
+        panel.querySelector(".jobpipe-visual-hide-status").textContent =
+          ids.length + " user-reported applied posting(s) imported. Not ATS-verified.";
+      } catch {
+        panel.querySelector(".jobpipe-visual-hide-status").textContent =
+          "CSV rejected. Use job_url,status with only LinkedIn jobs/view URLs and APPLIED statuses.";
+      }
+    });
     panel.querySelector(".jobpipe-visual-hide-show").addEventListener("click", () => {
       showHidden = !showHidden;
       refresh();
