@@ -1068,7 +1068,7 @@ def test_record_outcome_rejects_cross_job_mutation_before_sqlite_write(
     engine._ensure_run(bundle)
     before = engine.ledger.get_run(bundle.run_id)
     with pytest.raises(ValueError, match="immutable run binding"):
-        engine.record_outcome(ApplicationOutcome.review_ready(
+        engine._record_outcome(ApplicationOutcome.review_ready(
             run_id=bundle.run_id, job_id="wrong-job", adapter="untrusted",
             details={"review_fingerprint": "a" * 64},
         ))
