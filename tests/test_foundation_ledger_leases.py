@@ -343,3 +343,39 @@ def test_lease_owner_checks_and_expired_takeover(tmp_path: Path) -> None:
 
     leases.release(second)
     assert leases.get("browser:default") is None
+
+
+@pytest.mark.parametrize("candidate", [
+    {"run_id": "foreign-run", "job_id": "job-bound", "status": "REVIEW_READY"},
+    {"run_id": "run-bound", "job_id": "foreign-job", "status": "REVIEW_READY"},
+])
+def test_append_only_ledger_refuses_cross_bound_outcome_atomically(
+    tmp_path: Path, candidate: dict,
+) -> None:
+    ledger = EventLedger(tmp_path / "events.sqlite3")
+    ledger.create_run(run_id="run-bound", job_id="job-bound")
+    with pytest.raises(ValueError, match="immutable ledger identity"):
+        ledger.compare_and_set_state(
+            run_id="run-bound", expected_version=0,
+            new_state="REVIEW_READY", outcome=candidate,
+        )
+    run = ledger.get_run("run-bound")
+    assert run.state == "QUEUED"
+    assert run.state_version == 0
+    assert run.outcome is None
+    assert [event.event_type for event in ledger.list_events(run_id="run-bound")] == [
+        "RUN_CREATED",
+    ]
+
+
+def test_append_only_ledger_still_accepts_legacy_status_only_outcomes(
+    tmp_path: Path,
+) -> None:
+    ledger = EventLedger(tmp_path / "events.sqlite3")
+    ledger.create_run(run_id="run-legacy-bound", job_id="job-legacy-bound")
+    changed = ledger.compare_and_set_state(
+        run_id="run-legacy-bound", expected_version=0,
+        new_state="IN_PROGRESS", outcome={"status": "IN_PROGRESS"},
+    )
+    assert changed.state == "IN_PROGRESS"
+    assert changed.state_version == 1

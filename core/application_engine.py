@@ -124,6 +124,8 @@ class JobApplicationEngine:
 
     def _record_outcome(self, outcome: ApplicationOutcome) -> None:
         run = self.ledger.get_run(outcome.run_id)
+        if run.job_id != outcome.job_id:
+            raise ValueError("Outcome job does not match the immutable run binding")
         self.ledger.compare_and_set_state(
             run_id=outcome.run_id,
             expected_version=run.state_version,
@@ -544,6 +546,24 @@ class JobApplicationEngine:
                         private_home=private_home,
                     )
                 )
+                if (
+                    not isinstance(review_outcome, ApplicationOutcome)
+                    or review_outcome.run_id != bundle.run_id
+                    or review_outcome.job_id != bundle.job.job_id
+                ):
+                    # Adapter results are untrusted, including their run/job
+                    # identifiers. Wrong bindings cannot become an append-only
+                    # Review, submission authorization, or foreign job state.
+                    outcome = ApplicationOutcome(
+                        run_id=bundle.run_id,
+                        job_id=bundle.job.job_id,
+                        status=OutcomeStatus.INTERNAL_ERROR,
+                        phase=OutcomePhase.INSPECT,
+                        reason_code=ReasonCode.INTERNAL_ERROR,
+                        message="ATS adapter response did not match the current run and job",
+                    )
+                    self._record_outcome(outcome)
+                    return outcome
                 if review_outcome.status is OutcomeStatus.SUBMITTED_VERIFIED:
                     review_outcome = self._reject_untrusted_verified(
                         review_outcome,
@@ -781,6 +801,45 @@ class JobApplicationEngine:
                         )
                     self._record_outcome(submit_outcome)
                     return submit_outcome
+
+                if (
+                    not isinstance(submit_outcome, ApplicationOutcome)
+                    or submit_outcome.run_id != bundle.run_id
+                    or submit_outcome.job_id != bundle.job.job_id
+                ):
+                    intent = intent_box["intent"]
+                    if intent is not None:
+                        # A Submit may have happened before the untrusted
+                        # adapter returned. Preserve the unresolved intent and
+                        # NEVER turn this into a safe retry or a verified result.
+                        current = self.ledger.get_submission_intent(intent.intent_id)
+                        if current.status is SubmissionStatus.SUBMITTING:
+                            self.ledger.mark_submission_unknown(intent.intent_id)
+                        invalid_outcome = ApplicationOutcome(
+                            run_id=bundle.run_id,
+                            job_id=bundle.job.job_id,
+                            status=OutcomeStatus.SUBMIT_UNKNOWN,
+                            phase=OutcomePhase.VERIFY,
+                            reason_code=ReasonCode.SUBMISSION_CONFIRMATION_MISSING,
+                            message="ATS adapter returned an unbound submission result",
+                            checkpoint=f"submission-intent:{intent.intent_id}",
+                            details={
+                                "do_not_retry_submit": True,
+                                "human_reconciliation_required": True,
+                                "adapter_outcome_binding_invalid": True,
+                            },
+                        )
+                    else:
+                        invalid_outcome = ApplicationOutcome(
+                            run_id=bundle.run_id,
+                            job_id=bundle.job.job_id,
+                            status=OutcomeStatus.INTERNAL_ERROR,
+                            phase=OutcomePhase.SUBMIT,
+                            reason_code=ReasonCode.INTERNAL_ERROR,
+                            message="ATS adapter result did not match the current run and job",
+                        )
+                    self._record_outcome(invalid_outcome)
+                    return invalid_outcome
 
                 if validator_error.get("reason") == "duplicate submission":
                     submit_outcome = ApplicationOutcome(
