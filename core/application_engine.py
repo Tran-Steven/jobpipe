@@ -44,6 +44,7 @@ from .permits import (
     SubmissionPermitAction,
 )
 from .policy import ApprovalActor
+from .review_integrity import validated_review_fingerprint
 from .private_home import PrivateHome
 from .secrets import (
     PERMIT_SECRET_ACCOUNT,
@@ -259,20 +260,9 @@ class JobApplicationEngine:
         return canonical_hash({"kind": "preflight", **bundle.safe_metadata()})
 
     @staticmethod
-    def _review_hash(outcome: ApplicationOutcome) -> str:
-        details = dict(outcome.details)
-        review = details.get("review")
-        if isinstance(review, dict) and review.get("fingerprint"):
-            return str(review["fingerprint"])
-        for key in ("review_fingerprint", "form_fingerprint"):
-            if details.get(key):
-                return str(details[key])
-        for evidence in outcome.evidence_refs:
-            if evidence.kind.value == "FORM_SNAPSHOT" and evidence.sha256:
-                return evidence.sha256
-        if outcome.checkpoint and len(outcome.checkpoint) == 64:
-            return outcome.checkpoint
-        return ""
+    def _review_hash(outcome: ApplicationOutcome | None) -> str:
+        """Admit only coherent, deterministic Review evidence for Gate B."""
+        return validated_review_fingerprint(outcome)
 
     def latest_review_hash(self, run_id: str) -> str:
         """Return the most recent persisted Review fingerprint for a run.
@@ -295,9 +285,11 @@ class JobApplicationEngine:
             if not isinstance(raw, dict) or raw.get("status") != OutcomeStatus.REVIEW_READY.value:
                 continue
             try:
-                return ApplicationOutcome.from_dict(raw)
+                candidate = ApplicationOutcome.from_dict(raw)
             except (KeyError, TypeError, ValueError):
                 continue
+            if self._review_hash(candidate):
+                return candidate
         return None
 
     def gate_a_consumption_reference(
@@ -560,6 +552,26 @@ class JobApplicationEngine:
                             "validated; success was not recorded"
                         ),
                     )
+                if (
+                    review_outcome.status is OutcomeStatus.REVIEW_READY
+                    and not self._review_hash(review_outcome)
+                ):
+                    # A misleading adapter status must not become durable
+                    # qualification evidence or enable the Gate B path.
+                    outcome = ApplicationOutcome(
+                        run_id=bundle.run_id,
+                        job_id=bundle.job.job_id,
+                        status=OutcomeStatus.INTERNAL_ERROR,
+                        phase=OutcomePhase.REVIEW,
+                        reason_code=ReasonCode.INTERNAL_ERROR,
+                        message=(
+                            "Adapter returned Review-ready without valid "
+                            "deterministic Review evidence"
+                        ),
+                        adapter=review_outcome.adapter,
+                    )
+                    self._record_outcome(outcome)
+                    return outcome
                 self._record_outcome(review_outcome)
                 if review_outcome.status is not OutcomeStatus.REVIEW_READY:
                     return review_outcome
