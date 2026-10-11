@@ -127,3 +127,7 @@ V1 要完成所有核心业务域的端到端功能，而不是覆盖所有外�
 - 候选人数据不进入 Git、argv、日志或测试 fixture；秘密不进入任何 model prompt。
 - 每个模型能力只接收完成该任务所需且明确允许的最小 evidence；SemanticMapper 接收零候选人值。
 - 每个已修复的生产失败都有 sanitized regression fixture 和自动测试。
+
+## Optional LinkedIn visual filtering
+
+The experimental, opt-in LinkedIn WebExtension hides exact employer blocks, explicitly dismissed posting IDs, and user-reported applied posting IDs. Manual applied import accepts only `job_url,status` CSV records with an `APPLIED` state and an official LinkedIn numeric posting URL. Malformed and conflicting identities fail closed without partially persisting imported state. The extension retains IDs only in browser-local storage and never modifies the private Jobpipe submission ledger or creates `SUBMITTED_VERIFIED` evidence. Review/clear and show-matched controls are reversible. No automatic browser-to-Private-Home sync, live-site qualification, real application submission, or production activation is implied.
