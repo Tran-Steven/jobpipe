@@ -67,7 +67,18 @@ async def test_linkedin_extension_fixture_hide_block_undo_spa_and_no_submit(tmp_
         browser = await playwright.chromium.launch(headless=True)
         try:
             page = await browser.new_page()
-            await page.set_content(HTML)
+            await page.route(
+                "https://jobpipe.test/jobs/",
+                lambda route: route.fulfill(
+                    status=200,
+                    content_type="text/html",
+                    body=HTML,
+                ),
+            )
+            await page.goto("https://jobpipe.test/jobs/")
+            assert await page.evaluate(
+                "() => window.isSecureContext && Boolean(window.crypto?.subtle)"
+            )
             await page.add_script_tag(content=MOCK_STORAGE)
             await page.add_style_tag(path=str(ROOT / "style.css"))
             await page.add_script_tag(path=str(ROOT / "rules.js"))
