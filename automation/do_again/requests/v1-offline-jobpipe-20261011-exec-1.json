@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "request_id": "v1-offline-jobpipe-20261011-exec-1",
+  "operation": "scratch_script",
+  "args": {
+    "language": "python",
+    "content": "print('DO_AGAIN_V1_OFFLINE_SANDBOX_EXECUTED')\n"
+  },
+  "expected": {
+    "repo_head": "670ca713c468e7d735fae7e2d90c724e05b51319"
+  },
+  "limits": {
+    "timeout_seconds": 30
+  },
+  "issued_at_utc": "2026-10-11T22:17:47.223Z",
+  "expires_at_utc": "2026-10-11T22:32:47.223Z",
+  "continuation": {
+    "goal_id": "jobpipe-offline-v1-acceptance-20261011",
+    "goal_state": "in_progress",
+    "acknowledged_receipts": [
+      "v1-offline-jobpipe-20261011-status-1"
+    ],
+    "summary": "Execute exactly one network-denied sandbox print, then publish a root-brokered receipt."
+  }
+}
