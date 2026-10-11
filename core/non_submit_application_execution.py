@@ -32,6 +32,7 @@ from .job_discovery import (
     JobPostingReadRepository,
     JobPostingRepositoryError,
 )
+from .review_integrity import validated_review_fingerprint
 from .outcomes import (
     SUBMISSION_EVIDENCE_KINDS,
     ApplicationOutcome,
@@ -1196,6 +1197,15 @@ async def execute_non_submit_application(
             NonSubmitApplicationExecutionFailureReason
             .SUBMISSION_BOUNDARY_VIOLATION,
             "Application Engine crossed the non-submit boundary",
+        )
+
+    if (
+        outcome.status is OutcomeStatus.REVIEW_READY
+        and not validated_review_fingerprint(outcome)
+    ):
+        return _failed(
+            NonSubmitApplicationExecutionFailureReason.ENGINE_CONTRACT_FAILURE,
+            "Application Engine claimed Review without coherent Review evidence",
         )
 
     if outcome.status is OutcomeStatus.REVIEW_READY:

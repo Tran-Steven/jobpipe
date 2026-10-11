@@ -851,3 +851,91 @@ async def test_stale_browser_lease_blocks_permit_consumption_and_click(tmp_path:
     ]
     assert "GATE_B_PERMIT_CONSUMED" not in event_types
     assert "SUBMISSION_INTENT_CREATED" not in event_types
+
+
+class FalseReviewRegistry:
+    def __init__(self, maker) -> None:
+        self.maker = maker
+        self.calls = 0
+
+    async def run(self, request: AdapterRunRequest) -> ApplicationOutcome:
+        self.calls += 1
+        return self.maker(request)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("kind", [
+    "wrong_phase", "no_fingerprint", "unresolved_required",
+    "conflicting_evidence", "submission_evidence", "wrong_reason",
+])
+async def test_engine_cannot_persist_false_review_or_grant_gate_b(
+    tmp_path: Path, kind: str,
+) -> None:
+    def make(request):
+        original = ApplicationOutcome.review_ready(
+            run_id=request.run_id, job_id=request.job_id,
+            adapter="synthetic-review", checkpoint="review.stage",
+            details={"review": {
+                "fingerprint": "a" * 64, "unresolved_required": [],
+            }},
+        )
+        from dataclasses import replace
+        if kind == "wrong_phase":
+            return replace(original, phase=OutcomePhase.FILL)
+        if kind == "no_fingerprint":
+            return replace(original, details={})
+        if kind == "unresolved_required":
+            return replace(original, details={"review": {
+                "fingerprint": "a" * 64, "unresolved_required": ["MFA"],
+            }})
+        if kind == "conflicting_evidence":
+            return replace(original, evidence_refs=(EvidenceRef(
+                kind=EvidenceKind.FORM_SNAPSHOT, sha256="b" * 64,
+            ),))
+        if kind == "submission_evidence":
+            return replace(original, evidence_refs=(EvidenceRef(
+                kind=EvidenceKind.CONFIRMATION_TEXT, sha256="a" * 64,
+            ),))
+        return replace(original, reason_code=ReasonCode.NONE)
+
+    registry = FalseReviewRegistry(make)
+    engine = _engine(tmp_path, registry)
+    bundle = _bundle(
+        tmp_path, run_id="run-false-review", tier=JobTier.LOW,
+        mode=AutonomyMode.LOW_RISK_AUTOPILOT,
+    )
+    outcome = await engine.execute(
+        page=object(), bundle=bundle, request_submit=True,
+    )
+
+    assert outcome.status is OutcomeStatus.INTERNAL_ERROR
+    assert registry.calls == 1
+    assert engine.latest_review_outcome(bundle.run_id) is None
+    assert engine.latest_review_hash(bundle.run_id) == ""
+    events = engine.ledger.list_events(run_id=bundle.run_id)
+    assert not any(
+        event.payload.get("outcome", {}).get("status") == "REVIEW_READY"
+        for event in events
+    )
+    assert not {"GATE_B_AUTHORIZED", "SUBMISSION_INTENT_CREATED"} & {
+        event.event_type for event in events
+    }
+
+
+@pytest.mark.asyncio
+async def test_legacy_malformed_review_event_cannot_be_reused_as_gate_b_proof(
+    tmp_path: Path,
+) -> None:
+    engine = _engine(tmp_path, ForbiddenRegistry())
+    bundle = _bundle(
+        tmp_path, run_id="run-old-review", tier=JobTier.LOW,
+        mode=AutonomyMode.LOW_RISK_AUTOPILOT,
+    )
+    # Represent a pre-hardening, append-only event that already exists.
+    malformed = ApplicationOutcome.review_ready(
+        run_id=bundle.run_id, job_id=bundle.job.job_id,
+        adapter="legacy", details={"review": {"fingerprint": "invalid"}},
+    )
+    engine.record_outcome(malformed)
+    assert engine.latest_review_outcome(bundle.run_id) is None
+    assert engine.latest_review_hash(bundle.run_id) == ""

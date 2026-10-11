@@ -485,3 +485,43 @@ async def test_workday_special_route_receives_bundle_materials_and_private_home(
 
     assert captured[0].materials is assembled.bundle.materials
     assert captured[0].private_home is parts["home"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("reason", [
+    "missing_review_fingerprint",
+    "wrong_review_phase",
+    "required_controls_left_open",
+])
+async def test_non_submit_rejects_false_review_ready_without_persistence(
+    tmp_path: Path, reason: str,
+) -> None:
+    from dataclasses import replace
+
+    parts, assembled, repository = _setup(tmp_path)
+    bundle = assembled.bundle
+    baseline = ApplicationOutcome.review_ready(
+        run_id=bundle.run_id, job_id=bundle.job.job_id,
+        adapter="synthetic", checkpoint="synthetic.review",
+        details={"review_fingerprint": "a" * 64},
+    )
+    if reason == "missing_review_fingerprint":
+        outcome = replace(baseline, details={})
+    elif reason == "wrong_review_phase":
+        outcome = replace(baseline, phase=OutcomePhase.FILL)
+    else:
+        outcome = replace(baseline, details={"review": {
+            "fingerprint": "a" * 64,
+            "unresolved_required": ["attestation"],
+        }})
+    result, _, browser = await _execute(
+        parts, assembled, repository, engine=_Engine(outcome),
+    )
+    assert result.status is NonSubmitApplicationExecutionStatus.FAILED
+    assert result.failure_reason is (
+        NonSubmitApplicationExecutionFailureReason.ENGINE_CONTRACT_FAILURE
+    )
+    assert browser.calls == 1
+    assert not tuple(
+        parts["home"].paths.non_submit_application_executions.rglob("*.json")
+    )
