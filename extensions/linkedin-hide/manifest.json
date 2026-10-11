@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "jobpipe — LinkedIn visual hide (local-only)",
-  "description": "Optionally hide manually dismissed LinkedIn job cards and blocked employers. Does not apply to jobs or sync private history.",
-  "version": "0.2.0",
+  "description": "Optionally hide dismissed, user-reported applied and blocked LinkedIn job cards. No submissions or background sync.",
+  "version": "0.3.0",
   "permissions": [
     "storage"
   ],
