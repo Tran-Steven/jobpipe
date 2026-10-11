@@ -164,6 +164,43 @@ async def test_linkedin_extension_fixture_hide_block_undo_spa_and_no_submit(tmp_
 
             # The extension only changes local visibility/downloads its own CSV;
             # it never clicks a site's real submit/dismiss controls.
+            applied_csv = tmp_path / "self-reported-applied.csv"
+            applied_csv.write_text(
+                "job_url,status\\nhttps://www.linkedin.com/jobs/view/102,APPLIED\\n",
+                encoding="utf-8",
+            )
+            async with page.expect_file_chooser() as chooser:
+                await panel.get_by_role("button", name="Import applied CSV").click()
+            await (await chooser.value).set_files(str(applied_csv))
+            await page.wait_for_function(
+                "() => document.querySelector('#job-102').classList.contains('jobpipe-visual-hidden')"
+            )
+            imported = await page.evaluate("window.__localHistory['jobpipe.linkedin.hide.v1']")
+            assert imported["appliedPostingIds"] == ["102"]
+            assert imported["hiddenPostingIds"] == ["101"]
+            assert PrivateJobHistory(private).state_for(
+                "https://www.linkedin.com/jobs/view/102"
+            ) is None
+
+            applied_csv.write_text(
+                "job_url,status\\nhttps://evil.test/jobs/view/102,APPLIED\\n",
+                encoding="utf-8",
+            )
+            async with page.expect_file_chooser() as chooser:
+                await panel.get_by_role("button", name="Import applied CSV").click()
+            await (await chooser.value).set_files(str(applied_csv))
+            await panel.get_by_text("CSV rejected.", exact=False).wait_for()
+            unchanged = await page.evaluate("window.__localHistory['jobpipe.linkedin.hide.v1']")
+            assert unchanged == imported
+
+            await panel.get_by_role("button", name="Clear applied imports").click()
+            await page.wait_for_function(
+                "() => !document.querySelector('#job-102').classList.contains('jobpipe-visual-hidden')"
+            )
+            cleared = await page.evaluate("window.__localHistory['jobpipe.linkedin.hide.v1']")
+            assert cleared["appliedPostingIds"] == []
+            assert cleared["hiddenPostingIds"] == ["101"]
+
             assert await page.locator("#site-submit").is_visible()
             assert await page.evaluate("window.__siteSubmitClicks") == 0
         finally:
