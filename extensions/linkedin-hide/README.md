@@ -43,6 +43,29 @@ derive posting URLs from Jobpipe's hash-only private history exports. Prepare
 this CSV only from applications you personally confirm, keep it private, and
 delete the local copy when it is no longer required. This import does not
 update Jobpipe's private submission ledger or authorize an application.
+### Import a Jobpipe private history backup (hash-only)
+
+Run `python jobctl.py job-history-export --csv ~/Downloads/jobpipe-private-history.csv`
+from your own configured Private Home. The resulting export has the exact
+`identity_hash,status,recorded_at` columns and no source URLs. It is still
+**sensitive job-search history**: hashes of public posting URLs can be
+guessed or matched by someone who knows the original URL.
+
+On a LinkedIn jobs page, select **Import Jobpipe backup** and choose the
+exported CSV. The extension validates the entire local file (up to 10,000 rows
+and 2 MB), stores the exact SHA-256 hash values in its own browser-local storage,
+and checks only the native LinkedIn IDs of currently displayed cards by hashing
+their canonical `https://linkedin.com/jobs/view/{id}` identity with WebCrypto.
+Self-reported applied entries hide as such; dismissed entries remain distinct.
+Unknown or ATS-only hashes cannot be linked to LinkedIn without separately
+verified posting identities, and no company/title inference is performed.
+
+Use **Review blocked → Clear Jobpipe backup** to remove just the imported
+hashes; **Show matched** temporarily reveals hidden cards. Importing a later
+backup replaces the earlier imported hash snapshot without changing separately
+manually dismissed or user-reported applied IDs. Nothing automatically syncs
+with Jobpipe or changes its private database. No site application/submit
+controls are clicked. Delete the exported CSV from Downloads when finished.
 ### Optional manual import of your hidden postings
 
 Use **Export dismissals** only when you want to transfer individual hidden
@@ -71,8 +94,8 @@ to overwrite a previously applied posting with `DISMISSED`.
   pages. No cookies, tabs, webRequest or local filesystem permissions.
 - No auto-apply, automatic final clicks, ATS login, CAPTCHA interaction, or
   cross-service data sharing.
-- Only numeric LinkedIn posting IDs (not full URLs), and normalized company
-  names are stored by the extension. These values may still be sensitive local
+- Only native numeric LinkedIn posting IDs, normalized employer names, and
+  explicitly imported SHA-256 history hashes are stored locally, never full URLs. These values may still be sensitive local
   history and must not be logged or uploaded.
 - Company/title similarity alone never marks a job as already applied.
 - Conflicting job identities, contradictory employer labels, and overlong employer
