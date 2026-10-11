@@ -168,3 +168,47 @@ test("contradictory employer labels and excessively long names do not produce co
   assert.equal(rules.whyHidden(ambiguous, state), "");
   assert.equal(rules.normalizeCompany("Acme" + "x".repeat(200)), "");
 });
+
+test("Jobpipe hash-only export uses exact Python-compatible LinkedIn URL identity", () => {
+  const crypto = require("node:crypto");
+  const identity = rules.linkedInCanonicalIdentity("101");
+  assert.equal(identity, "https://linkedin.com/jobs/view/101");
+  assert.equal(
+    crypto.createHash("sha256").update(identity, "utf8").digest("hex"),
+    "192468cc5c97be0781e1f586714fd09d31780cc5210618213c71bb85129c9465"
+  );
+  assert.equal(rules.linkedInCanonicalIdentity("not-numeric"), "");
+  const csv = "identity_hash,status,recorded_at\r\n" +
+    "192468cc5c97be0781e1f586714fd09d31780cc5210618213c71bb85129c9465,APPLIED_SELF_REPORTED,2026-10-10T19:38:00+00:00\r\n" +
+    "e8659817d5aac604501069f0b8bdfb8147cd2cb861d327a7a741cb4ded189c10,DISMISSED,2026-10-10T19:38:01Z\r\n";
+  const parsed = rules.parsePrivateHistoryCsv(csv);
+  const state = rules.sanitizeState(parsed);
+  assert.deepEqual(state.historyAppliedHashes, ["192468cc5c97be0781e1f586714fd09d31780cc5210618213c71bb85129c9465"]);
+  assert.deepEqual(state.historyDismissedHashes, ["e8659817d5aac604501069f0b8bdfb8147cd2cb861d327a7a741cb4ded189c10"]);
+  assert.equal(rules.whyHidden(card({ id: "101" }), state, state.historyAppliedHashes[0]), "private-history-applied");
+  assert.equal(rules.whyHidden(card({ id: "102" }), state, state.historyDismissedHashes[0]), "private-history-dismissed");
+  assert.equal(rules.whyHidden(card({ id: "103" }), state, ""), "");
+});
+
+test("hash backup rejects forged statuses, conflicting duplicates and malformed fields", () => {
+  const a = "192468cc5c97be0781e1f586714fd09d31780cc5210618213c71bb85129c9465";
+  const header = "identity_hash,status,recorded_at\n";
+  const row = (hash, status, date = "2026-10-10T19:38:00+00:00") => [hash, status, date].join(",") + "\n";
+  const bad = [
+    header,
+    header + row(a, "SUBMITTED_VERIFIED"),
+    header + row(a, "APPLIED"),
+    header + row(a.toUpperCase(), "DISMISSED"),
+    header + row(a, "APPLIED_SELF_REPORTED", "2026-10-10"),
+    header + row(a, "APPLIED_SELF_REPORTED", "not-a-date"),
+    header + row(a, "APPLIED_SELF_REPORTED") + row(a, "DISMISSED"),
+    "job_url,status\nhttps://www.linkedin.com/jobs/view/101,APPLIED\n",
+    header + row(a, "DISMISSED") + "malformed-line\n",
+    header + row(a, "DISMISSED").repeat(10001),
+    "a".repeat(2000001)
+  ];
+  for (const item of bad) assert.throws(() => rules.parsePrivateHistoryCsv(item));
+  assert.deepEqual(rules.sanitizeState({historyAppliedHashes: ["A".repeat(64)],historyDismissedHashes:["not-a-hash"]}).historyAppliedHashes, []);
+  const same = rules.parsePrivateHistoryCsv(header + row(a, "DISMISSED") + row(a, "DISMISSED"));
+  assert.deepEqual(same.historyDismissedHashes, [a]);
+});
