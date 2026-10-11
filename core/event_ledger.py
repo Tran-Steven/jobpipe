@@ -822,6 +822,12 @@ class EventLedger:
             outcome_value: Mapping[str, Any] | None = outcome.to_dict()
         else:
             outcome_value = outcome
+        if (
+            isinstance(outcome_value, Mapping)
+            and "run_id" in outcome_value
+            and outcome_value["run_id"] != run_id
+        ):
+            raise ValueError("Outcome run does not match immutable ledger identity")
         outcome_json = _canonical_json(outcome_value) if outcome_value is not None else None
         with self.transaction() as connection:
             current = connection.execute(
@@ -829,6 +835,12 @@ class EventLedger:
             ).fetchone()
             if current is None:
                 raise RunNotFoundError(run_id)
+            if (
+                isinstance(outcome_value, Mapping)
+                and "job_id" in outcome_value
+                and outcome_value["job_id"] != current["job_id"]
+            ):
+                raise ValueError("Outcome job does not match immutable ledger identity")
             cursor = connection.execute(
                 """
                 UPDATE runs
