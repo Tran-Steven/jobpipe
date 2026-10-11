@@ -1,7 +1,7 @@
 "use strict";
 /* Pure, no-network LinkedIn card identity and privacy rules. */
 (function (root) {
-  const COMPANY_LIMIT = 500, ID_LIMIT = 2000;
+  const COMPANY_LIMIT = 500, ID_LIMIT = 2000, HASH_LIMIT = 10000;
   function normalizeCompany(value) {
     if (typeof value !== "string") return "";
     const name = value.normalize("NFKC").replace(/\s+/g, " ").trim().toLocaleLowerCase("en-US");
@@ -62,17 +62,23 @@
     const blocked = Array.isArray(value.blockedCompanies) ? value.blockedCompanies : [];
     const dismissed = Array.isArray(value.hiddenPostingIds) ? value.hiddenPostingIds : [];
     const applied = Array.isArray(value.appliedPostingIds) ? value.appliedPostingIds : [];
+    const historyApplied = Array.isArray(value.historyAppliedHashes) ? value.historyAppliedHashes : [];
+    const historyDismissed = Array.isArray(value.historyDismissedHashes) ? value.historyDismissedHashes : [];
     return {
       blockedCompanies: Array.from(new Set(blocked.map(normalizeCompany).filter(Boolean))).slice(0, COMPANY_LIMIT),
       hiddenPostingIds: Array.from(new Set(dismissed.map(normalizeId).filter(Boolean))).slice(0, ID_LIMIT),
-      appliedPostingIds: Array.from(new Set(applied.map(normalizeId).filter(Boolean))).slice(0, ID_LIMIT)
+      appliedPostingIds: Array.from(new Set(applied.map(normalizeId).filter(Boolean))).slice(0, ID_LIMIT),
+      historyAppliedHashes: Array.from(new Set(historyApplied.filter((v) => typeof v === "string" && /^[0-9a-f]{64}$/.test(v)))).slice(0, HASH_LIMIT),
+      historyDismissedHashes: Array.from(new Set(historyDismissed.filter((v) => typeof v === "string" && /^[0-9a-f]{64}$/.test(v)))).slice(0, HASH_LIMIT)
     };
   }
-  function whyHidden(card, state) {
+  function whyHidden(card, state, identityHash = "") {
     const employer = companyFromCard(card), id = jobIdFromCard(card);
     if (employer && state.blockedCompanies.includes(employer)) return "blocked-company";
     if (id && state.appliedPostingIds.includes(id)) return "user-reported-applied";
+    if (id && identityHash && state.historyAppliedHashes.includes(identityHash)) return "private-history-applied";
     if (id && state.hiddenPostingIds.includes(id)) return "dismissed-posting";
+    if (id && identityHash && state.historyDismissedHashes.includes(identityHash)) return "private-history-dismissed";
     return "";
   }
   function dismissedHistoryCsv(input) {
@@ -112,7 +118,35 @@
     }
     return Array.from(ids);
   }
-  const api = Object.freeze({ normalizeCompany, normalizeId, jobIdFromUrl, jobIdFromCard, companyFromCard, sanitizeState, whyHidden, dismissedHistoryCsv, parseAppliedHistoryCsv });
+  function linkedInCanonicalIdentity(id) {
+    const numeric = normalizeId(id);
+    return numeric ? "https://linkedin.com/jobs/view/" + numeric : "";
+  }
+  function parsePrivateHistoryCsv(value) {
+    if (typeof value !== "string" || value.length > 2000000) throw new Error("Invalid private history CSV size");
+    const lines = value.replace(/^\uFEFF/, "").split(/\r?\n/);
+    if (lines.at(-1) === "") lines.pop();
+    if (lines.shift() !== "identity_hash,status,recorded_at" || lines.length < 1 || lines.length > HASH_LIMIT) {
+      throw new Error("Invalid private history CSV shape");
+    }
+    const states = new Map();
+    for (const line of lines) {
+      const fields = line.split(",");
+      if (fields.length !== 3 || !/^[0-9a-f]{64}$/.test(fields[0])) throw new Error("Invalid history identity");
+      if (!["APPLIED_SELF_REPORTED", "DISMISSED"].includes(fields[1])) throw new Error("Invalid history state");
+      if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})$/.test(fields[2]) || !Number.isFinite(Date.parse(fields[2]))) {
+        throw new Error("Invalid history date");
+      }
+      const previous = states.get(fields[0]);
+      if (previous && previous !== fields[1]) throw new Error("Conflicting history state");
+      states.set(fields[0], fields[1]);
+    }
+    return {
+      historyAppliedHashes: Array.from(states, ([hash, state]) => state === "APPLIED_SELF_REPORTED" ? hash : "").filter(Boolean),
+      historyDismissedHashes: Array.from(states, ([hash, state]) => state === "DISMISSED" ? hash : "").filter(Boolean)
+    };
+  }
+  const api = Object.freeze({ normalizeCompany, normalizeId, jobIdFromUrl, jobIdFromCard, companyFromCard, sanitizeState, whyHidden, dismissedHistoryCsv, parseAppliedHistoryCsv, linkedInCanonicalIdentity, parsePrivateHistoryCsv });
   root.JobpipeLinkedInRules = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(typeof globalThis === "object" ? globalThis : this);
