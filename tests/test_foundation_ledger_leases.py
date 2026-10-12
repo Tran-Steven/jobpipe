@@ -412,3 +412,28 @@ def test_nonfinite_heartbeat_interval_releases_lease(
     with pytest.raises(ValueError, match="heartbeat_interval"):
         asyncio.run(attempt())
     assert manager.get("browser:nonfinite-interval") is None
+
+
+@pytest.mark.parametrize("start,ttl", [
+    (1e308, 1e308),
+    (float("inf"), 10.0),
+    (float("nan"), 10.0),
+])
+def test_lease_acquire_refuses_nonfinite_deadline_without_persisting(
+    tmp_path: Path, start: float, ttl: float,
+) -> None:
+    manager = LeaseManager(EventLedger(tmp_path / "events.sqlite3"), clock=lambda: start)
+    with pytest.raises(ValueError, match="lease clock and expiry must be finite"):
+        manager.acquire("browser:overflow", owner="worker", ttl_seconds=ttl)
+    assert manager.get("browser:overflow") is None
+
+
+def test_lease_renew_refuses_overflowed_deadline_without_mutation(tmp_path: Path) -> None:
+    now = [1e308]
+    manager = LeaseManager(EventLedger(tmp_path / "events.sqlite3"), clock=lambda: now[0])
+    lease = manager.acquire("browser:overflow-renew", owner="worker", ttl_seconds=1.0)
+    before = manager.get(lease.resource)
+    assert before is not None
+    with pytest.raises(ValueError, match="lease clock and expiry must be finite"):
+        manager.renew(lease, ttl_seconds=1e308)
+    assert manager.get(lease.resource) == before
