@@ -107,6 +107,8 @@ class LeaseManager:
         now = self.clock()
         token = str(uuid.uuid4())
         expires_at = now + ttl_seconds
+        if not math.isfinite(now) or not math.isfinite(expires_at):
+            raise ValueError("lease clock and expiry must be finite")
         with self.ledger.transaction() as connection:
             existing = connection.execute(
                 "SELECT * FROM leases WHERE resource = ?", (resource,)
@@ -164,6 +166,8 @@ class LeaseManager:
             if float(current["expires_at"]) <= now:
                 raise LeaseExpiredError(lease.resource)
             expires_at = now + ttl_seconds
+            if not math.isfinite(now) or not math.isfinite(expires_at):
+                raise ValueError("lease clock and expiry must be finite")
             connection.execute(
                 """
                 UPDATE leases SET renewed_at = ?, expires_at = ?
