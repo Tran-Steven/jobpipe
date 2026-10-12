@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "request_id": "restore-offline-status-20261012-01",
+  "operation": "status",
+  "args": {},
+  "expected": {},
+  "issued_at_utc": "2026-10-12T15:05:38.379Z",
+  "expires_at_utc": "2026-10-12T15:20:38.379Z",
+  "limits": {
+    "timeout_seconds": 30
+  },
+  "continuation": {
+    "acknowledged_receipts": [
+      "v1-offline-jobpipe-feature-review-compact-acceptance-20261011-01"
+    ],
+    "goal_id": "jobpipe-offline-v1-acceptance-20261011",
+    "goal_state": "in_progress",
+    "summary": "Acknowledge reviewed successful offline acceptance receipt and verify read-only protected status. No browser dispatch or application activity."
+  }
+}
