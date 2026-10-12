@@ -431,7 +431,7 @@ def test_lease_acquire_refuses_nonfinite_deadline_without_persisting(
 def test_lease_renew_refuses_overflowed_deadline_without_mutation(tmp_path: Path) -> None:
     now = [1e308]
     manager = LeaseManager(EventLedger(tmp_path / "events.sqlite3"), clock=lambda: now[0])
-    lease = manager.acquire("browser:overflow-renew", owner="worker", ttl_seconds=1.0)
+    lease = manager.acquire("browser:overflow-renew", owner="worker", ttl_seconds=1e307)
     before = manager.get(lease.resource)
     assert before is not None
     with pytest.raises(ValueError, match="lease clock and expiry must be finite"):
