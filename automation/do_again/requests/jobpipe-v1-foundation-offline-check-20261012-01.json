@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "request_id": "jobpipe-v1-foundation-offline-check-20261012-01",
+  "operation": "scratch_script",
+  "issued_at_utc": "2026-10-12T18:05:04.454Z",
+  "expires_at_utc": "2026-10-12T18:25:04.454Z",
+  "args": {
+    "language": "python",
+    "content": "import ast,json,hashlib\nfrom pathlib import Path\nroot=Path.cwd()\ntarget=root/\"core/leases.py\"\ntests=root/\"tests/test_foundation_ledger_leases.py\"\nassert target.is_file(),\"FOUNDATION_SOURCE_MISSING\"\nassert tests.is_file(),\"FOUNDATION_TESTS_MISSING\"\ncode=target.read_bytes()\ntree=ast.parse(code,filename=str(target))\ntest_tree=ast.parse(tests.read_bytes(),filename=str(tests))\nfound={n.name for n in ast.walk(test_tree) if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef))}\nrequired={\"test_lease_owner_checks_and_expired_takeover\",\"test_run_state_uses_compare_and_swap_and_append_only_events\",\"test_submission_intent_is_idempotent_and_blocks_duplicate_submit\"}\nmissing=sorted(required-found)\nprint(json.dumps({\"state\":\"inspected_offline\",\"source_sha256\":hashlib.sha256(code).hexdigest(),\"source_syntax\":\"pass\",\"tests_present\":sorted(required & found),\"tests_missing\":missing,\"real_applications_submitted\":0,\"browser_dispatch_touched\":False,\"repository_writes\":False},sort_keys=True))\nassert not missing,\"MISSING_FOUNDATION_TESTS\"\n"
+  },
+  "expected": {
+    "repo_head": "670ca713c468e7d735fae7e2d90c724e05b51319"
+  },
+  "limits": {
+    "timeout_seconds": 60
+  },
+  "continuation": {
+    "goal_id": "jobpipe-offline-v1-acceptance-20261011",
+    "goal_state": "in_progress",
+    "summary": "Read-only foundation readiness check for next scoped jobpipe code change. Do not alter browser dispatch, real application state, branch, or protected authority."
+  }
+}
