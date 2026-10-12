@@ -437,3 +437,16 @@ def test_lease_renew_refuses_overflowed_deadline_without_mutation(tmp_path: Path
     with pytest.raises(ValueError, match="lease clock and expiry must be finite"):
         manager.renew(lease, ttl_seconds=1e308)
     assert manager.get(lease.resource) == before
+
+
+@pytest.mark.parametrize("invalid_now", [float("nan"), float("inf"), float("-inf")])
+def test_lease_assert_current_fails_closed_on_nonfinite_clock(
+    tmp_path: Path, invalid_now: float,
+) -> None:
+    now = [100.0]
+    manager = LeaseManager(EventLedger(tmp_path / "events.sqlite3"), clock=lambda: now[0])
+    lease = manager.acquire("browser:clock-invalid", owner="worker", ttl_seconds=10)
+    now[0] = invalid_now
+    from core.leases import LeaseExpiredError
+    with pytest.raises(LeaseExpiredError):
+        manager.assert_current(lease)
