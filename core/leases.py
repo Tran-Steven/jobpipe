@@ -148,7 +148,10 @@ class LeaseManager:
             raise LeaseNotFoundError(lease.resource)
         if current.owner != lease.owner or current.token != lease.token:
             raise LeaseOwnershipError(lease.resource)
-        if current.expires_at <= self.clock():
+        now = self.clock()
+        if not math.isfinite(now) or not math.isfinite(current.expires_at):
+            raise LeaseExpiredError(lease.resource)
+        if current.expires_at <= now:
             raise LeaseExpiredError(lease.resource)
         return current
 
