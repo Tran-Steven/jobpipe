@@ -7,6 +7,7 @@ import argparse
 import asyncio
 import getpass
 import json
+import sys
 from collections import Counter
 from copy import deepcopy
 from pathlib import Path
@@ -1240,6 +1241,15 @@ def build_parser() -> argparse.ArgumentParser:
     capture_review.add_argument("--employer", required=True)
     capture_review.add_argument("--verified-profile-keys", default="")
 
+    interactive_review = subparsers.add_parser(
+        "ats-review-interactive",
+        help="Attended, explicitly verified ATS answer review; never submit applications",
+    )
+    interactive_review.add_argument("--fields", required=True)
+    interactive_review.add_argument("--bank", required=True)
+    interactive_review.add_argument("--employer", required=True)
+    interactive_review.add_argument("--verified-profile-keys", default="")
+
     review_parser = subparsers.add_parser("ats-review-queue", help="Inspect sanitized ATS questions and verified answer availability offline; no approval or submission")
     review_parser.add_argument("--fields", required=True)
     review_parser.add_argument("--bank", required=True)
@@ -1349,6 +1359,36 @@ def main() -> int:
             keys = {key.strip() for key in args.verified_profile_keys.split(",") if key.strip()}
             result = build_review_with_verified_matches(fields, keys, bank, args.employer)
             _json_print(result)
+            return 0
+        if args.command == "ats-review-interactive":
+            from tools.ats_review_answer_matches import build_review_with_verified_matches
+            from tools.ats_review_interactive import review_interactively
+            from tools.ats_verified_answer_bank import load_bank
+
+            # Attended human-only workflow. Never reuse an automated pipe to
+            # infer verification or authorize a private answer bank write.
+            if not sys.stdin.isatty():
+                raise ValueError("ats-review-interactive requires an attended terminal")
+            fields = json.loads(Path(args.fields).read_text(encoding="utf-8"))
+            if not isinstance(fields, list) or any(not isinstance(x, dict) for x in fields):
+                raise ValueError("fields must be a metadata array")
+            keys = {key.strip() for key in args.verified_profile_keys.split(",") if key.strip()}
+            bank_path = Path(args.bank)
+            review = build_review_with_verified_matches(
+                fields, keys, load_bank(bank_path), args.employer,
+            )
+
+            def prompt_stderr(prompt: str) -> str:
+                sys.stderr.write(prompt)
+                sys.stderr.flush()
+                return input()
+
+            summary = review_interactively(
+                bank_path, review["human_review"], args.employer,
+                input_fn=prompt_stderr,
+                print_fn=lambda line: print(line, file=sys.stderr),
+            )
+            _json_print(summary)
             return 0
         if args.command == "ats-review-queue":
             from tools.ats_review_cli import main as ats_review_main

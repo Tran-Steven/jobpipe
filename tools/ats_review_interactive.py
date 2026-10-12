@@ -5,8 +5,12 @@ from typing import Any,Callable
 from tools.ats_review_batch_approval import approve_batch
 
 def review_interactively(bank_path:Path,review_items:list[dict[str,Any]],employer:str,
-                         *,input_fn:Callable[[str],str]=input,print_fn:Callable[[str],None]=print)->dict[str,Any]:
+                         *,input_fn:Callable[[str],str]|None=None,print_fn:Callable[[str],None]=print)->dict[str,Any]:
     """Optional answers may be skipped; approvals cannot be inferred from keystrokes."""
+    # Bind at call time so explicit tests and attended CLI sessions use the
+    # current input provider instead of a stale import-time capture.
+    if input_fn is None:
+        input_fn = input
     decisions=[]
     ordered=sorted(review_items,key=lambda x:(not bool(x.get("required")),str(x.get("question") or "")))
     for item in ordered:
