@@ -1,4 +1,5 @@
 from dataclasses import replace
+import asyncio
 import hashlib
 from pathlib import Path
 
@@ -379,3 +380,73 @@ def test_append_only_ledger_still_accepts_legacy_status_only_outcomes(
     )
     assert changed.state == "IN_PROGRESS"
     assert changed.state_version == 1
+
+
+@pytest.mark.parametrize("ttl_seconds", [float("nan"), float("inf"), float("-inf")])
+def test_nonfinite_lease_ttl_is_rejected_without_persisting(
+    tmp_path: Path, ttl_seconds: float,
+) -> None:
+    ledger = EventLedger(tmp_path / "events.sqlite3")
+    manager = LeaseManager(ledger)
+    with pytest.raises(ValueError, match="finite and positive"):
+        manager.acquire("browser:nonfinite", owner="worker", ttl_seconds=ttl_seconds)
+    assert manager.get("browser:nonfinite") is None
+
+
+@pytest.mark.parametrize("heartbeat_interval", [float("nan"), float("inf"), float("-inf")])
+def test_nonfinite_heartbeat_interval_releases_lease(
+    tmp_path: Path, heartbeat_interval: float,
+) -> None:
+    ledger = EventLedger(tmp_path / "events.sqlite3")
+    manager = LeaseManager(ledger)
+
+    async def attempt() -> None:
+        async with manager.hold_renewing(
+            "browser:nonfinite-interval",
+            owner="worker",
+            ttl_seconds=10,
+            heartbeat_interval=heartbeat_interval,
+        ):
+            pytest.fail("invalid heartbeat interval was admitted")
+
+    with pytest.raises(ValueError, match="heartbeat_interval"):
+        asyncio.run(attempt())
+    assert manager.get("browser:nonfinite-interval") is None
+
+
+@pytest.mark.parametrize("start,ttl", [
+    (1e308, 1e308),
+    (float("inf"), 10.0),
+    (float("nan"), 10.0),
+])
+def test_lease_acquire_refuses_nonfinite_deadline_without_persisting(
+    tmp_path: Path, start: float, ttl: float,
+) -> None:
+    manager = LeaseManager(EventLedger(tmp_path / "events.sqlite3"), clock=lambda: start)
+    with pytest.raises(ValueError, match="lease clock and expiry must be finite"):
+        manager.acquire("browser:overflow", owner="worker", ttl_seconds=ttl)
+    assert manager.get("browser:overflow") is None
+
+
+def test_lease_renew_refuses_overflowed_deadline_without_mutation(tmp_path: Path) -> None:
+    now = [1e308]
+    manager = LeaseManager(EventLedger(tmp_path / "events.sqlite3"), clock=lambda: now[0])
+    lease = manager.acquire("browser:overflow-renew", owner="worker", ttl_seconds=1e307)
+    before = manager.get(lease.resource)
+    assert before is not None
+    with pytest.raises(ValueError, match="lease clock and expiry must be finite"):
+        manager.renew(lease, ttl_seconds=1e308)
+    assert manager.get(lease.resource) == before
+
+
+@pytest.mark.parametrize("invalid_now", [float("nan"), float("inf"), float("-inf")])
+def test_lease_assert_current_fails_closed_on_nonfinite_clock(
+    tmp_path: Path, invalid_now: float,
+) -> None:
+    now = [100.0]
+    manager = LeaseManager(EventLedger(tmp_path / "events.sqlite3"), clock=lambda: now[0])
+    lease = manager.acquire("browser:clock-invalid", owner="worker", ttl_seconds=10)
+    now[0] = invalid_now
+    from core.leases import LeaseExpiredError
+    with pytest.raises(LeaseExpiredError):
+        manager.assert_current(lease)

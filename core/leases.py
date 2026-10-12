@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import math
 import time
 import uuid
 from contextlib import asynccontextmanager, contextmanager
@@ -81,8 +82,8 @@ class LeaseManager:
     def _validate(resource: str, owner: str, ttl_seconds: float) -> None:
         if not resource.strip() or not owner.strip():
             raise ValueError("resource and owner are required")
-        if ttl_seconds <= 0:
-            raise ValueError("ttl_seconds must be positive")
+        if not math.isfinite(ttl_seconds) or ttl_seconds <= 0:
+            raise ValueError("ttl_seconds must be finite and positive")
 
     @staticmethod
     def _from_row(row) -> Lease:
@@ -106,6 +107,8 @@ class LeaseManager:
         now = self.clock()
         token = str(uuid.uuid4())
         expires_at = now + ttl_seconds
+        if not math.isfinite(now) or not math.isfinite(expires_at):
+            raise ValueError("lease clock and expiry must be finite")
         with self.ledger.transaction() as connection:
             existing = connection.execute(
                 "SELECT * FROM leases WHERE resource = ?", (resource,)
@@ -145,7 +148,10 @@ class LeaseManager:
             raise LeaseNotFoundError(lease.resource)
         if current.owner != lease.owner or current.token != lease.token:
             raise LeaseOwnershipError(lease.resource)
-        if current.expires_at <= self.clock():
+        now = self.clock()
+        if not math.isfinite(now) or not math.isfinite(current.expires_at):
+            raise LeaseExpiredError(lease.resource)
+        if current.expires_at <= now:
             raise LeaseExpiredError(lease.resource)
         return current
 
@@ -163,6 +169,8 @@ class LeaseManager:
             if float(current["expires_at"]) <= now:
                 raise LeaseExpiredError(lease.resource)
             expires_at = now + ttl_seconds
+            if not math.isfinite(now) or not math.isfinite(expires_at):
+                raise ValueError("lease clock and expiry must be finite")
             connection.execute(
                 """
                 UPDATE leases SET renewed_at = ?, expires_at = ?
@@ -242,7 +250,7 @@ class LeaseManager:
             if heartbeat_interval is not None
             else min(60.0, max(0.05, ttl_seconds / 3.0))
         )
-        if interval <= 0 or interval >= ttl_seconds:
+        if not math.isfinite(interval) or interval <= 0 or interval >= ttl_seconds:
             try:
                 self.release(lease)
             finally:
