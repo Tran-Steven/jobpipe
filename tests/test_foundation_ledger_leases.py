@@ -1,4 +1,5 @@
 from dataclasses import replace
+import asyncio
 import hashlib
 from pathlib import Path
 
@@ -379,3 +380,35 @@ def test_append_only_ledger_still_accepts_legacy_status_only_outcomes(
     )
     assert changed.state == "IN_PROGRESS"
     assert changed.state_version == 1
+
+
+@pytest.mark.parametrize("ttl_seconds", [float("nan"), float("inf"), float("-inf")])
+def test_nonfinite_lease_ttl_is_rejected_without_persisting(
+    tmp_path: Path, ttl_seconds: float,
+) -> None:
+    ledger = EventLedger(tmp_path / "events.sqlite3")
+    manager = LeaseManager(ledger)
+    with pytest.raises(ValueError, match="finite and positive"):
+        manager.acquire("browser:nonfinite", owner="worker", ttl_seconds=ttl_seconds)
+    assert manager.get("browser:nonfinite") is None
+
+
+@pytest.mark.parametrize("heartbeat_interval", [float("nan"), float("inf"), float("-inf")])
+def test_nonfinite_heartbeat_interval_releases_lease(
+    tmp_path: Path, heartbeat_interval: float,
+) -> None:
+    ledger = EventLedger(tmp_path / "events.sqlite3")
+    manager = LeaseManager(ledger)
+
+    async def attempt() -> None:
+        async with manager.hold_renewing(
+            "browser:nonfinite-interval",
+            owner="worker",
+            ttl_seconds=10,
+            heartbeat_interval=heartbeat_interval,
+        ):
+            pytest.fail("invalid heartbeat interval was admitted")
+
+    with pytest.raises(ValueError, match="heartbeat_interval"):
+        asyncio.run(attempt())
+    assert manager.get("browser:nonfinite-interval") is None
