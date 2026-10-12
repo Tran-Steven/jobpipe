@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import math
 import time
 import uuid
 from contextlib import asynccontextmanager, contextmanager
@@ -81,8 +82,8 @@ class LeaseManager:
     def _validate(resource: str, owner: str, ttl_seconds: float) -> None:
         if not resource.strip() or not owner.strip():
             raise ValueError("resource and owner are required")
-        if ttl_seconds <= 0:
-            raise ValueError("ttl_seconds must be positive")
+        if not math.isfinite(ttl_seconds) or ttl_seconds <= 0:
+            raise ValueError("ttl_seconds must be finite and positive")
 
     @staticmethod
     def _from_row(row) -> Lease:
@@ -242,7 +243,7 @@ class LeaseManager:
             if heartbeat_interval is not None
             else min(60.0, max(0.05, ttl_seconds / 3.0))
         )
-        if interval <= 0 or interval >= ttl_seconds:
+        if not math.isfinite(interval) or interval <= 0 or interval >= ttl_seconds:
             try:
                 self.release(lease)
             finally:
