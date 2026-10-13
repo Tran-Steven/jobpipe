@@ -21,7 +21,7 @@ def classify_field(field: Mapping[str, Any], verified_keys: set[str] | frozenset
     kind = str(field.get("type") or "").lower()
     if bool(field.get("ambiguous")) or not question:
         return {"status":"human_review","reason":"ambiguous_question"}
-    if kind in {"checkbox","radio","select-one","select-multiple","textarea","file","password"}:
+    if kind not in {"text", "email", "tel", "url"}:
         return {"status":"human_review","reason":"nontrivial_control"}
     for key, pattern in _CONTACT.items():
         if pattern.fullmatch(question) and (not label or pattern.fullmatch(label)):
