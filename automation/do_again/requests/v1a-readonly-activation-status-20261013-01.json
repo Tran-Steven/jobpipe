@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "request_id": "v1a-readonly-activation-status-20261013-01",
+  "operation": "status",
+  "args": {},
+  "expected": {},
+  "issued_at_utc": "2026-10-13T08:21:02.333Z",
+  "expires_at_utc": "2026-10-13T08:29:02.333Z",
+  "limits": {
+    "timeout_seconds": 30
+  },
+  "continuation": {
+    "goal_id": "v1a-live-activation-readonly-20261013",
+    "goal_state": "in_progress",
+    "summary": "Read-only operator status for native V1A cutover admission; do not start or stop services, grant authority, replay requests, modify code, deploy, submit applications, or alter Sonary."
+  }
+}
