@@ -16,6 +16,10 @@ def classify_field(field: Mapping[str, Any], verified_keys: set[str] | frozenset
 
     Verified keys grant only *candidate mapping*, never automatic form filling.
     """
+    if not isinstance(verified_keys, (set, frozenset)) or any(
+        not isinstance(key, str) for key in verified_keys
+    ):
+        return {'status': 'human_review', 'reason': 'invalid_verified_keys'}
     for metadata_key in ('question', 'label'):
         if metadata_key in field and not isinstance(field[metadata_key], str):
             return {'status': 'human_review', 'reason': 'invalid_field_metadata'}

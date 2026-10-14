@@ -450,3 +450,159 @@ def test_malformed_metadata_never_exposes_candidate_or_answer():
     assert 'profile_key' not in result
     assert 'answer' not in result
     assert 'value' not in result
+
+
+@pytest.mark.parametrize('verified_keys', [
+    'email',
+    'full_name',
+    ['email'],
+    ('email',),
+    {'email': True},
+    {'email': False},
+    {'email': 'verified'},
+    {},
+    [],
+    (),
+    b'email',
+    None,
+    0,
+    1,
+    True,
+])
+def test_invalid_verified_key_containers_require_review(verified_keys):
+    result = classify_field(
+        {
+            'question': 'Email',
+            'label': 'Email',
+            'type': 'email',
+            'ambiguous': False,
+        },
+        verified_keys,
+    )
+    assert result == {
+        'status': 'human_review',
+        'reason': 'invalid_verified_keys',
+    }
+
+
+@pytest.mark.parametrize('verified_keys', [
+    {'email', None},
+    {'email', 1},
+    {'email', False},
+    frozenset({'email', None}),
+    frozenset({'email', 1}),
+    {None},
+    {1},
+    frozenset({1}),
+    {'email', b'phone'},
+])
+def test_nonstring_verified_key_members_require_review(verified_keys):
+    result = classify_field(
+        {
+            'question': 'Email',
+            'label': 'Email',
+            'type': 'email',
+            'ambiguous': False,
+        },
+        verified_keys,
+    )
+    assert result == {
+        'status': 'human_review',
+        'reason': 'invalid_verified_keys',
+    }
+
+
+@pytest.mark.parametrize('verified_keys', [
+    {'email'},
+    frozenset({'email'}),
+    {'email', 'unused'},
+    frozenset({'email', 'unused'}),
+])
+def test_valid_verified_key_containers_preserve_candidates(verified_keys):
+    result = classify_field(
+        {
+            'question': 'Email',
+            'label': 'Email',
+            'type': 'email',
+            'ambiguous': False,
+        },
+        verified_keys,
+    )
+    assert result == {
+        'status': 'verified_candidate',
+        'profile_key': 'email',
+    }
+
+
+@pytest.mark.parametrize('verified_keys', [set(), frozenset()])
+def test_empty_verified_key_containers_preserve_unverified_review(verified_keys):
+    result = classify_field(
+        {
+            'question': 'Email',
+            'label': 'Email',
+            'type': 'email',
+            'ambiguous': False,
+        },
+        verified_keys,
+    )
+    assert result == {
+        'status': 'human_review',
+        'reason': 'unverified_profile_fact',
+    }
+
+
+def test_invalid_verified_keys_never_expose_candidate_or_answer():
+    result = classify_field(
+        {
+            'question': 'Full name',
+            'label': 'Full name',
+            'type': 'text',
+            'ambiguous': False,
+        },
+        {'full_name': False},
+    )
+    assert result == {
+        'status': 'human_review',
+        'reason': 'invalid_verified_keys',
+    }
+    assert 'profile_key' not in result
+    assert 'answer' not in result
+    assert 'value' not in result
+
+
+@pytest.mark.parametrize('verified_keys', [
+    {'email'},
+    frozenset({'email'}),
+])
+def test_verified_key_validation_preserves_existing_safeguards(verified_keys):
+    fields = [
+        {'question': 'Email', 'label': 'Email', 'type': 'email', 'ambiguous': False},
+        {'question': 'Email', 'label': 'Email', 'type': 'tel', 'ambiguous': False},
+        {'question': 'Email', 'label': 'Email', 'type': 'email', 'ambiguous': None},
+        {'question': None, 'label': 'Email', 'type': 'email', 'ambiguous': False},
+        {'question': 'Referee email', 'label': 'Referee email', 'type': 'email', 'ambiguous': False},
+        {'question': 'Email', 'label': 'Email', 'type': 'select-one', 'ambiguous': False},
+        {'question': 'Phone', 'label': 'Phone', 'type': 'tel', 'ambiguous': False},
+    ]
+    assert triage_fields(fields, verified_keys) == [
+        {'status': 'verified_candidate', 'profile_key': 'email'},
+        {'status': 'human_review', 'reason': 'mismatched_contact_control'},
+        {'status': 'human_review', 'reason': 'ambiguous_question'},
+        {'status': 'human_review', 'reason': 'invalid_field_metadata'},
+        {'status': 'human_review', 'reason': 'unknown_question'},
+        {'status': 'human_review', 'reason': 'nontrivial_control'},
+        {'status': 'human_review', 'reason': 'unverified_profile_fact'},
+    ]
+
+
+def test_invalid_verified_container_preserves_triage_result_order():
+    fields = [
+        {'question': 'Email', 'label': 'Email', 'type': 'email', 'ambiguous': False},
+        {'question': 'Phone', 'label': 'Phone', 'type': 'tel', 'ambiguous': False},
+        {'question': 'GitHub', 'label': 'GitHub', 'type': 'url', 'ambiguous': False},
+    ]
+    assert triage_fields(fields, ['email', 'phone', 'github']) == [
+        {'status': 'human_review', 'reason': 'invalid_verified_keys'},
+        {'status': 'human_review', 'reason': 'invalid_verified_keys'},
+        {'status': 'human_review', 'reason': 'invalid_verified_keys'},
+    ]
