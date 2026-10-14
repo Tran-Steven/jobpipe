@@ -147,3 +147,136 @@ def test_unknown_non_contact_question_requires_review():
         {'full_name', 'email', 'phone'},
     )
     assert result == {'status': 'human_review', 'reason': 'unknown_question'}
+
+
+@pytest.mark.parametrize('ambiguous', [
+    None,
+    0,
+    0.0,
+    '',
+    [],
+    {},
+    (),
+    'false',
+    'False',
+    '0',
+    'no',
+    1,
+    True,
+])
+def test_nonboolean_ambiguity_metadata_requires_review(ambiguous):
+    result = classify_field(
+        {
+            'question': 'Email',
+            'label': 'Email',
+            'type': 'email',
+            'ambiguous': ambiguous,
+        },
+        {'email'},
+    )
+    assert result == {
+        'status': 'human_review',
+        'reason': 'ambiguous_question',
+    }
+
+
+@pytest.mark.parametrize('question,kind,key', [
+    ('Full name', 'text', 'full_name'),
+    ('Email', 'email', 'email'),
+    ('Phone', 'tel', 'phone'),
+    ('LinkedIn', 'url', 'linkedin'),
+    ('GitHub', 'url', 'github'),
+])
+@pytest.mark.parametrize('include_flag', [False, True])
+def test_false_or_missing_ambiguity_preserves_candidates(
+    question, kind, key, include_flag
+):
+    field = {
+        'question': question,
+        'label': question,
+        'type': kind,
+    }
+    if include_flag:
+        field['ambiguous'] = False
+    result = classify_field(field, {key})
+    assert result == {
+        'status': 'verified_candidate',
+        'profile_key': key,
+    }
+
+
+def test_malformed_ambiguity_remains_review_even_without_verified_fact():
+    result = classify_field(
+        {
+            'question': 'Email',
+            'label': 'Email',
+            'type': 'email',
+            'ambiguous': None,
+        },
+        set(),
+    )
+    assert result == {
+        'status': 'human_review',
+        'reason': 'ambiguous_question',
+    }
+
+
+def test_mixed_ambiguity_metadata_preserves_triage_order():
+    fields = [
+        {
+            'question': 'Email',
+            'label': 'Email',
+            'type': 'email',
+            'ambiguous': False,
+        },
+        {
+            'question': 'Email',
+            'label': 'Email',
+            'type': 'email',
+            'ambiguous': None,
+        },
+        {
+            'question': 'Phone',
+            'label': 'Phone',
+            'type': 'tel',
+            'ambiguous': [],
+        },
+        {
+            'question': 'GitHub',
+            'label': 'GitHub',
+            'type': 'url',
+        },
+        {
+            'question': 'LinkedIn',
+            'label': 'LinkedIn',
+            'type': 'email',
+            'ambiguous': False,
+        },
+    ]
+    results = triage_fields(fields, {'email', 'phone', 'github', 'linkedin'})
+    assert results == [
+        {'status': 'verified_candidate', 'profile_key': 'email'},
+        {'status': 'human_review', 'reason': 'ambiguous_question'},
+        {'status': 'human_review', 'reason': 'ambiguous_question'},
+        {'status': 'verified_candidate', 'profile_key': 'github'},
+        {'status': 'human_review', 'reason': 'mismatched_contact_control'},
+    ]
+
+
+def test_malformed_ambiguity_never_returns_candidate_data():
+    result = classify_field(
+        {
+            'question': 'Full name',
+            'label': 'Full name',
+            'type': 'text',
+            'ambiguous': {},
+        },
+        {'full_name'},
+    )
+    assert result == {
+        'status': 'human_review',
+        'reason': 'ambiguous_question',
+    }
+    assert 'profile_key' not in result
+    assert 'answer' not in result
+    assert 'value' not in result

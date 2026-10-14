@@ -19,7 +19,7 @@ def classify_field(field: Mapping[str, Any], verified_keys: set[str] | frozenset
     question = re.sub(r"\s+", " ", str(field.get("question") or field.get("label") or "")).strip()
     label = re.sub(r"\s+", " ", str(field.get("label") or "")).strip()
     kind = str(field.get("type") or "").lower()
-    if bool(field.get("ambiguous")) or not question:
+    if field.get("ambiguous", False) is not False or not question:
         return {"status":"human_review","reason":"ambiguous_question"}
     if kind not in {"text", "email", "tel", "url"}:
         return {"status":"human_review","reason":"nontrivial_control"}
