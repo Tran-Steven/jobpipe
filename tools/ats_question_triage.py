@@ -23,8 +23,17 @@ def classify_field(field: Mapping[str, Any], verified_keys: set[str] | frozenset
         return {"status":"human_review","reason":"ambiguous_question"}
     if kind not in {"text", "email", "tel", "url"}:
         return {"status":"human_review","reason":"nontrivial_control"}
+    expected_kinds = {
+        "full_name": "text",
+        "email": "email",
+        "phone": "tel",
+        "linkedin": "url",
+        "github": "url",
+    }
     for key, pattern in _CONTACT.items():
         if pattern.fullmatch(question) and (not label or pattern.fullmatch(label)):
+            if kind not in {"text", expected_kinds[key]}:
+                return {"status":"human_review","reason":"mismatched_contact_control"}
             if key in verified_keys:
                 return {"status":"verified_candidate","profile_key":key}
             return {"status":"human_review","reason":"unverified_profile_fact"}
