@@ -280,3 +280,173 @@ def test_malformed_ambiguity_never_returns_candidate_data():
     assert 'profile_key' not in result
     assert 'answer' not in result
     assert 'value' not in result
+
+
+@pytest.mark.parametrize('bad_value', [
+    None,
+    False,
+    True,
+    0,
+    1,
+    0.0,
+    [],
+    {},
+    (),
+    ['Email'],
+    {'value': 'Email'},
+])
+@pytest.mark.parametrize('metadata_key', ['question', 'label'])
+def test_malformed_contact_metadata_requires_review(metadata_key, bad_value):
+    field = {
+        'question': 'Email',
+        'label': 'Email',
+        'type': 'email',
+        'ambiguous': False,
+    }
+    field[metadata_key] = bad_value
+    result = classify_field(field, {'email'})
+    assert result == {
+        'status': 'human_review',
+        'reason': 'invalid_field_metadata',
+    }
+
+
+@pytest.mark.parametrize('label', [
+    ' ',
+    '   ',
+    '\t',
+    '\n',
+    ' \t \n ',
+])
+def test_whitespace_only_contact_label_requires_review(label):
+    result = classify_field(
+        {
+            'question': 'Email',
+            'label': label,
+            'type': 'email',
+            'ambiguous': False,
+        },
+        {'email'},
+    )
+    assert result == {
+        'status': 'human_review',
+        'reason': 'invalid_field_metadata',
+    }
+
+
+@pytest.mark.parametrize('question,kind,key', [
+    ('Full name', 'text', 'full_name'),
+    ('Email', 'email', 'email'),
+    ('Phone', 'tel', 'phone'),
+    ('LinkedIn', 'url', 'linkedin'),
+    ('GitHub', 'url', 'github'),
+])
+def test_missing_label_preserves_verified_candidate(question, kind, key):
+    result = classify_field(
+        {'question': question, 'type': kind, 'ambiguous': False},
+        {key},
+    )
+    assert result == {'status': 'verified_candidate', 'profile_key': key}
+
+
+@pytest.mark.parametrize('question,kind,key', [
+    ('Full name', 'text', 'full_name'),
+    ('Email', 'email', 'email'),
+    ('Phone', 'tel', 'phone'),
+    ('LinkedIn', 'url', 'linkedin'),
+    ('GitHub', 'url', 'github'),
+])
+def test_empty_string_label_preserves_verified_candidate(question, kind, key):
+    result = classify_field(
+        {
+            'question': question,
+            'label': '',
+            'type': kind,
+            'ambiguous': False,
+        },
+        {key},
+    )
+    assert result == {'status': 'verified_candidate', 'profile_key': key}
+
+
+@pytest.mark.parametrize('question_value', ['', None])
+def test_missing_or_empty_question_fallback_is_distinguished(question_value):
+    field = {
+        'label': 'Email',
+        'type': 'email',
+        'ambiguous': False,
+    }
+    if question_value is not None:
+        field['question'] = question_value
+    result = classify_field(field, {'email'})
+    assert result == {'status': 'verified_candidate', 'profile_key': 'email'}
+
+
+def test_explicit_null_question_does_not_fallback_to_verified_label():
+    result = classify_field(
+        {
+            'question': None,
+            'label': 'Email',
+            'type': 'email',
+            'ambiguous': False,
+        },
+        {'email'},
+    )
+    assert result == {
+        'status': 'human_review',
+        'reason': 'invalid_field_metadata',
+    }
+
+
+def test_valid_contact_label_whitespace_normalization_is_preserved():
+    result = classify_field(
+        {
+            'question': 'Email',
+            'label': '  Email  ',
+            'type': 'email',
+            'ambiguous': False,
+        },
+        {'email'},
+    )
+    assert result == {'status': 'verified_candidate', 'profile_key': 'email'}
+
+
+def test_mixed_metadata_validation_preserves_triage_order():
+    fields = [
+        {'question': 'Email', 'label': 'Email', 'type': 'email', 'ambiguous': False},
+        {'question': None, 'label': 'Email', 'type': 'email', 'ambiguous': False},
+        {'question': 'Phone', 'label': '   ', 'type': 'tel', 'ambiguous': False},
+        {'question': 'GitHub', 'type': 'url', 'ambiguous': False},
+        {'question': 'LinkedIn', 'label': 'LinkedIn', 'type': 'email', 'ambiguous': False},
+        {'question': 'Email', 'label': 'Email', 'type': 'email', 'ambiguous': None},
+        {'question': 'Referee email', 'label': 'Referee email', 'type': 'email', 'ambiguous': False},
+    ]
+    results = triage_fields(fields, {'email', 'phone', 'github', 'linkedin'})
+    assert results == [
+        {'status': 'verified_candidate', 'profile_key': 'email'},
+        {'status': 'human_review', 'reason': 'invalid_field_metadata'},
+        {'status': 'human_review', 'reason': 'invalid_field_metadata'},
+        {'status': 'verified_candidate', 'profile_key': 'github'},
+        {'status': 'human_review', 'reason': 'mismatched_contact_control'},
+        {'status': 'human_review', 'reason': 'ambiguous_question'},
+        {'status': 'human_review', 'reason': 'unknown_question'},
+    ]
+
+
+def test_malformed_metadata_never_exposes_candidate_or_answer():
+    result = classify_field(
+        {
+            'question': 'Full name',
+            'label': False,
+            'type': 'text',
+            'ambiguous': False,
+        },
+        {'full_name'},
+    )
+    assert result == {
+        'status': 'human_review',
+        'reason': 'invalid_field_metadata',
+    }
+    assert 'profile_key' not in result
+    assert 'answer' not in result
+    assert 'value' not in result

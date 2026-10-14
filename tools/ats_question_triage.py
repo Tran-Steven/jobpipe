@@ -16,6 +16,11 @@ def classify_field(field: Mapping[str, Any], verified_keys: set[str] | frozenset
 
     Verified keys grant only *candidate mapping*, never automatic form filling.
     """
+    for metadata_key in ('question', 'label'):
+        if metadata_key in field and not isinstance(field[metadata_key], str):
+            return {'status': 'human_review', 'reason': 'invalid_field_metadata'}
+    if 'label' in field and field['label'] and not field['label'].strip():
+        return {'status': 'human_review', 'reason': 'invalid_field_metadata'}
     question = re.sub(r"\s+", " ", str(field.get("question") or field.get("label") or "")).strip()
     label = re.sub(r"\s+", " ", str(field.get("label") or "")).strip()
     kind = str(field.get("type") or "").lower()
